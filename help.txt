@@ -1,0 +1,4 @@
+1) remove none modules from nodejs folder - so in git will be just a needed files
+2) create template - user register form
+3) send resive data from/to server
+4) try backbone on user form
