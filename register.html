@@ -10,7 +10,7 @@
 		<meta name="author" content="Hege Refsnes">
 
 		<link rel="stylesheet" type="text/css" href="/frameworks/bootstrap.css">
-		<link rel="stylesheet" type="text/css" href="/public/register_style.css">
+		<link rel="stylesheet" type="text/css" href="/public/style.css">
 
 		<script type="text/javascript" src="/frameworks/jquery.js"></script>
 		<script type="text/javascript" src="/frameworks/underscore.js"></script>
@@ -20,18 +20,49 @@
 
     </head>
 	<body>
-		<form method="POST" action="/reseller/ajax/member/register_new_customer/" name="form" id="registerCustomerForm" class="">
+		<div class="container">
+			<nav class="navbar navbar-default">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<a class="navbar-brand" href="#">WebSiteName</a>
+					</div>
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="/">Home</a></li>
+						<li><a href="/register">Register user</a></li>
+					</ul>
+				</div>
+			</nav>
+		   	<div class="row">
+	    		<div class="col-sm-4">
+					<form method="POST" action="/reseller/ajax/member/register_new_customer/" name="form" id="registerCustomerForm" class="">
 
-			<input type="hidden" value="" name="country_value">
-			<input type="hidden" value="" name="state_value">
+						<input type="hidden" value="UA" name="country_value" />
+						<input type="hidden" value="Kiev" name="state_value" />
 
-			<input type="text" value="" name="first_name">
-			<input type="text" value="" name="last_name">
-
-			<div class="btn-wrapper alignRight withSpacing">
-				<input name="Submit" type="button" class="btn primary action" value="Next" >
+						<ul class="list-group">
+							<li class="list-group-item">
+								<input type="text" value="" name="first_name" class="form-control" placeholder="first name" />
+							</li>
+							<li class="list-group-item">
+								<input type="text" value="" name="last_name" class="form-control" placeholder="last name" />
+							</li>
+							<li class="list-group-item">
+								<button type="reset" value="Reset" class="btn btn-default">Reset</button>
+								<button name="Submit" type="button" class="btn btn-primary pull-right sendAjaxForm">Send Form</button>
+							
+							</li>
+						</ul>
+					</form>
+				</div>
+	    	</div>
+	    	<div class="row">
+				<div class="col-sm-4" >
+					<div class="panel panel-default">
+					  	<div class="panel-heading">Data from server</div>
+					  	<div class="panel-body" id="post_data"></div>
+					</div>
+				</div>
 			</div>
-
-		</form>
+		</div>
 	</body>
 </html>
