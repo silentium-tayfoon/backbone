@@ -1,3 +1,8 @@
+GIT 
+	ignore local folder - go to .git/info/ open exclude end add a folder 'node_modules/'
+	so in that way yout modules will not be in the git;
+
+
 1) remove none modules from nodejs folder - so in git will be just a needed files
 2) create template - user register form
 3) send resive data from/to server
