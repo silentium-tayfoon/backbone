@@ -4,7 +4,9 @@ $(function(){
 	var registerCustomerForm = document.getElementById('registerCustomerForm');
 	var post_data = document.getElementById('post_data');
 	var sendAjaxForm = document.querySelector('.sendAjaxForm');
+	var navbar = document.querySelector('.navbar');
 
+	
 
 
 	$(sendAjaxForm).on('click', function(){
