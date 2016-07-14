@@ -34,9 +34,29 @@
 			</nav>
 			<div class="row">
 				<div class="col-sm-4" id="post_data">
-					<h1>go to register</h1>	
+					<h6>try cliks and handlebars</h6>	
 				</div>
+				<div id='click_buttons'>
+					<button class="btn btn-default" id='show_list' type="button">Show list</button>
+					<button class="btn btn-default show_list" type="button">Show list console</button>
+					<button class="btn btn-default show_alert" type="button">Show alert</button>
+				</div>
+				<div class="task_list_target"></div>
 			</div>
 		</div>
+		<script id="task_list_template" type="text/x-handlebars-template">
+			<div class="entry">
+				<h6><:task:></h6>
+				<ul class="list-group">
+					<:#each todo_list:>
+						<li class="list-group-item">
+							<p><:name:></p>
+							<p><:description:></p>
+						</li>
+					<:/each:>
+				</ul>
+				</div>
+			</div>
+		</script>
 	</body>
 </html>

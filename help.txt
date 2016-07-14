@@ -10,6 +10,12 @@ GIT
 	backbone
 	handlebars
 
+1.1) подцепить handlebars для view
+	лень колупать оригинальный handlebars, подключить Димин на стероидах!
+
+
+
+
 2) все тоже самое но исползовать:
 	backone 
 	polymer	

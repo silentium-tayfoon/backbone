@@ -59,10 +59,23 @@
 				<div class="col-sm-4" >
 					<div class="panel panel-default">
 					  	<div class="panel-heading">Data from server</div>
-					  	<div class="panel-body" id="post_data"></div>
+					  	<ul class="user_view">
+						  	<li>
+						  		<div class="panel-body" id="post_data"></div>
+						  	</li>
+					  	</ul>
+					  	
 					</div>
 				</div>
 			</div>
 		</div>
+		<script id="user_from_server" type="text/x-handlebars-template">
+			<div class="entry">
+				<h1>{{title}}</h1>
+				<div class="body">
+				{{body}}
+				</div>
+			</div>
+		</script>
 	</body>
 </html>

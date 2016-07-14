@@ -29,7 +29,10 @@ $(function(){
 
 
 		user.on("change", function(msg) {
-			changeUserView();
+			if(user.hasChanged(['first_name'])){
+				changeUserView();
+				console.log(user.previous("first_name")+' vs '+user.get('first_name')) ;
+			}
 		  	console.log("user changed - "+msg);
 		});
 
