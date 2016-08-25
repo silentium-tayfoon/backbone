@@ -117,8 +117,20 @@
 		view.setElement('<p><a><b>test</b></a></p>');
 		view.$('a b').html(); // выводит "test"
 
-		
+	// underscore template()
+	/*
+		если нету переменной в шаблоне, а ее может и не быть, то выбрасывает ошибку!
+		есть 2 пути решения
+		1) в модели задать defaults, например пустую строку
+		2) когда скармливаем модель шаблонизатору, то ее нужно обернуть в обьект
 
+	*/	
+		render: function(){
+				this.$el.html(this.template({d:this.model.attributes}));
+				return this;
+			}
+	// и потом в шаблоне обращаемся через атрибут обьекта d
+		First name : <%= d.first_name %>		
 
 
 
