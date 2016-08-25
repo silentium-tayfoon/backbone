@@ -1,0 +1,326 @@
+
+
+//МОДЕЛИ
+
+	//создание класа
+		var Todo = Backbone.Model.extend({
+			//значения по умолчанию
+			defaults: {
+				title: 'no title',
+				completed: false
+			},
+			//инициализация, как правило сюда навешиваются ивенты на изменения данных и валидация
+			initialize: function(){
+	        	console.log('This model has been initialized.');
+
+	        	this.on('change', function(){
+					if(this.hasChanged('first_name')){
+						console.log('first_name - changed');
+						//тут же можно вызвать рендер данных,
+						changeUserView();
+					}
+				});
+
+				this.on("invalid", function(model, error){
+					console.log(error);
+				});
+	 		}
+		});
+
+	//создание рабочего обьекта
+		var todo_list = new Todo({
+			title: 'some title'
+		});
+
+	//перевести в строку и показать модель
+		console.log(todo_list.toJSON());
+	//или так перевести в строку
+		JSON.stringify(todo_list);
+
+	//взять значение из модели
+		todo_list.get('title'); // 'some title'
+
+	//записать значение
+		todo_list.set({title:'some new value'});
+
+	//записать значение в обход set() а значит не сработают ивенты
+	//прямой доступ через свойство attributes
+		todo_list.attributes.title = 'some value';
+
+	// прямая запись без триггера событий
+		todo_list.set({title:'some new value', {silent: true}});
+
+	//валидация значений, по большому
+		1) происходит автоматически при вызове todo_list.save()
+		2) или если в set() передать параметр  {validate:true}
+			todo_list.set('title', 'asf123', {validate:true});
+	//+ добавить обьявление при создании класса
+		validate: function(some_attributes){
+	       		if(some_attributes.hasOwnProperty('first_name')){
+	       			// тут делаем что угодно
+	       		}
+	       	}
+
+	//удаление атрибута 
+		todo_list.unset('title');
+
+//ПРЕДСТАВЛЕНИЯ - ВЬЮХИ
+	
+	//
+	var TodoView = Backbone.View.extend({
+		//ключевой элемент - хранит ссылку на дом дерево, или создает елемент с нуля! как тут.
+		tagName: 'li',
+		className: 'container', // необязательное свойство; можно присваивать ему
+                            	// несколько классов, например 'container homepage'
+    	id: 'todos', 			// необязательное свойство
+		// Кэширование функции шаблона для отдельного элемента.
+		todoTpl: _.template( "An example template" ),
+		events: {
+		 'dblclick label': 'edit',
+		 'keypress .edit': 'updateOnEnter',
+		 'blur .edit': 'close'
+		},
+		// Повторное отображение заголовка задачи.
+		 render: function() {
+		 this.$el.html( this.todoTpl( this.model.toJSON() ) );
+		 this.input = this.$('.edit');
+		 return this;
+		},
+		edit: function() {
+		 // выполняется при двойном щелчке по задаче
+		},
+		close: function() {
+		 // выполняется, когда задача теряет фокус
+		},
+		updateOnEnter: function( e ) {
+		 // выполняется при каждом нажатии клавиши в режиме редактирования задачи,
+		 // но мы будем ждать нажатия enter, чтобы попасть в действие
+		}
+	 });
+	 var todoView = new TodoView();
+	 // помещаем в журнал ссылку на DOM-элемент,
+	 // соответствующий экземпляру представления
+	 console.log(todoView.el); // в журнале: <li></li>
+
+	 // setElement - для переиспользования готового view, на другом дом обьекте - при этом
+	 // все события со старого удалит, а на новый повесит
+		// применение к элементу button1
+		var view = new View({el: button1});
+		// Применение представления к элементу button2 с помощью метода setElement
+		view.setElement(button2);
+		button1.trigger('click');
+		button2.trigger('click'); // возвращает true
+
+
+	//view не покажет готовый елемент - нужно делать руками
+		var view = new Backbone.View;
+		view.setElement('<p><a><b>test</b></a></p>');
+		view.$('a b').html(); // выводит "test"
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
