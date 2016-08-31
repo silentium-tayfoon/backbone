@@ -50,7 +50,7 @@
 	// прямая запись без триггера событий
 		todo_list.set({title:'some new value', {silent: true}});
 
-	//валидация значений, по большому
+	//валидация значений
 		1) происходит автоматически при вызове todo_list.save()
 		2) или если в set() передать параметр  {validate:true}
 			todo_list.set('title', 'asf123', {validate:true});
@@ -133,31 +133,178 @@
 		First name : <%= d.first_name %>		
 
 
+//КОЛЛЕКЦИИ
+	// создание коллекции
+		var Todo = Backbone.Model.extend({
+			defaults: {
+				title: '',
+				completed: false
+			}
+		});
+		var TodosCollection = Backbone.Collection.extend({
+			model: Todo
+		});
+		var myTodo = new Todo({title:'Read the whole book', id: 2});
+		// передача массива моделей при создании экземпляра коллекции
+		var todos = new TodosCollection([myTodo]);
+		console.log("Collecti`on size: " + todos.length); // Collection size: 1
+
+	// добавление, удаление, полная перезапись из коллекции
+	// Обратите внимание, что при использовании метода Collection.reset() события add и remove не генерируются, вместо них генерируется событие reset.
+		Collection.add(), 
+		Collection.remove(), 
+		Collection.reset()
+
+		todos.add(myTodo); 
+		todos.remove(myTodo);
+		todos.reset([
+		    { title: 'go to Cuba.', completed: false }
+		]);
+		// Для удобства при использовании "reset" список моделей, находившихся в коллекции, доступны как options.previousModels.	
+
+	// можно так же добавлять или удалять массивы моделей
+		todos.add([myTodo, myTodo2]);
+
+	// считывание моделей Collection.get()  - id, cid, idAttribute
+		todos.get(id / cid / idAttribute)
+		/*
+			id - уникальный идентификатор
+			cid - клиентский идентификатор, генерируется библиотекой автоматически, можно использовать если нету id и модель не сохраняется в базе
+			idAttribute - преобразователь, если в базе храниться модель и ее идентификатор 'user_id' то его можно задать как id для Backbone модели, то есть сделать маппинг
+		*/
+		var Meal = Backbone.Model.extend({
+		  idAttribute: "_id"
+		});
+
+		var cake = new Meal({ _id: 1, name: "Пирожок" });
+		alert("id пирожка: " + cake.id);
+
+	// слушаем события коллекции - add, remove
+
+		var TodosCollection = new Backbone.Collection();
+
+ 			TodosCollection.on("add", function(todo) {
+     			console.log('Collection was changed with title = '+ todo.get("title"));
+			});
+
+			TodosCollection.add([
+			    { title: 'go to Jamaica', completed: false }
+			    { title: 'go to Disneyland', completed: true }
+		    ]);
+
+	// можно отследить любые изменения моделей в коллекции change
+
+		TodosCollection.on("change:title", function(model) {
+		    console.log("Changed my mind! I should " + model.get('title'));
+		});
+
+	// Можно также использовать таблицы событий вида obj.on({click: action}) в стиле jQuery.
+	
+		myTodo.on({
+			'change:title' : titleChanged,
+			'change:completed' : stateChanged
+		});
+		function titleChanged(){
+			console.log('The title was changed!');
+		}			
+
+	// Backbone.Events.once() - События Backbone также поддерживают метод once(), который гарантирует, что обратный вызов при получении уведомления сработает только один раз
+	// Backbone.Events - использование ивентов БЕЗ модели!
+
+		// Определение объекта с двумя счетчиками
+
+			var TodoCounter = { counterA: 0, counterB: 0 };
+
+		// добавление в Backbone.Events
+
+			_.extend(TodoCounter, Backbone.Events);
+
+		// инкрементирование счетчика counterA, генерация события
+
+			var incrA = function(){
+				TodoCounter.counterA += 1;
+				TodoCounter.trigger('event');
+			};
+
+		// инкрементирование счетчика counterB
+
+			var incrB = function(){
+				TodoCounter.counterB += 1;
+			};
+
+		// использование once вместо явного отключения нашего слушателя событий
+
+			TodoCounter.once('event', incrA);
+			TodoCounter.once('event', incrB);
+
+		// генерация еще одного события
+
+			TodoCounter.trigger('event');
+
+		// проверка вывода
+
+		console.log(TodoCounter.counterA === 1); // true
+		console.log(TodoCounter.counterB === 1); // true
+
+		// Инкрементирование счетчиков counterA и counterB должно было произойти только один раз.
+
+	// Collection.update()
+		/*
+		Метод update() доступен для коллекций (а также доступен в качестве параметра для выборки) и обеспечивает прекрасные возможности обновления наборов моделей. Этот метод обновляет коллекцию, используя заданный список моде- лей. Если модель из списка отсутствует в коллекции, то она добавляется в нее. Если модель уже имеется в коллекции, то атрибуты этой модели добавляются к существующей модели. Модели, присутствующие в коллекции, но отсутству- ющие в списке, удаляются.
+		*/
+
+// СОБЫТИЯ - publish/subscribe паттерн, публикация/подписка
+	// 
+	on() 
+	off()
+	trigger()
 
 
+		var ourObject = {};
+	// Mixin
+		_.extend(ourObject, Backbone.Events);
+
+		function dancing (msg, msg2) { console.log("We are dancing. " + msg + '  -- '+msg2); }
+
+	// Добавление настраиваемого события, подписка
+		ourObject.on('dance', dancing);
+
+	// Генерация настраиваемого события
+		ourObject.trigger('dance', 'our event');
+
+	// Перехват всех событий - триггеров
+		ourObject.on("all", function(eventName){
+			console.log("The name of the event passed was " + eventName);
+		});
+
+	// Генерация событий, и передача нескольких параметров 
+		ourObject.trigger('run dance jump', 'our event', 'some param 2');
+
+	// Удаление событий, отписка
+		ourObject.off("move", dancing);
 
 
+	// listenTo() и stopListening() - прослушка других обьектов, если есть on, то нужен и off, чтобы не было утечек памяти
 
+		var a = _.extend({}, Backbone.Events);
+		var b = _.extend({}, Backbone.Events);
+		var c = _.extend({}, Backbone.Events);
 
+		// добавление к объекту A слушателей событий B и C
+			a.listenTo(b, 'anything', function(event){
+			console.log("anything happened"); });
+			a.listenTo(c, 'everything', function(event){
+			console.log("everything happened"); });
 
+		// генерация события
+			b.trigger('anything'); // в журнал: anything happened
 
+		// прекращение прослушивания
+			a.stopListening();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		// A не получает эти события
+			b.trigger('anything');
+			c.trigger('everything');
 
 
 

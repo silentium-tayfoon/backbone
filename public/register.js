@@ -2,52 +2,102 @@ $(function(){
 
 	/** dom links --------------- */
 
-		
+		var COUNTRY = 'UA';
 		var post_data = document.getElementById('post_data');
 		var register_customer_form_template = document.getElementById('register_customer_form_template');
 		var user_from_server_template = document.getElementById('user_from_server_template');
-		var send_ajax_form = document.querySelector('.send_ajax_form');
+		var save_data = document.querySelector('.save_data');
 		var navbar = document.querySelector('.navbar');
 
-	/** classes --------------- */
-	
+		var min = function(val){
+			var pass = false;
+			if(val.length && val.length > 1){
+				pass = true;
+			}
+			return pass;
+		};
+
+	var formApp = function(){
+
 		var User = Backbone.Model.extend({
+			url:'/api/users',
 	       	defaults: {
-	       			   id: 'not set',
-	           first_name: 'new in model  first name',
-	            last_name: 'new in model no last name'
-	   			// country: req.body.country,
-				// vehicle1: req.body.vehicle1,
-				// vehicle2: req.body.vehicle2,
-				// gender: req.body.gender
+	       		first_name: 'new in model  first name',
+	            last_name: 'new in model no last name',
+				country: COUNTRY,
+				vehicle1: null,
+				vehicle2: true,
+				gender: 'female'
 	       	},
 	       	initialize: function(){
 	            console.log('user model initialized');
 
-				this.on('change', function(){
-					//if(this.hasChanged('first_name')){
-						console.log('- Values for this model have changed - trigger from base class, first name');
-						userData.render();
-					//}
+				// this.on('change', function(){
+				// 	//if(this.hasChanged('first_name')){
+				// 		console.log('- Values for this model have changed - trigger from base class, first name');
+				// 		userData.render();
+				// 	//}
+				// });
+
+				this.on('change', function(model){
+					console.log('saved');
 				});
 
 				this.on("invalid", function(model, error){
 					console.log(error);
 				});
 	       	},
-	       	validate: function(some_attributes){
-	       		if(some_attributes.hasOwnProperty('first_name')){
-	       			some_attributes.first_name = some_attributes.first_name.trim();
-	       			var is_number = /^[\d\s]+$/;
-	       			if(is_number.test(some_attributes.first_name)){
-	       				return 'no number are allowed!';	
-	       			}
-	       		}
+	       	validate: function(attributes){
+	       		_.each(attributes, min, this);
 	       	}
 		});
 
-		var user = new User({});
+		var RegisterCustomerForm = Backbone.View.extend({
+			initialize: function(){
+		        this.render(user);
+		    },
+		    model: User,
+			el: '#registerCustomerForm',
+			template: _.template($(register_customer_form_template).html()),
+			events: {
+				'click .save_data': 'saveData'
+			},
+			saveData: function(){
+				var self = this;
+				var register_new_user = new this.model;
+				var dom_val = '';
+				var getValFromDom = function(val, key){
+					register_new_user.set(key, this.$el.find('[name='+key+']').val());
+				};
 
+				_.each(register_new_user.attributes, getValFromDom, this);
+
+				register_new_user.save();
+				console.log(register_new_user);
+			},
+			render: function(model){
+				this.$el.html(this.template({data:model.attributes}));
+				return this;		
+			}
+		});
+
+
+		var user = new User({});
+		var registerUser = new RegisterCustomerForm({});
+	};
+
+	window.formApp = formApp;
+	formApp();
+
+
+	/** classes --------------- */
+
+		// var UsersList = Backbone.Collection.extend({
+		// 	model: User,
+		// 	url: '/register_get_all'
+		// });
+
+		// var users_list = new UsersList();
 
 	/** common func --------------- */	
 
@@ -75,51 +125,25 @@ $(function(){
 
 	/** views --------------- */
 
-		var RegisterCustomerForm = Backbone.View.extend({
-			initialize: function(){
-		        this.render();
-		    },
-			el: '#registerCustomerForm',
-			events: {
-				'click .send_ajax_form': 'sendReciveAjax'
-			},
-			template: _.template($(register_customer_form_template).html()),
-			model: user,
-			sendReciveAjax: function(){
-				var self = this;
-				var success = function(server_data){
-					self.model.set({
-						id: server_data.id,
-						first_name: server_data.first_name, 
-						last_name: server_data.last_name,
-						country: server_data.country,
-						vehicle1: server_data.vehicle1,
-						vehicle2: server_data.vehicle2,
-						gender: server_data.gender
-					});	
-				}
+		// var UserDataList = Backbone.View.extend({
+		// 	initialize: function(){
+		// 		this.model_list.fetch();
+		//         this.render();
+		//     },
+		// 	el: '#post_data',
+		// 	template: _.template($(user_from_server_template).html()),
+		// 	model: user,
+		// 	model_list: users_list,
+		// 	render: function(){
+		// 		var user_list_view = this;
+		// 		this.model_list.forEach(function(model){
+		// 			user_list_view.$el.html(user_list_view.template({d:model.attributes}));
+		// 		});
+		// 		return this;
+		// 	}
+		// });
 
-				registerAjax(this.$el, success);
-			},
-			render: function(){
-				this.$el.html(this.template({data:this.model.attributes}));
-				return this;		
-			}
-		});
-
-		var registerUser = new RegisterCustomerForm({});
-
-		var UserDataList = Backbone.View.extend({
-			el: '#post_data',
-			template: _.template($(user_from_server_template).html()),
-			model: user,
-			render: function(){
-				this.$el.html(this.template({d:this.model.attributes}));
-				return this;
-			}
-		});
-
-		var userData = new UserDataList();
+		// var userData = new UserDataList();
 
 });
 

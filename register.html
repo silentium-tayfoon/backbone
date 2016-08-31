@@ -94,18 +94,23 @@
 				</li>
 				<li class="list-group-item">
 					<span class='highLabel'>Transport</span><br>
-					<label><input type="checkbox" name="vehicle1" value="Bike"> I have a bike</label><br>
-  					<label><input type="checkbox" name="vehicle2" value="Car"> I have a car</label>
+					<label><input type="checkbox" name="vehicle1" value="true" 
+					<% if(data.vehicle1){%> checked <% } %>> I have a bike</label><br>
+  					<label><input type="checkbox" name="vehicle2" value="true"
+  					<% if(data.vehicle2){%> checked <% } %>> I have a car</label>
 				</li>
 				<li class="list-group-item">
 					<span class='highLabel' data-label='access'>Gender</span><br>
-					<label><input type="radio" name="gender" value="male" checked> Male</label><br>
-					<label><input type="radio" name="gender" value="female"> Female</label><br>
-					<label><input type="radio" name="gender" value="other"> Other</label>
+					<label><input type="radio" name="gender" value="male" 
+					<% if(data.gender === 'male'){%> checked <% } %>> Male</label><br>
+					<label><input type="radio" name="gender" value="female"
+					<% if(data.gender === 'female'){%> checked <% } %>> Female</label><br>
+					<label><input type="radio" name="gender" value="other"
+					<% if(data.gender === 'other'){%> checked <% } %>> Other</label>
 				</li>
 				<li class="list-group-item">
 					<span class='highLabel'>Country</span>
-					<select name="country" class="select_standart select2-hidden-accessible form-control">
+					<select name="country" value="<%= (data.country) ? data.country : '' %>" class="select_standart select2-hidden-accessible form-control">
 						<option value="AX">Åland Islands</option>
 						<option value="AF">Afghanistan</option>
 						<option value="AL">Albania</option>
@@ -351,7 +356,7 @@
 				</li>
 				<li class="list-group-item">
 					<button type="reset" value="Reset" class="btn btn-default">Reset</button>
-					<button name="Submit" type="button" class="btn btn-primary pull-right send_ajax_form">Send Form</button>
+					<button name="Submit" type="button" class="btn btn-primary pull-right save_data">Save</button>
 				</li>
 			</ul>
 		</script>
