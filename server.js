@@ -1,4 +1,4 @@
-
+var PORT = 8090;
 var application_root = __dirname;
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -94,6 +94,7 @@ app.post( '/api/users', function( request, response ) {
 	console.log('Add new user');
 
 	var user = new UserModel({
+		id: UserModel.length,
 		first_name: request.body.first_name,
         last_name: request.body.last_name,
 		country: request.body.country,
@@ -139,18 +140,29 @@ app.put( '/api/users/:id', function( request, response ) {
 //удаление книги
 app.delete( '/api/users/:id', function( request, response ) {
 
-	console.log( 'Deleting user with id: ' + request.params.id );
+	console.log(request.params);
+	if(request.params.id){
+		console.log( 'Deleting user with id: ' + request.params.id );
 
-	return UserModel.findById( request.params.id, function( err, user ) {
-		return user.remove( function( err ) {
-			if( !err ) {
-				console.log( 'User removed, with id: ' + request.params.id );
-				return response.send( '' );
-			} else {
-				console.log( err );
-			}
-		}); 
-	});
+		return UserModel.findById( request.params.id, function( err, user ) {
+			if(user){
+				return user.remove( function( err ) {
+					if( !err ) {
+						console.log( 'User removed, with id: ' + request.params.id );
+						return response.send( '{"id":"' + request.params.id + '"}' ); // '{"id":"' + request.params.id + '"}' // JSON string
+					} else {
+						console.log( err );
+					}
+				});
+			}else{
+				console.log('can\'t find a user');
+				return response.send( JSON.stringify( 'error: "no such user "' ) );
+			}	 
+		});
+	}else{
+		console.log('no id was prowided!');
+	}
+	
 });
 
 /*
@@ -211,6 +223,6 @@ app.post('/register', function(req, res){
 
 });
 
-app.listen(8080, function () {
-	console.log('Example app listening on port 8080!');
+app.listen(PORT, function () {
+	console.log('Example app listening on port '+ PORT +'!');
 });
