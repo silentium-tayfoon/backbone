@@ -135,11 +135,11 @@ $(function(){
 
 		var UserDataListDeleteAll = Backbone.View.extend({
 			initialize: function(){
-				this.listenTo(this.model, 'add',    this.render);
-				//this.listenTo(this.model, 'remove', this.render);
-				this.listenTo(this.model, 'destroy', function(){
-					console.log('destroy');
-				});
+				this.listenTo(this.model, 'add', this.render);
+
+				var lazy_render = _.debounce(this.render, 300);
+
+				this.listenTo(this.model, 'destroy', lazy_render);
 			},
 			events: {
 				click : function(){
@@ -150,6 +150,8 @@ $(function(){
 			template: 'clear all',
 			model: users_list,
 			render: function(){
+
+				console.log('re count - '+this.model.length);
 				this.$el.empty().text(this.template + ' ( ' + this.model.length + ' )');
 			},
 			deleteAll: function(){
