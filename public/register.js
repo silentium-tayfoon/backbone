@@ -38,9 +38,9 @@ $(function(){
 				});
 	       	},
 	       	validate: function(attributes){
-	       		// if(!attributes._id){
-	       		// 	return 'no id!'
-	       		// }
+	       		if(attributes.first_name.length < 10){
+	       			return 'name length < 10';
+	       		}
 	       		//_.each(attributes, min, this);
 	       	}
 		});
@@ -63,9 +63,44 @@ $(function(){
 
 		window.users_list = users_list;
 
+		var Button = Backbone.View.extend({
+			initialize: function(){
+				this.listenTo(this.model, 'invalid', function(){
+					console.log('BUTTON invalid');
+					this.$el.removeClass('btn-danger').addClass('btn-default');
+				});
+				this.listenTo(this.model, 'request', function(){
+					console.log('BUTTON request');
+					this.$el.removeClass('btn-default').addClass('btn-danger');
+				});
+				this.listenTo(this.model, 'sync', function(){
+					console.log('BUTTON sync');
+					this.$el.removeClass('btn-danger').addClass('btn-default');
+				});
+			},
+			model: null,
+			el: null,
+			reinit: function(model){
+				this.model = model;
+				this.initialize();
+			}
+		});
+
 		var RegisterCustomerForm = Backbone.View.extend({
 			initialize: function(){
-		        this.render(user);
+
+				this.new_user = new this.model({});
+
+		        this.render();
+
+		        window.b = this.button = new Button({
+		        					'model': this.new_user,
+		        					'el': this.$el.find('[name="Submit"]')
+		        				});
+
+		        this.listenTo(this.new_user, 'invalid', function(){
+		        	console.log('INVALID VALIDATION');
+		        } );
 		    },
 		    model: User,
 			el: '#registerCustomerForm',
@@ -75,6 +110,7 @@ $(function(){
 			},
 			getValFromDom: function(val, key){
 
+				if(!key){debugger;}
 				var $domElement = this.$el.find('[name='+key+']');
 				var checked = 'false';
 
@@ -95,14 +131,15 @@ $(function(){
 					this.new_user.set(key, $domElement.val());	
 				}
 			},
-			new_user:'',
 			collection: users_list,
 			saveData: function(){
+				//this.$el.find('[name="Submit"]').removeClass('btn-default').addClass('btn-danger');
 
 				var list_view = this;
 
+				//window.user = this.new_user = new this.model({});
 
-				window.user = this.new_user = new this.model({});
+				console.log('save new user - ' + this.new_user.cid + '  ' + this.new_user);
 
 				_.each(this.new_user.attributes, this.getValFromDom, this);
 
@@ -117,6 +154,10 @@ $(function(){
 								list_view.new_user.set('id', list_view.collection.length);
 							}
 
+							// add new empty user
+							list_view.new_user = new list_view.model({});
+							list_view.button.reinit(list_view.new_user);
+							//list_view.$el.find('[name="Submit"]').removeClass('btn-danger').addClass('btn-default');
 						},
 						error: function(){
 							console.log('Save new user on server FAILL');
@@ -124,8 +165,8 @@ $(function(){
 						wait: true
 					}); 
 			},
-			render: function(model){
-				this.$el.html(this.template({data:model.attributes}));
+			render: function(){
+				this.$el.html(this.template({data:this.new_user.attributes}));
 				return this;		
 			}
 		});
