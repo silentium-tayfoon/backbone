@@ -1,3 +1,7 @@
+mongodb start demon
+https://docs.mongodb.com/manual/tutorial/manage-mongodb-processes/
+# mongod
+
 start server:# node server.js
 path: http://localhost:8080/
 
@@ -35,6 +39,8 @@ GIT
 1.7) добавление пользователя, редактирование пользователя
 
 + 1.8) RESTFULL API - взаимодействие с сервером!
+
+! 1.9) API - переписать все на post запросы, и формировать ответы с ошибками или удачным выполнением
 
 2) все тоже самое но исползовать: polymer	
 

@@ -17,6 +17,8 @@ $(function(){
 			return pass;
 		};
 
+		
+
 		var User = Backbone.Model.extend({
 			url:'/api/users',
 	       	defaults: {

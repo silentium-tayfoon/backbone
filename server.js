@@ -89,28 +89,30 @@ app.get( '/api/users/:id', function( request, response ) {
 });
 
 //добавление новой книги
-app.post( '/api/users', function( request, response ) {
+// app.post( '/api/users', function( request, response ) {
 
-	console.log('Add new user');
+// 	console.log('Add new user');
 
-	var user = new UserModel({
-		id: UserModel.length,
-		first_name: request.body.first_name,
-        last_name: request.body.last_name,
-		country: request.body.country,
-		vehicle1: request.body.vehicle1,
-		vehicle2: request.body.vehicle2,
-		gender: request.body.gender
-	});
-	user.save( function( err ) {
-		if( !err ) {
-			return console.log( 'New user with id: ' + user.id );
-		} else {
-			return console.log( err );
-		}
-	});
-	return response.send( user );
-});
+// 	console.log( 'params: ' + request.params );
+
+// 	var user = new UserModel({
+// 		id: UserModel.length,
+// 		first_name: request.body.first_name,
+//         last_name: request.body.last_name,
+// 		country: request.body.country,
+// 		vehicle1: request.body.vehicle1,
+// 		vehicle2: request.body.vehicle2,
+// 		gender: request.body.gender
+// 	});
+// 	user.save( function( err ) {
+// 		if( !err ) {
+// 			return console.log( 'New user with id: ' + user.id );
+// 		} else {
+// 			return console.log( err );
+// 		}
+// 	});
+// 	return response.send( user );
+// });
 
 //Обновление книги
 app.put( '/api/users/:id', function( request, response ) {
@@ -167,6 +169,120 @@ app.delete( '/api/users/:id', function( request, response ) {
 
 /*
 	// REST-сервер
+*/
+
+/*
+	REST by POST with /?method=create/read/update/delete
+*/
+
+	var create = function(request, response){
+		var user = new UserModel({
+			id: UserModel.length,
+			first_name: request.body.first_name,
+	        last_name: request.body.last_name,
+			country: request.body.country,
+			vehicle1: request.body.vehicle1,
+			vehicle2: request.body.vehicle2,
+			gender: request.body.gender
+		});
+		user.save( function( err ) {
+			if( !err ) {
+				return console.log( 'New user with id: ' + user.id );
+			} else {
+				return console.log( err );
+			}
+		});
+		return response.send( user );
+	};
+
+	var read = function(request, response) {
+		console.log('Show all users');
+
+		return UserModel.find( function( err, users ) {
+			if( !err ) {
+				return response.send( users );
+			} else {
+				return console.log( err );
+			}
+		}); 
+	};
+
+	var update = function(request, response) {
+		console.log( 'Updating user with id: ' + request.query.id );
+
+	    return UserModel.findById( request.query.id, function( err, user ) {
+
+	    	user.first_name = request.body.first_name,
+	        user.last_name = request.body.last_name,
+			user.country = request.body.country,
+			user.vehicle1 = request.body.vehicle1,
+			user.vehicle2 = request.body.vehicle2,
+			user.gender = request.body.gender
+
+	        return user.save( function( err ) {
+	            if( !err ) {
+	                console.log( 'Updated with id: ' + request.query.id );
+				} else {
+	                console.log( err );
+	            }
+	            return response.send( user );
+	        });
+		}); 
+	};
+
+	var del = function(request, response) {
+
+		if(request.query.id){
+			console.log( 'Deleting user with id: ' + request.query.id );
+
+			return UserModel.findById( request.query.id, function( err, user ) {
+				if(user){
+					return user.remove( function( err ) {
+						if( !err ) {
+							console.log( 'User removed, with id: ' + request.query.id );
+							return response.send( '{"id":"' + request.query.id + '"}' ); // '{"id":"' + request.params.id + '"}' // JSON string
+						} else {
+							console.log( err );
+						}
+					});
+				}else{
+					console.log('can\'t find a user');
+					return response.send( JSON.stringify( 'error: "no such user "' ) );
+				}	 
+			});
+		}else{
+			console.log('no id was prowided!');
+		}
+	};
+
+
+	//добавление новой книги
+app.post( '/api/users/', function( request, response ) {
+
+	//console.log('QUERY: '+request.query.method);
+
+	switch (request.query.method) {
+
+	    case 'create':
+	        create(request, response);
+	        break; 
+	    case 'read':
+	    	read(request, response);
+	    	break; 
+	    case 'update':
+	    	update(request, response);
+	    	break; 
+	    case 'delete':
+			del(request, response);	
+	    	break; 
+	    default: 
+	    	return console.log('QUERY: '+request.query.method);
+	}
+
+});
+
+/*
+	// REST by POST with /?method="create/read/update/delete"
 */
 
 var users = [];

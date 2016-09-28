@@ -1386,7 +1386,7 @@
   // Useful when interfacing with server-side languages like **PHP** that make
   // it difficult to read the body of `PUT` requests.
   Backbone.sync = function(method, model, options) {
-    var type = methodMap[method];
+    var type = 'POST'; //methodMap[method];
 
     // Default options, unless specified.
     _.defaults(options || (options = {}), {
@@ -1398,8 +1398,24 @@
     var params = {type: type, dataType: 'json'};
 
     // Ensure that we have a URL.
+    var slash = '';
+    var id = '';
+    var model_url = _.result(model, 'url');
     if (!options.url) {
-      params.url = _.result(model, 'url') || urlError();
+      params.url = model_url || urlError();
+      
+      slash = (params.url[params.url.length - 1] === '/') ? '' : '/';
+
+      params.url = params.url + slash +'?method=' + method ;
+      
+    } else {
+      slash = (model_url[model_url.length - 1] === '/') ? '' : '/';
+
+      model_url = model_url + slash;
+
+      id = options.url.split(model_url)[1]; // "/api/users/57ea62bac5ef82243b83f858".split("/api/users/");
+
+      options.url = model_url +'?method=' + method + '&id=' + id; // /api/users/?method=delete&id=57ea62b9c5ef82243b83f857
     }
 
     // Ensure that we have the appropriate request data.
@@ -1440,6 +1456,7 @@
     };
 
     // Make the request, allowing the user to override any Ajax options.
+    debugger;
     var xhr = options.xhr = Backbone.ajax(_.extend(params, options));
     model.trigger('request', model, xhr, options);
     return xhr;
