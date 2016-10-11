@@ -1,11 +1,23 @@
-$(function(){
+
+
+var register_form_template2 = require('html!./../../tpl/register_form_template11.tpl');
+var register_template = require('html!./tpl/register_template11.tpl');
+console.log('DIR: ' + __dirname);
+console.log(11111)
+module.exports = function(){
+
+	console.log('WTF!&&&&&');
+
+	console.log(NODE_ENV);
+
+	$(function(){
 
 	/** dom links --------------- */
 
 		var COUNTRY = 'UA';
 		var post_data = document.getElementById('post_data');
-		var register_customer_form_template = document.getElementById('register_customer_form_template');
-		var user_from_server_template = document.getElementById('user_from_server_template');
+		//var register_template = document.getElementById('register_template');
+		//var register_form_template = document.getElementById('register_form_template');
 		var save_data = document.querySelector('.save_data');
 		var navbar = document.querySelector('.navbar');
 
@@ -17,7 +29,6 @@ $(function(){
 			return pass;
 		};
 
-		
 
 		var User = Backbone.Model.extend({
 			url:'/api/users',
@@ -106,7 +117,7 @@ $(function(){
 		    },
 		    model: User,
 			el: '#registerCustomerForm',
-			template: _.template($(register_customer_form_template).html()),
+			template: _.template(register_form_template),
 			events: {
 				'click .save_data': 'saveData'
 			},
@@ -234,7 +245,7 @@ $(function(){
 				this.listenTo(users_list, 'destroy', this.remove);
 		    },
 			el: '#post_data',
-			template: _.template($(user_from_server_template).html()),
+			template: _.template(register_template),
 			model: users_list,
 			render: function(){
 				console.log('render');
@@ -257,56 +268,5 @@ $(function(){
 
 		var userData = new UserDataList();
 
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	});
+};

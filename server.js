@@ -299,6 +299,10 @@ app.get('/register', function (req, res) {
   res.sendFile(application_root + '/register.html');
 });
 
+app.get('/tabs', function (req, res) {
+  res.sendFile(application_root + '/tabs.html');
+});
+
 app.get('/register_get_all', function (req, res) {
 	var response = {
 		status  : true,
