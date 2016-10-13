@@ -15,6 +15,7 @@
 
   },
   "scripts": {
-
+    "dev": "NODE_ENV='dev' webpack",
+    "prod": "NODE_ENV='prod' webpack"
   }
 }

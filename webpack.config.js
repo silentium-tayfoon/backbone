@@ -1,7 +1,7 @@
-
+/* to run with parameters which are in package.json - in console #: npm run prod */
 
 // process.env.NODE_ENV - get on run: NODE_ENV=some_val webpack
-var NODE_ENV = process.env.NODE_ENV || 'development';
+var NODE_ENV = process.env.NODE_ENV || 'dev';
 var webpack = require('webpack');
 
 
@@ -19,7 +19,7 @@ module.exports = {
         library: 'register_var'
     }
 
-    ,watch: false //NODE_ENV == 'development'
+    ,watch: false //NODE_ENV == 'dev'
 
     ,watchOptions: {
     	aggregateTimeout: 1000
@@ -49,7 +49,7 @@ module.exports = {
 
 };
 
-if (NODE_ENV == 'production') {
+if (NODE_ENV == 'prod') {
 	module.exports.plugins.push(
 		new webpack.optimize.UglifyJsPlugin({
 			compress: {
