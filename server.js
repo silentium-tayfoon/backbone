@@ -303,6 +303,10 @@ app.get('/tabs', function (req, res) {
   res.sendFile(application_root + '/tabs.html');
 });
 
+app.get('/module3', function (req, res) {
+  res.sendFile(application_root + '/module3.html');
+});
+
 app.get('/register_get_all', function (req, res) {
 	var response = {
 		status  : true,

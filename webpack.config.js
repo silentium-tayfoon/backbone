@@ -3,20 +3,24 @@
 // process.env.NODE_ENV - get on run: NODE_ENV=some_val webpack
 var NODE_ENV = process.env.NODE_ENV || 'dev';
 var webpack = require('webpack');
-
+var path = require("path");
 
 
 //var clearRequire = require('webpack-clear-require');
 //clearRequire('react');
 //clearRequire(); // all 
 
+
 module.exports = {
-    entry: "./public/register/register_entrypoint.js"
+    entry: {
+    	'public/register/register': "./public/register/register_entrypoint.js",
+		'public/module3/module3': "./public/module3/module3_entrypoint.js"
+	}
 
     ,output: {
-        filename: "build_register.js",
-        path: './public/register',
-        library: 'register_var'
+		path: './',
+		filename: "[name].bundle.js",
+		chunkFilename: "[id].chunk.js"
     }
 
     ,watch: false //NODE_ENV == 'dev'
@@ -31,11 +35,19 @@ module.exports = {
     	new webpack.DefinePlugin({
     		NODE_ENV: JSON.stringify(NODE_ENV)
     	})
+		// ,new webpack.ProvidePlugin({
+		// 	$: "jquery",
+		// 	jQuery: "jquery",
+		// 	"window.jQuery": "jquery"
+		// })
     	//,new webpack.EnvironmentPlugin(OBJ_DATA) // OBJ_DATA=some_val webpack
     ]
 
+
+
+
     ,resolve: {
-    	modulesDirectories: ['public', 'tpl'],
+    	modulesDirectories: ['frameworks'],
     	extensions: ['', '.js']
     }
 
