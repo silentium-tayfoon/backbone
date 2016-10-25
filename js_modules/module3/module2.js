@@ -11,6 +11,6 @@ module.exports = function(){
 	console.log('underscore = '+_.VERSION);
 	console.log('Backbone = '+Backbone.VERSION);
 
-	console.log('MODULE 1');
+	console.log('MODULE 2');
 
 };
