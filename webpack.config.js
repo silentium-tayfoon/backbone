@@ -35,13 +35,6 @@ module.exports = {
     	new webpack.DefinePlugin({
     		NODE_ENV: JSON.stringify(NODE_ENV)
     	})
-		,new webpack.optimize.UglifyJsPlugin({
-			compress: {
-				warnings: false,
-				drop_console: false,
-				unsafe: false
-			}
-		})
 		// ,new webpack.ProvidePlugin({
 		// 	$: "jquery",
 		// 	jQuery: "jquery",

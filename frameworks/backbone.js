@@ -10,7 +10,7 @@
   // Establish the root object, `window` (`self`) in the browser, or `global` on the server.
   // We use `self` instead of `window` for `WebWorker` support.
   var root = (typeof self == 'object' && self.self === self && self) ||
-            (typeof global == 'object' && global.global === global && global);
+      (typeof global == 'object' && global.global === global && global);
 
   // Set up Backbone appropriately for the environment. Start with AMD.
   if (typeof define === 'function' && define.amd) {
@@ -20,13 +20,13 @@
       root.Backbone = factory(root, exports, _, $);
     });
 
-  // Next for Node.js or CommonJS. jQuery may not be needed as a module.
+    // Next for Node.js or CommonJS. jQuery may not be needed as a module.
   } else if (typeof exports !== 'undefined') {
     var _ = require('underscore'), $;
     try { $ = require('jquery'); } catch (e) {}
     factory(root, exports, _, $);
 
-  // Finally, as a browser global.
+    // Finally, as a browser global.
   } else {
     root.Backbone = factory(root, {}, root._, (root.jQuery || root.Zepto || root.ender || root.$));
   }
@@ -277,9 +277,9 @@
       for (var j = 0; j < handlers.length; j++) {
         var handler = handlers[j];
         if (
-          callback && callback !== handler.callback &&
+            callback && callback !== handler.callback &&
             callback !== handler.callback._callback ||
-              context && context !== handler.context
+            context && context !== handler.context
         ) {
           remaining.push(handler);
         } else {
@@ -394,6 +394,7 @@
   var Model = Backbone.Model = function(attributes, options) {
     var attrs = attributes || {};
     options || (options = {});
+    this.preinitialize.apply(this, arguments);
     this.cid = _.uniqueId(this.cidPrefix);
     this.attributes = {};
     if (options.collection) this.collection = options.collection;
@@ -421,6 +422,10 @@
     // The prefix is used to create the client id which is used to identify models locally.
     // You may want to override this if you're experiencing name clashes with model ids.
     cidPrefix: 'c',
+
+    // preinitialize is an empty function by default. You can override it with a function
+    // or object.  preinitialize will run before any instantiation logic is run in the Model.
+    preinitialize: function(){},
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -562,12 +567,14 @@
       if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
       var old = this._changing ? this._previousAttributes : this.attributes;
       var changed = {};
+      var hasChanged;
       for (var attr in diff) {
         var val = diff[attr];
         if (_.isEqual(old[attr], val)) continue;
         changed[attr] = val;
+        hasChanged = true;
       }
-      return _.size(changed) ? changed : false;
+      return hasChanged ? changed : false;
     },
 
     // Get the previous value of an attribute, recorded at the time the last
@@ -689,9 +696,9 @@
     // that will be called.
     url: function() {
       var base =
-        _.result(this, 'urlRoot') ||
-        _.result(this.collection, 'url') ||
-        urlError();
+          _.result(this, 'urlRoot') ||
+          _.result(this.collection, 'url') ||
+          urlError();
       if (this.isNew()) return base;
       var id = this.get(this.idAttribute);
       return base.replace(/[^\/]$/, '$&/') + encodeURIComponent(id);
@@ -734,7 +741,7 @@
   // Underscore methods that we want to implement on the Model, mapped to the
   // number of arguments they take.
   var modelMethods = {keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
-      omit: 0, chain: 1, isEmpty: 1};
+    omit: 0, chain: 1, isEmpty: 1};
 
   // Mix in each Underscore method as a proxy to `Model#attributes`.
   addUnderscoreMethods(Model, modelMethods, 'attributes');
@@ -754,6 +761,7 @@
   // its models in sort order, as they're added and removed.
   var Collection = Backbone.Collection = function(models, options) {
     options || (options = {});
+    this.preinitialize.apply(this, arguments);
     if (options.model) this.model = options.model;
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
@@ -782,6 +790,11 @@
     // The default model for a collection is just a **Backbone.Model**.
     // This should be overridden in most cases.
     model: Model,
+
+
+    // preinitialize is an empty function by default. You can override it with a function
+    // or object.  preinitialize will run before any instantiation logic is run in the Collection.
+    preinitialize: function(){},
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -875,7 +888,7 @@
           }
           models[i] = existing;
 
-        // If this is a new, valid model, push it to the `toAdd` list.
+          // If this is a new, valid model, push it to the `toAdd` list.
         } else if (add) {
           model = models[i] = this._prepareModel(model, options);
           if (model) {
@@ -901,8 +914,8 @@
       var replace = !sortable && add && remove;
       if (set.length && replace) {
         orderChanged = this.length !== set.length || _.some(this.models, function(m, index) {
-          return m !== set[index];
-        });
+              return m !== set[index];
+            });
         this.models.length = 0;
         splice(this.models, set, 0);
         this.length = this.models.length;
@@ -985,8 +998,8 @@
     get: function(obj) {
       if (obj == null) return void 0;
       return this._byId[obj] ||
-        this._byId[this.modelId(obj.attributes || obj)] ||
-        obj.cid && this._byId[obj.cid];
+          this._byId[this.modelId(obj.attributes || obj)] ||
+          obj.cid && this._byId[obj.cid];
     },
 
     // Returns `true` if the model is in the collection.
@@ -1093,6 +1106,21 @@
       return attrs[this.model.prototype.idAttribute || 'id'];
     },
 
+    // Get an iterator of all models in this collection.
+    values: function() {
+      return new CollectionIterator(this, ITERATOR_VALUES);
+    },
+
+    // Get an iterator of all model IDs in this collection.
+    keys: function() {
+      return new CollectionIterator(this, ITERATOR_KEYS);
+    },
+
+    // Get an iterator of all [ID, model] tuples in this collection.
+    entries: function() {
+      return new CollectionIterator(this, ITERATOR_KEYSVALUES);
+    },
+
     // Private method to reset all internal state. Called when the collection
     // is first initialized or reset.
     _reset: function() {
@@ -1189,17 +1217,83 @@
 
   });
 
+  // Defining an @@iterator method implements JavaScript's Iterable protocol.
+  // In modern ES2015 browsers, this value is found at Symbol.iterator.
+  /* global Symbol */
+  var $$iterator = typeof Symbol === 'function' && Symbol.iterator;
+  if ($$iterator) {
+    Collection.prototype[$$iterator] = Collection.prototype.values;
+  }
+
+  // CollectionIterator
+  // ------------------
+
+  // A CollectionIterator implements JavaScript's Iterator protocol, allowing the
+  // use of `for of` loops in modern browsers and interoperation between
+  // Backbone.Collection and other JavaScript functions and third-party libraries
+  // which can operate on Iterables.
+  var CollectionIterator = function(collection, kind) {
+    this._collection = collection;
+    this._kind = kind;
+    this._index = 0;
+  };
+
+  // This "enum" defines the three possible kinds of values which can be emitted
+  // by a CollectionIterator that correspond to the values(), keys() and entries()
+  // methods on Collection, respectively.
+  var ITERATOR_VALUES = 1;
+  var ITERATOR_KEYS = 2;
+  var ITERATOR_KEYSVALUES = 3;
+
+  // All Iterators should themselves be Iterable.
+  if ($$iterator) {
+    CollectionIterator.prototype[$$iterator] = function() {
+      return this;
+    };
+  }
+
+  CollectionIterator.prototype.next = function() {
+    if (this._collection) {
+
+      // Only continue iterating if the iterated collection is long enough.
+      if (this._index < this._collection.length) {
+        var model = this._collection.at(this._index);
+        this._index++;
+
+        // Construct a value depending on what kind of values should be iterated.
+        var value;
+        if (this._kind === ITERATOR_VALUES) {
+          value = model;
+        } else {
+          var id = this._collection.modelId(model.attributes);
+          if (this._kind === ITERATOR_KEYS) {
+            value = id;
+          } else { // ITERATOR_KEYSVALUES
+            value = [id, model];
+          }
+        }
+        return {value: value, done: false};
+      }
+
+      // Once exhausted, remove the reference to the collection so future
+      // calls to the next method always return done.
+      this._collection = void 0;
+    }
+
+    return {value: void 0, done: true};
+  };
+
   // Underscore methods that we want to implement on the Collection.
   // 90% of the core usefulness of Backbone Collections is actually implemented
   // right here:
   var collectionMethods = {forEach: 3, each: 3, map: 3, collect: 3, reduce: 0,
-      foldl: 0, inject: 0, reduceRight: 0, foldr: 0, find: 3, detect: 3, filter: 3,
-      select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 3, includes: 3,
-      contains: 3, invoke: 0, max: 3, min: 3, toArray: 1, size: 1, first: 3,
-      head: 3, take: 3, initial: 3, rest: 3, tail: 3, drop: 3, last: 3,
-      without: 0, difference: 0, indexOf: 3, shuffle: 1, lastIndexOf: 3,
-      isEmpty: 1, chain: 1, sample: 3, partition: 3, groupBy: 3, countBy: 3,
-      sortBy: 3, indexBy: 3, findIndex: 3, findLastIndex: 3};
+    foldl: 0, inject: 0, reduceRight: 0, foldr: 0, find: 3, detect: 3, filter: 3,
+    select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 3, includes: 3,
+    contains: 3, invoke: 0, max: 3, min: 3, toArray: 1, size: 1, first: 3,
+    head: 3, take: 3, initial: 3, rest: 3, tail: 3, drop: 3, last: 3,
+    without: 0, difference: 0, indexOf: 3, shuffle: 1, lastIndexOf: 3,
+    isEmpty: 1, chain: 1, sample: 3, partition: 3, groupBy: 3, countBy: 3,
+    sortBy: 3, indexBy: 3, findIndex: 3, findLastIndex: 3};
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
   addUnderscoreMethods(Collection, collectionMethods, 'models');
@@ -1219,6 +1313,7 @@
   // if an existing element is not provided...
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
+    this.preinitialize.apply(this, arguments);
     _.extend(this, _.pick(options, viewOptions));
     this._ensureElement();
     this.initialize.apply(this, arguments);
@@ -1241,6 +1336,10 @@
     $: function(selector) {
       return this.$el.find(selector);
     },
+
+    // preinitialize is an empty function by default. You can override it with a function
+    // or object.  preinitialize will run before any instantiation logic is run in the View
+    preinitialize: function(){},
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -1386,7 +1485,7 @@
   // Useful when interfacing with server-side languages like **PHP** that make
   // it difficult to read the body of `PUT` requests.
   Backbone.sync = function(method, model, options) {
-    var type = 'POST'; //methodMap[method];
+    var type = methodMap[method];
 
     // Default options, unless specified.
     _.defaults(options || (options = {}), {
@@ -1398,24 +1497,8 @@
     var params = {type: type, dataType: 'json'};
 
     // Ensure that we have a URL.
-    var slash = '';
-    var id = '';
-    var model_url = _.result(model, 'url');
     if (!options.url) {
-      params.url = model_url || urlError();
-      
-      slash = (params.url[params.url.length - 1] === '/') ? '' : '/';
-
-      params.url = params.url + slash +'?method=' + method ;
-      
-    } else {
-      slash = (model_url[model_url.length - 1] === '/') ? '' : '/';
-
-      model_url = model_url + slash;
-
-      id = options.url.split(model_url)[1]; // "/api/users/57ea62bac5ef82243b83f858".split("/api/users/");
-
-      options.url = model_url +'?method=' + method + '&id=' + id; // /api/users/?method=delete&id=57ea62b9c5ef82243b83f857
+      params.url = _.result(model, 'url') || urlError();
     }
 
     // Ensure that we have the appropriate request data.
@@ -1483,6 +1566,7 @@
   // matched. Creating a new one sets its `routes` hash, if not set statically.
   var Router = Backbone.Router = function(options) {
     options || (options = {});
+    this.preinitialize.apply(this, arguments);
     if (options.routes) this.routes = options.routes;
     this._bindRoutes();
     this.initialize.apply(this, arguments);
@@ -1497,6 +1581,10 @@
 
   // Set up all inheritable **Backbone.Router** properties and methods.
   _.extend(Router.prototype, Events, {
+
+    // preinitialize is an empty function by default. You can override it with a function
+    // or object.  preinitialize will run before any instantiation logic is run in the Router.
+    preinitialize: function(){},
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -1555,11 +1643,11 @@
     // against the current location hash.
     _routeToRegExp: function(route) {
       route = route.replace(escapeRegExp, '\\$&')
-                   .replace(optionalParam, '(?:$1)?')
-                   .replace(namedParam, function(match, optional) {
-                     return optional ? match : '([^/?]+)';
-                   })
-                   .replace(splatParam, '([^?]*?)');
+          .replace(optionalParam, '(?:$1)?')
+          .replace(namedParam, function(match, optional) {
+            return optional ? match : '([^/?]+)';
+          })
+          .replace(splatParam, '([^?]*?)');
       return new RegExp('^' + route + '(?:\\?([\\s\\S]*))?$');
     },
 
@@ -1652,7 +1740,7 @@
     // Get the pathname and search params, without the root.
     getPath: function() {
       var path = this.decodeFragment(
-        this.location.pathname + this.getSearch()
+          this.location.pathname + this.getSearch()
       ).slice(this.root.length - 1);
       return path.charAt(0) === '/' ? path.slice(1) : path;
     },
@@ -1702,8 +1790,8 @@
           // Return immediately as browser will do redirect to new url
           return true;
 
-        // Or if we've started out with a hash-based route, but we're currently
-        // in a browser where it could be `pushState`-based instead...
+          // Or if we've started out with a hash-based route, but we're currently
+          // in a browser where it could be `pushState`-based instead...
         } else if (this._hasPushState && this.atRoot()) {
           this.navigate(this.getHash(), {replace: true});
         }
@@ -1728,8 +1816,8 @@
 
       // Add a cross-platform `addEventListener` shim for older browsers.
       var addEventListener = window.addEventListener || function(eventName, listener) {
-        return attachEvent('on' + eventName, listener);
-      };
+            return attachEvent('on' + eventName, listener);
+          };
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
@@ -1749,8 +1837,8 @@
     stop: function() {
       // Add a cross-platform `removeEventListener` shim for older browsers.
       var removeEventListener = window.removeEventListener || function(eventName, listener) {
-        return detachEvent('on' + eventName, listener);
-      };
+            return detachEvent('on' + eventName, listener);
+          };
 
       // Remove window listeners.
       if (this._usePushState) {
@@ -1828,18 +1916,21 @@
       }
       var url = rootPath + fragment;
 
-      // Strip the hash and decode for matching.
-      fragment = this.decodeFragment(fragment.replace(pathStripper, ''));
+      // Strip the fragment of the query and hash for matching.
+      fragment = fragment.replace(pathStripper, '');
 
-      if (this.fragment === fragment) return;
-      this.fragment = fragment;
+      // Decode for matching.
+      var decodedFragment = this.decodeFragment(fragment);
+
+      if (this.fragment === decodedFragment) return;
+      this.fragment = decodedFragment;
 
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._usePushState) {
         this.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, url);
 
-      // If hash changes haven't been explicitly disabled, update the hash
-      // fragment to store history.
+        // If hash changes haven't been explicitly disabled, update the hash
+        // fragment to store history.
       } else if (this._wantsHashChange) {
         this._updateHash(this.location, fragment, options.replace);
         if (this.iframe && fragment !== this.getHash(this.iframe.contentWindow)) {
@@ -1856,8 +1947,8 @@
           this._updateHash(iWindow.location, fragment, options.replace);
         }
 
-      // If you've told us that you explicitly don't want fallback hashchange-
-      // based history, then `navigate` becomes a page refresh.
+        // If you've told us that you explicitly don't want fallback hashchange-
+        // based history, then `navigate` becomes a page refresh.
       } else {
         return this.location.assign(url);
       }
