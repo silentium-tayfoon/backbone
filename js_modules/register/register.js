@@ -1,7 +1,7 @@
 var $ = require('./../../frameworks/jquery.js');
 var _ = require('imports?$=jquery!./../../frameworks/underscore.js');
 var Backbone = require('imports?$=jquery&_=underscore!./../../frameworks/backbone.js');
-var vendor_update = require('imports?$=jquery&_=underscore&Backbone=backbone!./../../frameworks/vendor_update.js');
+var vendor_update = require('imports?$=jquery&_=underscore!./../../frameworks/vendor_update.js');
 
 var register_form_template = require('html!./../../tpl/register_form_template.tpl');
 var register_template = require('html!./../../tpl/register_template.tpl');
@@ -11,6 +11,7 @@ module.exports = function(){
 	console.log('JQUERY = '+$.fn.jquery);
 	console.log('underscore = '+_.VERSION);
 	console.log('Backbone = '+Backbone.VERSION);
+	console.log(Backbone.sync);
 
 	$(function(){
 
