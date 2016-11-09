@@ -23,7 +23,7 @@ module.exports = {
 		chunkFilename: "[id].chunk.js"
     }
 
-    ,watch: false //NODE_ENV == 'dev'
+    ,watch: true //NODE_ENV == 'dev'
 
     ,watchOptions: {
     	aggregateTimeout: 1000

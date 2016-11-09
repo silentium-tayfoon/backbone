@@ -26,6 +26,19 @@
 		<% if(data.gender === 'other'){%> checked <% } %>> Other</label>
 	</li>
 	<li class="list-group-item">
+		<span class='highLabel' data-label='acc_type'>private/business</span><br>
+		<label><input type="radio" name="acc_type" value="personal"
+			<% if(data.acc_type === 'personal'){%> checked <% } %>> personal</label><br>
+		<label><input type="radio" name="acc_type" value="business"
+			<% if(data.acc_type === 'business'){%> checked <% } %>> business</label>
+	</li>
+	<li class="list-group-item acc_type_toggle <% if(data.acc_type === 'personal'){%> hidden <% } %>" >
+		<span class='highLabel' data-label='business_name'>business</span><br>
+		<label>
+		<input type="text" name="business_name" value="<% if(data.business_name){%> data.business_name <% } %>" class="form-control"> business name
+		</label>
+	</li>
+	<li class="list-group-item">
 		<span class='highLabel'>Country</span>
 		<select name="country" value="<%= (data.country) ? data.country : '' %>" class="select_standart select2-hidden-accessible form-control">
 			<option value="AX">Åland Islands</option>

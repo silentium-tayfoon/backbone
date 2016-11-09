@@ -163,7 +163,7 @@ module.exports = function(){
 		        } );
 		    },
 		    model: User,
-			el: '#registerCustomerForm',
+			el: '#registerCustomerForm2',
 			template: _.template(register_form_template),
 			events: {
 				'click .save_data': 'saveData'
