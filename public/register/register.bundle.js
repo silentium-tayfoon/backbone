@@ -15289,6 +15289,19 @@
 			};
 	
 	
+			var View = Backbone.Model.extend({
+				defaults: {
+					model: null,
+					link: null,
+					somestrange: 'blabla'
+				},
+				initialize: function (options) {
+					this.on('change', function (model) {
+						debugger;
+					});
+				}
+			});
+	
 			var User = Backbone.Model.extend({
 				url:'/api/users',
 		       	defaults: {
@@ -15301,43 +15314,15 @@
 					business_name: '',
 					gender: 'female'
 		       	},
-		       	initialize: function(){
+		       	initialize: function(options){
 	
 					// this.on('change', function(model){
 					// 	console.log('saved');
 					// });
 	
-					this.on("invalid", function(model, error){
-						console.log(error);
-					});
-		       	}
-		       	,validate: function(attr, options){
-	
-		       		var validate_result = Validate.execute(attr);
-	
-					console.log(validate_result);
-	
-	
-	
-					// var pass = {};
-		       		// var rules = {};
-	                //
-		       		// rules['first_name'] = {execute: function (val) {
-	                //
-					// 	if (val.length > 6 && val.length < 20) {
-					// 		pass = true;
-					// 	}else{
-					// 		pass = {key: options.key, dom: options.$dom};
-					// 	}
-	                //
-					// 	return pass;
-					// }};
-	                //
-					// if(rules[options.key] && options.$dom) {
-					// 	return rules[options.key].execute(options.$dom.val());
-					// }
-					//return {'error':'ahtung!'};
-		       		//_.each(attributes, min, this);
+					this.validate = function(attr){
+						return Validate.check_valid.call(Validate, attr);
+					};
 		       	}
 			});
 	
@@ -15394,7 +15379,12 @@
 						var data = {};
 						data[e.target.name] = e.target.value;
 						console.log(data);
-						self.new_user.set(data);
+						if(e.target.type === 'button' || e.target.type === 'checkbox' || e.target.type === 'radio'){
+							self.new_user.set(data);
+						}else{
+							self.new_user.set(data, {validate:true});
+						}
+	
 					});
 	
 					var $acc_type_toggle = this.$el.find('.acc_type_toggle');
@@ -15419,6 +15409,7 @@
 			    model: User,
 				el: '#registerCustomerForm',
 				template: _.template(register_form_template),
+				form_links: {},
 				events: {
 					'click .save_data': 'saveData'
 				},
@@ -15470,13 +15461,15 @@
 	
 					//window.user = this.new_user = new this.model({});
 	
-					console.log('save new user - ' + this.new_user.cid + '  ' + this.new_user);
+					//console.log('save new user - ' + this.new_user.cid + '  ' + this.new_user);
 	
 					var data_from_dom = this.getValFromDom(this.new_user.attributes);
 	
 					// recive formated data from dom - now validate
 	
-					var validate_result = this.new_user.validate(data_from_dom);
+					//var validate_result = this.new_user.validate(data_from_dom);
+	
+					this.new_user.set(data_from_dom, {validate:true});
 	
 					this.new_user.save(null,null,{
 							success: function(){
@@ -15498,10 +15491,10 @@
 								console.log('Save new user on server FAILL');
 							},
 							wait: true
-						}); 
+						});
 				},
 				render: function(){
-					this.$el.html(this.template({data:this.new_user.attributes}));
+					this.$el.html(this.template({data: this.new_user.attributes}));
 					return this;		
 				}
 			});
@@ -15680,6 +15673,20 @@
 	    model.trigger('request', model, xhr, options);
 	    return xhr;
 	};
+	
+	// Backbone.Validation = function(){
+	//
+	//     var version = 0.1;
+	//
+	//     this.get_version = function () {
+	//         return version;
+	//     };
+	//
+	//
+	//     this.validate = function (link, attr) {
+	//         return {data:attr};
+	//     };
+	// };
 
 
 /***/ },
@@ -15709,94 +15716,184 @@
 	     *   dependencies: {key:'is_business', val: true/false}}]
 	     * */
 	    var Rules = function () {
+	
+	        var this_validation = this;
+	
 	        /**
-	         * simply extend 'to_validate' object with validation result and return
+	         *
+	         * get object for validation & run validation for every key in object
+	         *
+	         * @to_validate {object} - simply {key:value}
 	         * */
-	        this.execute = function (to_validate) {
+	        // this.execute = function (to_validate) {
+	        //
+	        //     var i;
+	        //     var j;
+	        //     var default_validate;
+	        //     var default_validate_result;
+	        //
+	        //     for (i = 0; i<to_validate.length; i++) {
+	        //         if(to_validate[i].hasOwnProperty('dependencies') && to_validate[i].dependencies.val === false){
+	        //             // do not validate
+	        //         }else{
+	        //             // select rules to use
+	        //
+	        //             this.value = to_validate[i].val;
+	        //
+	        //             if (to_validate[i].hasOwnProperty('rules')) {
+	        //                 // use incoming rules
+	        //                 for(j=0; j<to_validate[i].rules.length; j++){
+	        //
+	        //                     if(this.list.hasOwnProperty(to_validate[i].rules[j])){
+	        //
+	        //                         if(this.list[to_validate[i].rules[j]].execute() === false){
+	        //                             to_validate[i]['error'] = this.list[to_validate[i].rules[j]].message;
+	        //                             break;
+	        //                         }else{
+	        //                             to_validate[i]['error'] = false;
+	        //                         }
+	        //                     }else{
+	        //                         console.error('NO such rule to validate: '+to_validate[i].rules[j]);
+	        //                     }
+	        //                 }
+	        //             }else{
+	        //                 // find pre-defined rules (username, password)
+	        //
+	        //                 if(this.defaults.elements.hasOwnProperty(to_validate[i].key)){
+	        //
+	        //                     default_validate = this.defaults.elements[to_validate[i].key];
+	        //
+	        //                     for(j=0; j<default_validate.length; j++){
+	        //
+	        //                         if(typeof default_validate === 'string'){
+	        //                             // simple rule, just execute
+	        //                             default_validate_result = this.list[default_validate].execute();
+	        //                         }else{
+	        //                             // rule with data (min, max...)
+	        //                             default_validate_result = this.list[default_validate.name].execute(default_validate.value);
+	        //                         }
+	        //
+	        //                         if(default_validate_result === false){
+	        //                             to_validate[i]['error'] = this.list[default_validate.name].message;
+	        //                         }else{
+	        //                             to_validate[i]['error'] = false;
+	        //                         }
+	        //                     }
+	        //                 }else{
+	        //                     console.error('NO such default rule to validate: '+to_validate[i].key);
+	        //                 }
+	        //
+	        //             }
+	        //         }
+	        //     }
+	        //
+	        //     return to_validate;
+	        // };
 	
-	            var i;
-	            var j;
-	            var default_validate;
-	            var default_validate_result;
+	        this.check_valid = function (to_validate) {
 	
-	            for (i = 0; i<to_validate.length; i++) {
-	                if(to_validate[i].hasOwnProperty('dependencies') && to_validate[i].dependencies.val === false){
-	                    // do not validate
-	                }else{
-	                    // select rules to use
 	
-	                    this.value = to_validate[i].val;
+	            console.log('RUN validation');
 	
-	                    if (to_validate[i].hasOwnProperty('rules')) {
-	                        // use incoming rules
-	                        for(j=0; j<to_validate[i].rules.length; j++){
 	
-	                            if(this.list.hasOwnProperty(to_validate[i].rules[j])){
+	            var validate_summ = {};
+	            var key, validate_result, dependencies_key;
 	
-	                                if(this.list[to_validate[i].rules[j]].execute() === false){
-	                                    to_validate[i]['error'] = this.list[to_validate[i].rules[j]].message;
-	                                    break;
-	                                }else{
-	                                    to_validate[i]['error'] = false;
-	                                }
-	                            }else{
-	                                console.error('NO such rule to validate: '+to_validate[i].rules[j]);
-	                            }
-	                        }
-	                    }else{
-	                        // find pre-defined rules (username, password)
 	
-	                        if(this.defaults.elements.hasOwnProperty(to_validate[i].key)){
+	            for(key in to_validate){
 	
-	                            default_validate = this.defaults.elements[to_validate[i].key];
+	                validate_result = null;
+	                dependencies_key = null;
 	
-	                            for(j=0; j<default_validate.length; j++){
+	                if(this_validation.defaults.elements.hasOwnProperty(key)){
+	                    // there is such predefined rule
 	
-	                                if(typeof default_validate === 'string'){
-	                                    // simple rule, just execute
-	                                    default_validate_result = this.list[default_validate].execute();
-	                                }else{
-	                                    // rule with data (min, max...)
-	                                    default_validate_result = this.list[default_validate.name].execute(default_validate.value);
-	                                }
+	                    if (this_validation.defaults.elements[key].dependencies !== false) {
+	                        // check dependence field
 	
-	                                if(default_validate_result === false){
-	                                    to_validate[i]['error'] = this.list[default_validate.name].message;
-	                                }else{
-	                                    to_validate[i]['error'] = false;
+	                        dependencies_key = this_validation.defaults.elements[key].dependencies;
+	
+	                        if(to_validate.hasOwnProperty(dependencies_key.name)) {
+	                            // there is such dependence field
+	
+	                            if (to_validate[dependencies_key.name] === dependencies_key.value) {
+	                                // check dependence field value
+	
+	                                validate_result = this_validation.makeValidation(key,to_validate[key]);
+	
+	                                if (validate_result) {
+	                                    validate_summ[key] = validate_result;
 	                                }
 	                            }
 	                        }else{
-	                            console.error('NO such default rule to validate: '+to_validate[i].key);
+	                            // there is no such field in object - where to find?
+	                            console.error('validation error - no dependencies field');
 	                        }
+	                    }else{
+	                        validate_result = this_validation.makeValidation(key,to_validate[key]);
 	
+	                        if (validate_result) {
+	                            validate_summ[key] = validate_result;
+	                        }
 	                    }
 	                }
 	            }
 	
-	            return to_validate;
+	            if(Object.keys(validate_summ).length > 0){
+	                return validate_summ;
+	            }
 	        };
-	    };
 	
-	    Rules.prototype.format = function (data) { // standart Backbone.Model {key:value}
-	        var validate_object = {validation_passed: false, data: {}};
+	        /***
+	         *
+	         * run for key a list of rules
+	         *
+	         * @return {string} - error result
+	         * */
+	        this.makeValidation = function (key, value) {
 	
-	        for(key in data){
-	            validate_object.data['key'] = key;
-	            validate_object.data['val'] = data[key];
-	            validate_object.data['rules'] = null;
-	            validate_object.data['dependencies'] = false;
-	        }
+	            var i;
+	            var rule_name;
+	            var result;
+	            var rules = this_validation.defaults.elements[key].rules;
+	            var return_message = null;
+	
+	            console.log(key+' : '+value);
+	
+	            this.value = value;
+	
+	            for (i = 0; i < rules.length; i++) {
+	
+	                rule_name = rules[i];
+	
+	                if(typeof rule_name === 'object'){
+	                    result = this_validation.list[rule_name.name].execute.call(this, rule_name.value);
+	                }else{
+	                    result = this_validation.list[rule_name].execute.call(this);
+	                }
+	
+	                if (!result) {
+	
+	                    if(this_validation.list[rule_name]){
+	                        return_message = this_validation.list[rule_name].message;
+	                    }else{
+	                        return_message = this_validation.list[rule_name.name].message(rule_name.value);
+	                    }
+	
+	                    return return_message;
+	                }
+	            }
+	        };
+	
 	    };
 	
 	    Rules.prototype.list = {
 	        not_empty: {
 	            execute: function() {
 	                var is_only_spaces = /^[\s\n]+$/.test(this.value);
-	                var is_select_null_value = this.tagName.toLowerCase() === 'select' ?
-	                this.value.toLowerCase() === 'null' : false;
-	
-	                return !is_select_null_value && !is_only_spaces && this.value.length !== 0;
+	                //var is_select_null_value = this.tagName.toLowerCase() === 'select' ? this.value.toLowerCase() === 'null' : false;
+	                //!is_select_null_value &&
+	                return  !is_only_spaces && this.value.length !== 0;
 	            },
 	            message: 'Can\'t be empty.'
 	        },
@@ -16019,7 +16116,10 @@
 	        // phone: ['not_empty', 'is_phone'],
 	        // email: ['not_empty', 'is_email'],
 	        //
-	             business_name: {rules: ['not_empty', {name: 'min', value: 2}, {name: 'max', value: 255}], dependencies: 'acc_type'}
+	        business_name: {
+	            rules: ['not_empty', {name: 'min', value: 2}, {name: 'max', value: 255}],
+	            dependencies: {name: 'acc_type', value: 'business'}
+	        }
 	        // business_name_id_au: 'business_name_id_au',
 	        // business_number: ['not_empty', {name: 'min', value: 2}, {name: 'max', value: 255}],
 	        //
@@ -16034,9 +16134,13 @@
 	        // card_cvv: ['not_empty', {name: 'max', value: 4}, 'is_number']
 	    };
 	
+	
+	    // init
+	    var validation_object = new Rules();
+	
 	    if (true) {
 	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function() {
-	            return new Rules;
+	            return validation_object;
 	        }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    }
 	})();

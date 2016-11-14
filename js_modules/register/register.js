@@ -35,6 +35,19 @@ module.exports = function(){
 		};
 
 
+		var View = Backbone.Model.extend({
+			defaults: {
+				model: null,
+				link: null,
+				somestrange: 'blabla'
+			},
+			initialize: function (options) {
+				this.on('change', function (model) {
+					debugger;
+				});
+			}
+		});
+
 		var User = Backbone.Model.extend({
 			url:'/api/users',
 	       	defaults: {
@@ -47,43 +60,15 @@ module.exports = function(){
 				business_name: '',
 				gender: 'female'
 	       	},
-	       	initialize: function(){
+	       	initialize: function(options){
 
 				// this.on('change', function(model){
 				// 	console.log('saved');
 				// });
 
-				this.on("invalid", function(model, error){
-					console.log(error);
-				});
-	       	}
-	       	,validate: function(attr, options){
-
-	       		var validate_result = Validate.execute(attr);
-
-				console.log(validate_result);
-
-
-
-				// var pass = {};
-	       		// var rules = {};
-                //
-	       		// rules['first_name'] = {execute: function (val) {
-                //
-				// 	if (val.length > 6 && val.length < 20) {
-				// 		pass = true;
-				// 	}else{
-				// 		pass = {key: options.key, dom: options.$dom};
-				// 	}
-                //
-				// 	return pass;
-				// }};
-                //
-				// if(rules[options.key] && options.$dom) {
-				// 	return rules[options.key].execute(options.$dom.val());
-				// }
-				//return {'error':'ahtung!'};
-	       		//_.each(attributes, min, this);
+				this.validate = function(attr){
+					return Validate.check_valid.call(Validate, attr);
+				};
 	       	}
 		});
 
@@ -140,7 +125,12 @@ module.exports = function(){
 					var data = {};
 					data[e.target.name] = e.target.value;
 					console.log(data);
-					self.new_user.set(data);
+					if(e.target.type === 'button' || e.target.type === 'checkbox' || e.target.type === 'radio'){
+						self.new_user.set(data);
+					}else{
+						self.new_user.set(data, {validate:true});
+					}
+
 				});
 
 				var $acc_type_toggle = this.$el.find('.acc_type_toggle');
@@ -165,6 +155,7 @@ module.exports = function(){
 		    model: User,
 			el: '#registerCustomerForm',
 			template: _.template(register_form_template),
+			form_links: {},
 			events: {
 				'click .save_data': 'saveData'
 			},
@@ -216,13 +207,15 @@ module.exports = function(){
 
 				//window.user = this.new_user = new this.model({});
 
-				console.log('save new user - ' + this.new_user.cid + '  ' + this.new_user);
+				//console.log('save new user - ' + this.new_user.cid + '  ' + this.new_user);
 
 				var data_from_dom = this.getValFromDom(this.new_user.attributes);
 
 				// recive formated data from dom - now validate
 
-				var validate_result = this.new_user.validate(data_from_dom);
+				//var validate_result = this.new_user.validate(data_from_dom);
+
+				this.new_user.set(data_from_dom, {validate:true});
 
 				this.new_user.save(null,null,{
 						success: function(){
@@ -244,10 +237,10 @@ module.exports = function(){
 							console.log('Save new user on server FAILL');
 						},
 						wait: true
-					}); 
+					});
 			},
 			render: function(){
-				this.$el.html(this.template({data:this.new_user.attributes}));
+				this.$el.html(this.template({data: this.new_user.attributes}));
 				return this;		
 			}
 		});

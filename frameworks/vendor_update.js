@@ -77,3 +77,17 @@ Backbone.sync = function(method, model, options) {
     model.trigger('request', model, xhr, options);
     return xhr;
 };
+
+// Backbone.Validation = function(){
+//
+//     var version = 0.1;
+//
+//     this.get_version = function () {
+//         return version;
+//     };
+//
+//
+//     this.validate = function (link, attr) {
+//         return {data:attr};
+//     };
+// };
