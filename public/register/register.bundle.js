@@ -15280,28 +15280,6 @@
 			var save_data = document.querySelector('.save_data');
 			var navbar = document.querySelector('.navbar');
 	
-			var min = function(val){
-				var pass = false;
-				if(val.length && val.length > 1){
-					pass = true;
-				}
-				return pass;
-			};
-	
-	
-			var View = Backbone.Model.extend({
-				defaults: {
-					model: null,
-					link: null,
-					somestrange: 'blabla'
-				},
-				initialize: function (options) {
-					this.on('change', function (model) {
-						debugger;
-					});
-				}
-			});
-	
 			var User = Backbone.Model.extend({
 				url:'/api/users',
 		       	defaults: {
@@ -15403,6 +15381,23 @@
 			        				});
 	
 					this.listenTo(this.new_user, 'invalid', function(){
+						var error_list = arguments[1];
+						var i;
+						/**
+						 * {
+							first_name: "Must be at least 8 characters.",
+							business_name: "Must be at least 2 characters."
+						 * }
+						 * */
+	
+						// showErrors(arguments[1]);
+	                    //
+	                    //
+						// if (error_list.length > 0) {
+						// 	for (i=0; i<error_list.length; i++) {
+	                    //
+						// 	}
+						// }
 			        	console.log('INVALID VALIDATION');
 			        } );
 			    },
@@ -15469,10 +15464,11 @@
 	
 					//var validate_result = this.new_user.validate(data_from_dom);
 	
-					this.new_user.set(data_from_dom, {validate:true});
+					//this.new_user.set(data_from_dom, {validate:true});
 	
-					this.new_user.save(null,null,{
+					this.new_user.save(data_from_dom,{
 							success: function(){
+								debugger;
 								console.log('!!!!! all good');
 	
 								list_view.collection.add(list_view.new_user);
@@ -15488,6 +15484,7 @@
 								//list_view.$el.find('[name="Submit"]').removeClass('btn-danger').addClass('btn-default');
 							},
 							error: function(){
+								debugger;
 								console.log('Save new user on server FAILL');
 							},
 							wait: true
@@ -15693,7 +15690,7 @@
 /* 10 */
 /***/ function(module, exports) {
 
-	module.exports = "<input type=\"hidden\" value=\"<%= (data.id) ? data.id : 'null' %>\" name=\"id\" />\n\n<ul class=\"list-group\">\n\t<li class=\"list-group-item\">\n\t\t<label class='highLabel' data-label='first_name' for=\"first_name\">First name</label>\n\t\t<input type=\"text\" value=\"<%= data.first_name %>\" name=\"first_name\" class=\"form-control\" placeholder=\"first name\" id='first_name' required />\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel' data-label='last_name'>Last name</span>\n\t\t<input type=\"text\" value=\"<%= data.last_name %>\" name=\"last_name\" class=\"form-control\" placeholder=\"last name\" />\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel'>Transport</span><br>\n\t\t<label><input type=\"checkbox\" name=\"vehicle1\" value=\"true\" \n\t\t<% if(data.vehicle1){%> checked <% } %>> I have a bike</label><br>\n\t\t\t<label><input type=\"checkbox\" name=\"vehicle2\" value=\"true\"\n\t\t\t<% if(data.vehicle2){%> checked <% } %>> I have a car</label>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel' data-label='access'>Gender</span><br>\n\t\t<label><input type=\"radio\" name=\"gender\" value=\"male\" \n\t\t<% if(data.gender === 'male'){%> checked <% } %>> Male</label><br>\n\t\t<label><input type=\"radio\" name=\"gender\" value=\"female\"\n\t\t<% if(data.gender === 'female'){%> checked <% } %>> Female</label><br>\n\t\t<label><input type=\"radio\" name=\"gender\" value=\"other\"\n\t\t<% if(data.gender === 'other'){%> checked <% } %>> Other</label>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel' data-label='acc_type'>private/business</span><br>\n\t\t<label><input type=\"radio\" name=\"acc_type\" value=\"personal\"\n\t\t\t<% if(data.acc_type === 'personal'){%> checked <% } %>> personal</label><br>\n\t\t<label><input type=\"radio\" name=\"acc_type\" value=\"business\"\n\t\t\t<% if(data.acc_type === 'business'){%> checked <% } %>> business</label>\n\t</li>\n\t<li class=\"list-group-item acc_type_toggle <% if(data.acc_type === 'personal'){%> hidden <% } %>\" >\n\t\t<span class='highLabel' data-label='business_name'>business</span><br>\n\t\t<label>\n\t\t<input type=\"text\" name=\"business_name\" value=\"<% if(data.business_name){%> data.business_name <% } %>\" class=\"form-control\"> business name\n\t\t</label>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel'>Country</span>\n\t\t<select name=\"country\" value=\"<%= (data.country) ? data.country : '' %>\" class=\"select_standart select2-hidden-accessible form-control\">\n\t\t\t<option value=\"AX\">Åland Islands</option>\n\t\t\t<option value=\"AF\">Afghanistan</option>\n\t\t\t<option value=\"AL\">Albania</option>\n\t\t\t<option value=\"DZ\">Algeria</option>\n\t\t\t<option value=\"AS\">American Samoa</option>\n\t\t\t<option value=\"AD\">Andorra</option>\n\t\t\t<option value=\"AO\">Angola</option>\n\t\t\t<option value=\"AI\">Anguilla</option>\n\t\t\t<option value=\"AQ\">Antarctica</option>\n\t\t\t<option value=\"AG\">Antigua And Barbuda</option>\n\t\t\t<option value=\"AR\">Argentina</option>\n\t\t\t<option value=\"AM\">Armenia</option>\n\t\t\t<option value=\"AW\">Aruba</option>\n\t\t\t<option value=\"AU\">Australia</option>\n\t\t\t<option value=\"AT\">Austria</option>\n\t\t\t<option value=\"AZ\">Azerbaijan</option>\n\t\t\t<option value=\"BS\">Bahamas</option>\n\t\t\t<option value=\"BH\">Bahrain</option>\n\t\t\t<option value=\"BD\">Bangladesh</option>\n\t\t\t<option value=\"BB\">Barbados</option>\n\t\t\t<option value=\"BY\">Belarus</option>\n\t\t\t<option value=\"BE\">Belgium</option>\n\t\t\t<option value=\"BZ\">Belize</option>\n\t\t\t<option value=\"BJ\">Benin</option>\n\t\t\t<option value=\"BM\">Bermuda</option>\n\t\t\t<option value=\"BT\">Bhutan</option>\n\t\t\t<option value=\"BO\">Bolivia</option>\n\t\t\t<option value=\"BA\">Bosnia and Herzegovina</option>\n\t\t\t<option value=\"BW\">Botswana</option>\n\t\t\t<option value=\"BV\">Bouvet Island</option>\n\t\t\t<option value=\"BR\">Brazil</option>\n\t\t\t<option value=\"IO\">British Indian Ocean Territory</option>\n\t\t\t<option value=\"BN\">Brunei</option>\n\t\t\t<option value=\"BG\">Bulgaria</option>\n\t\t\t<option value=\"BF\">Burkina Faso</option>\n\t\t\t<option value=\"BI\">Burundi</option>\n\t\t\t<option value=\"KH\">Cambodia</option>\n\t\t\t<option value=\"CM\">Cameroon</option>\n\t\t\t<option value=\"CA\">Canada</option>\n\t\t\t<option value=\"CV\">Cape Verde</option>\n\t\t\t<option value=\"KY\">Cayman Islands</option>\n\t\t\t<option value=\"CF\">Central African Republic</option>\n\t\t\t<option value=\"TD\">Chad</option>\n\t\t\t<option value=\"CL\">Chile</option>\n\t\t\t<option value=\"CN\">China</option>\n\t\t\t<option value=\"CX\">Christmas Island</option>\n\t\t\t<option value=\"CC\">Cocos (Keeling) Islands</option>\n\t\t\t<option value=\"CO\">Colombia</option>\n\t\t\t<option value=\"KM\">Comoros</option>\n\t\t\t<option value=\"CG\">Congo</option>\n\t\t\t<option value=\"CD\">Congo, Democractic Republic</option>\n\t\t\t<option value=\"CK\">Cook Islands</option>\n\t\t\t<option value=\"CR\">Costa Rica</option>\n\t\t\t<option value=\"CI\">Cote D'Ivoire (Ivory Coast)</option>\n\t\t\t<option value=\"HR\">Croatia (Hrvatska)</option>\n\t\t\t<option value=\"CU\">Cuba</option>\n\t\t\t<option value=\"CY\">Cyprus</option>\n\t\t\t<option value=\"CZ\">Czech Republic</option>\n\t\t\t<option value=\"DK\">Denmark</option>\n\t\t\t<option value=\"DJ\">Djibouti</option>\n\t\t\t<option value=\"DM\">Dominica</option>\n\t\t\t<option value=\"DO\">Dominican Republic</option>\n\t\t\t<option value=\"EC\">Ecuador</option>\n\t\t\t<option value=\"EG\">Egypt</option>\n\t\t\t<option value=\"SV\">El Salvador</option>\n\t\t\t<option value=\"GQ\">Equatorial Guinea</option>\n\t\t\t<option value=\"ER\">Eritrea</option>\n\t\t\t<option value=\"EE\">Estonia</option>\n\t\t\t<option value=\"ET\">Ethiopia</option>\n\t\t\t<option value=\"FK\">Falkland Islands</option>\n\t\t\t<option value=\"FO\">Faroe Islands</option>\n\t\t\t<option value=\"FJ\">Fiji Islands</option>\n\t\t\t<option value=\"FI\">Finland</option>\n\t\t\t<option value=\"FR\">France</option>\n\t\t\t<option value=\"GF\">French Guiana</option>\n\t\t\t<option value=\"PF\">French Polynesia</option>\n\t\t\t<option value=\"TF\">French Southern Territories</option>\n\t\t\t<option value=\"GA\">Gabon</option>\n\t\t\t<option value=\"GM\">Gambia, The</option>\n\t\t\t<option value=\"GE\">Georgia</option>\n\t\t\t<option value=\"DE\">Germany</option>\n\t\t\t<option value=\"GH\">Ghana</option>\n\t\t\t<option value=\"GI\">Gibraltar</option>\n\t\t\t<option value=\"GR\">Greece</option>\n\t\t\t<option value=\"GL\">Greenland</option>\n\t\t\t<option value=\"GD\">Grenada</option>\n\t\t\t<option value=\"GP\">Guadeloupe</option>\n\t\t\t<option value=\"GU\">Guam</option>\n\t\t\t<option value=\"GT\">Guatemala</option>\n\t\t\t<option value=\"GN\">Guinea</option>\n\t\t\t<option value=\"GW\">Guinea-Bissau</option>\n\t\t\t<option value=\"GY\">Guyana</option>\n\t\t\t<option value=\"HT\">Haiti</option>\n\t\t\t<option value=\"HM\">Heard and McDonald Islands</option>\n\t\t\t<option value=\"HN\">Honduras</option>\n\t\t\t<option value=\"HK\">Hong Kong S.A.R.</option>\n\t\t\t<option value=\"HU\">Hungary</option>\n\t\t\t<option value=\"IS\">Iceland</option>\n\t\t\t<option value=\"IN\">India</option>\n\t\t\t<option value=\"ID\">Indonesia</option>\n\t\t\t<option value=\"IR\">Iran</option>\n\t\t\t<option value=\"IQ\">Iraq</option>\n\t\t\t<option value=\"IE\">Ireland</option>\n\t\t\t<option value=\"IL\">Israel</option>\n\t\t\t<option value=\"IT\">Italy</option>\n\t\t\t<option value=\"JM\">Jamaica</option>\n\t\t\t<option value=\"JP\">Japan</option>\n\t\t\t<option value=\"JO\">Jordan</option>\n\t\t\t<option value=\"KZ\">Kazakhstan</option>\n\t\t\t<option value=\"KE\">Kenya</option>\n\t\t\t<option value=\"KI\">Kiribati</option>\n\t\t\t<option value=\"KR\">Korea</option>\n\t\t\t<option value=\"KP\">Korea, North</option>\n\t\t\t<option value=\"KW\">Kuwait</option>\n\t\t\t<option value=\"KG\">Kyrgyzstan</option>\n\t\t\t<option value=\"LA\">Laos</option>\n\t\t\t<option value=\"LV\">Latvia</option>\n\t\t\t<option value=\"LB\">Lebanon</option>\n\t\t\t<option value=\"LS\">Lesotho</option>\n\t\t\t<option value=\"LR\">Liberia</option>\n\t\t\t<option value=\"LY\">Libya</option>\n\t\t\t<option value=\"LI\">Liechtenstein</option>\n\t\t\t<option value=\"LT\">Lithuania</option>\n\t\t\t<option value=\"LU\">Luxembourg</option>\n\t\t\t<option value=\"MO\">Macau S.A.R.</option>\n\t\t\t<option value=\"MK\">Macedonia</option>\n\t\t\t<option value=\"MG\">Madagascar</option>\n\t\t\t<option value=\"MW\">Malawi</option>\n\t\t\t<option value=\"MY\">Malaysia</option>\n\t\t\t<option value=\"MV\">Maldives</option>\n\t\t\t<option value=\"ML\">Mali</option>\n\t\t\t<option value=\"MT\">Malta</option>\n\t\t\t<option value=\"MH\">Marshall Islands</option>\n\t\t\t<option value=\"MQ\">Martinique</option>\n\t\t\t<option value=\"MR\">Mauritania</option>\n\t\t\t<option value=\"MU\">Mauritius</option>\n\t\t\t<option value=\"YT\">Mayotte</option>\n\t\t\t<option value=\"MX\">Mexico</option>\n\t\t\t<option value=\"FM\">Micronesia</option>\n\t\t\t<option value=\"MD\">Moldova</option>\n\t\t\t<option value=\"MC\">Monaco</option>\n\t\t\t<option value=\"MN\">Mongolia</option>\n\t\t\t<option value=\"ME\">Montenegro</option>\n\t\t\t<option value=\"MS\">Montserrat</option>\n\t\t\t<option value=\"MA\">Morocco</option>\n\t\t\t<option value=\"MZ\">Mozambique</option>\n\t\t\t<option value=\"MM\">Myanmar</option>\n\t\t\t<option value=\"NA\">Namibia</option>\n\t\t\t<option value=\"NR\">Nauru</option>\n\t\t\t<option value=\"NP\">Nepal</option>\n\t\t\t<option value=\"NL\">Netherlands</option>\n\t\t\t<option value=\"AN\">Netherlands Antilles</option>\n\t\t\t<option value=\"NC\">New Caledonia</option>\n\t\t\t<option value=\"NZ\">New Zealand</option>\n\t\t\t<option value=\"NI\">Nicaragua</option>\n\t\t\t<option value=\"NE\">Niger</option>\n\t\t\t<option value=\"NG\">Nigeria</option>\n\t\t\t<option value=\"NU\">Niue</option>\n\t\t\t<option value=\"NF\">Norfolk Island</option>\n\t\t\t<option value=\"MP\">Northern Mariana Islands</option>\n\t\t\t<option value=\"NO\">Norway</option>\n\t\t\t<option value=\"OM\">Oman</option>\n\t\t\t<option value=\"PK\">Pakistan</option>\n\t\t\t<option value=\"PW\">Palau</option>\n\t\t\t<option value=\"PS\">Palestinian Territory</option>\n\t\t\t<option value=\"PA\">Panama</option>\n\t\t\t<option value=\"PG\">Papua new Guinea</option>\n\t\t\t<option value=\"PY\">Paraguay</option>\n\t\t\t<option value=\"PE\">Peru</option>\n\t\t\t<option value=\"PH\">Philippines</option>\n\t\t\t<option value=\"PN\">Pitcairn Island</option>\n\t\t\t<option value=\"PL\">Poland</option>\n\t\t\t<option value=\"PT\">Portugal</option>\n\t\t\t<option value=\"PR\">Puerto Rico</option>\n\t\t\t<option value=\"QA\">Qatar</option>\n\t\t\t<option value=\"RE\">Reunion</option>\n\t\t\t<option value=\"RO\">Romania</option>\n\t\t\t<option value=\"RU\">Russia</option>\n\t\t\t<option value=\"RW\">Rwanda</option>\n\t\t\t<option value=\"SH\">Saint Helena</option>\n\t\t\t<option value=\"KN\">Saint Kitts And Nevis</option>\n\t\t\t<option value=\"LC\">Saint Lucia</option>\n\t\t\t<option value=\"PM\">Saint Pierre and Miquelon</option>\n\t\t\t<option value=\"VC\">Saint Vincent And The Grenadines</option>\n\t\t\t<option value=\"WS\">Samoa</option>\n\t\t\t<option value=\"SM\">San Marino</option>\n\t\t\t<option value=\"ST\">Sao Tome and Principe</option>\n\t\t\t<option value=\"SA\">Saudi Arabia</option>\n\t\t\t<option value=\"SN\">Senegal</option>\n\t\t\t<option value=\"RS\">Serbia</option>\n\t\t\t<option value=\"SC\">Seychelles</option>\n\t\t\t<option value=\"SL\">Sierra Leone</option>\n\t\t\t<option value=\"SG\">Singapore</option>\n\t\t\t<option value=\"SK\">Slovakia</option>\n\t\t\t<option value=\"SI\">Slovenia</option>\n\t\t\t<option value=\"SB\">Solomon Islands</option>\n\t\t\t<option value=\"SO\">Somalia</option>\n\t\t\t<option value=\"ZA\">South Africa</option>\n\t\t\t<option value=\"GS\">South Georgia And The S.S Islands</option>\n\t\t\t<option value=\"ES\">Spain</option>\n\t\t\t<option value=\"LK\">Sri Lanka</option>\n\t\t\t<option value=\"SD\">Sudan</option>\n\t\t\t<option value=\"SR\">Suriname</option>\n\t\t\t<option value=\"SJ\">Svalbard And Jan Mayen Islands</option>\n\t\t\t<option value=\"SZ\">Swaziland</option>\n\t\t\t<option value=\"SE\">Sweden</option>\n\t\t\t<option value=\"CH\">Switzerland</option>\n\t\t\t<option value=\"SY\">Syria</option>\n\t\t\t<option value=\"TW\">Taiwan</option>\n\t\t\t<option value=\"TJ\">Tajikistan</option>\n\t\t\t<option value=\"TZ\">Tanzania</option>\n\t\t\t<option value=\"TH\">Thailand</option>\n\t\t\t<option value=\"TL\">Timor-Leste</option>\n\t\t\t<option value=\"TG\">Togo</option>\n\t\t\t<option value=\"TK\">Tokelau</option>\n\t\t\t<option value=\"TO\">Tonga</option>\n\t\t\t<option value=\"TT\">Trinidad And Tobago</option>\n\t\t\t<option value=\"TN\">Tunisia</option>\n\t\t\t<option value=\"TR\">Turkey</option>\n\t\t\t<option value=\"TM\">Turkmenistan</option>\n\t\t\t<option value=\"TC\">Turks And Caicos Islands</option>\n\t\t\t<option value=\"TV\">Tuvalu</option>\n\t\t\t<option value=\"UG\">Uganda</option>\n\t\t\t<option value=\"UA\">Ukraine</option>\n\t\t\t<option value=\"AE\">United Arab Emirates</option>\n\t\t\t<option value=\"GB\">United Kingdom</option>\n\t\t\t<option value=\"US\">United States</option>\n\t\t\t<option value=\"UM\">United States Minor Outlying Islands</option>\n\t\t\t<option value=\"UY\">Uruguay</option>\n\t\t\t<option value=\"UZ\">Uzbekistan</option>\n\t\t\t<option value=\"VU\">Vanuatu</option>\n\t\t\t<option value=\"VA\">Vatican City State (Holy See)</option>\n\t\t\t<option value=\"VE\">Venezuela</option>\n\t\t\t<option value=\"VN\">Vietnam</option>\n\t\t\t<option value=\"VG\">Virgin Islands (British)</option>\n\t\t\t<option value=\"VI\">Virgin Islands (US)</option>\n\t\t\t<option value=\"EH\">Western Sahara</option>\n\t\t\t<option value=\"WF\">Wallis And Futuna Islands</option>\n\t\t\t<option value=\"YE\">Yemen</option>\n\t\t\t<option value=\"ZM\">Zambia</option>\n\t\t\t<option value=\"ZW\">Zimbabwe</option>\n\t\t</select>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<button type=\"reset\" value=\"Reset\" class=\"btn btn-default\">Reset</button>\n\t\t<button name=\"Submit\" type=\"button\" class=\"btn btn-primary pull-right save_data\">Save</button>\n\t</li>\n</ul>";
+	module.exports = "<input type=\"hidden\" value=\"<%= (data.id) ? data.id : 'null' %>\" name=\"id\" />\n\n<ul class=\"list-group\">\n\t<li class=\"list-group-item v_element\">\n\t\t<label class='highLabel v_title' data-label='first_name' for=\"first_name\">First name</label>\n\t\t<input type=\"text\" value=\"<%= data.first_name %>\" name=\"first_name\" class=\"form-control v_input\" placeholder=\"first name\" id='first_name' required />\n\t\t<span class=\"v_error hidden\"></span>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel' data-label='last_name'>Last name</span>\n\t\t<input type=\"text\" value=\"<%= data.last_name %>\" name=\"last_name\" class=\"form-control\" placeholder=\"last name\" />\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel'>Transport</span><br>\n\t\t<label><input type=\"checkbox\" name=\"vehicle1\" value=\"true\" \n\t\t<% if(data.vehicle1){%> checked <% } %>> I have a bike</label><br>\n\t\t\t<label><input type=\"checkbox\" name=\"vehicle2\" value=\"true\"\n\t\t\t<% if(data.vehicle2){%> checked <% } %>> I have a car</label>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel' data-label='access'>Gender</span><br>\n\t\t<label><input type=\"radio\" name=\"gender\" value=\"male\" \n\t\t<% if(data.gender === 'male'){%> checked <% } %>> Male</label><br>\n\t\t<label><input type=\"radio\" name=\"gender\" value=\"female\"\n\t\t<% if(data.gender === 'female'){%> checked <% } %>> Female</label><br>\n\t\t<label><input type=\"radio\" name=\"gender\" value=\"other\"\n\t\t<% if(data.gender === 'other'){%> checked <% } %>> Other</label>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel' data-label='acc_type'>private/business</span><br>\n\t\t<label><input type=\"radio\" name=\"acc_type\" value=\"personal\"\n\t\t\t<% if(data.acc_type === 'personal'){%> checked <% } %>> personal</label><br>\n\t\t<label><input type=\"radio\" name=\"acc_type\" value=\"business\"\n\t\t\t<% if(data.acc_type === 'business'){%> checked <% } %>> business</label>\n\t</li>\n\t<li class=\"v_element list-group-item acc_type_toggle <% if(data.acc_type === 'personal'){%> hidden <% } %>\" >\n\t\t<span class='highLabel v_title' data-label='business_name'>business</span><br>\n\t\t<label>\n\t\t<input type=\"text\" name=\"business_name\" value=\"<% if(data.business_name){%> data.business_name <% } %>\" class=\"v_input form-control\"> business name\n\t\t</label>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel'>Country</span>\n\t\t<select name=\"country\" value=\"<%= (data.country) ? data.country : '' %>\" class=\"select_standart select2-hidden-accessible form-control\">\n\t\t\t<option value=\"AX\">Åland Islands</option>\n\t\t\t<option value=\"AF\">Afghanistan</option>\n\t\t\t<option value=\"AL\">Albania</option>\n\t\t\t<option value=\"DZ\">Algeria</option>\n\t\t\t<option value=\"AS\">American Samoa</option>\n\t\t\t<option value=\"AD\">Andorra</option>\n\t\t\t<option value=\"AO\">Angola</option>\n\t\t\t<option value=\"AI\">Anguilla</option>\n\t\t\t<option value=\"AQ\">Antarctica</option>\n\t\t\t<option value=\"AG\">Antigua And Barbuda</option>\n\t\t\t<option value=\"AR\">Argentina</option>\n\t\t\t<option value=\"AM\">Armenia</option>\n\t\t\t<option value=\"AW\">Aruba</option>\n\t\t\t<option value=\"AU\">Australia</option>\n\t\t\t<option value=\"AT\">Austria</option>\n\t\t\t<option value=\"AZ\">Azerbaijan</option>\n\t\t\t<option value=\"BS\">Bahamas</option>\n\t\t\t<option value=\"BH\">Bahrain</option>\n\t\t\t<option value=\"BD\">Bangladesh</option>\n\t\t\t<option value=\"BB\">Barbados</option>\n\t\t\t<option value=\"BY\">Belarus</option>\n\t\t\t<option value=\"BE\">Belgium</option>\n\t\t\t<option value=\"BZ\">Belize</option>\n\t\t\t<option value=\"BJ\">Benin</option>\n\t\t\t<option value=\"BM\">Bermuda</option>\n\t\t\t<option value=\"BT\">Bhutan</option>\n\t\t\t<option value=\"BO\">Bolivia</option>\n\t\t\t<option value=\"BA\">Bosnia and Herzegovina</option>\n\t\t\t<option value=\"BW\">Botswana</option>\n\t\t\t<option value=\"BV\">Bouvet Island</option>\n\t\t\t<option value=\"BR\">Brazil</option>\n\t\t\t<option value=\"IO\">British Indian Ocean Territory</option>\n\t\t\t<option value=\"BN\">Brunei</option>\n\t\t\t<option value=\"BG\">Bulgaria</option>\n\t\t\t<option value=\"BF\">Burkina Faso</option>\n\t\t\t<option value=\"BI\">Burundi</option>\n\t\t\t<option value=\"KH\">Cambodia</option>\n\t\t\t<option value=\"CM\">Cameroon</option>\n\t\t\t<option value=\"CA\">Canada</option>\n\t\t\t<option value=\"CV\">Cape Verde</option>\n\t\t\t<option value=\"KY\">Cayman Islands</option>\n\t\t\t<option value=\"CF\">Central African Republic</option>\n\t\t\t<option value=\"TD\">Chad</option>\n\t\t\t<option value=\"CL\">Chile</option>\n\t\t\t<option value=\"CN\">China</option>\n\t\t\t<option value=\"CX\">Christmas Island</option>\n\t\t\t<option value=\"CC\">Cocos (Keeling) Islands</option>\n\t\t\t<option value=\"CO\">Colombia</option>\n\t\t\t<option value=\"KM\">Comoros</option>\n\t\t\t<option value=\"CG\">Congo</option>\n\t\t\t<option value=\"CD\">Congo, Democractic Republic</option>\n\t\t\t<option value=\"CK\">Cook Islands</option>\n\t\t\t<option value=\"CR\">Costa Rica</option>\n\t\t\t<option value=\"CI\">Cote D'Ivoire (Ivory Coast)</option>\n\t\t\t<option value=\"HR\">Croatia (Hrvatska)</option>\n\t\t\t<option value=\"CU\">Cuba</option>\n\t\t\t<option value=\"CY\">Cyprus</option>\n\t\t\t<option value=\"CZ\">Czech Republic</option>\n\t\t\t<option value=\"DK\">Denmark</option>\n\t\t\t<option value=\"DJ\">Djibouti</option>\n\t\t\t<option value=\"DM\">Dominica</option>\n\t\t\t<option value=\"DO\">Dominican Republic</option>\n\t\t\t<option value=\"EC\">Ecuador</option>\n\t\t\t<option value=\"EG\">Egypt</option>\n\t\t\t<option value=\"SV\">El Salvador</option>\n\t\t\t<option value=\"GQ\">Equatorial Guinea</option>\n\t\t\t<option value=\"ER\">Eritrea</option>\n\t\t\t<option value=\"EE\">Estonia</option>\n\t\t\t<option value=\"ET\">Ethiopia</option>\n\t\t\t<option value=\"FK\">Falkland Islands</option>\n\t\t\t<option value=\"FO\">Faroe Islands</option>\n\t\t\t<option value=\"FJ\">Fiji Islands</option>\n\t\t\t<option value=\"FI\">Finland</option>\n\t\t\t<option value=\"FR\">France</option>\n\t\t\t<option value=\"GF\">French Guiana</option>\n\t\t\t<option value=\"PF\">French Polynesia</option>\n\t\t\t<option value=\"TF\">French Southern Territories</option>\n\t\t\t<option value=\"GA\">Gabon</option>\n\t\t\t<option value=\"GM\">Gambia, The</option>\n\t\t\t<option value=\"GE\">Georgia</option>\n\t\t\t<option value=\"DE\">Germany</option>\n\t\t\t<option value=\"GH\">Ghana</option>\n\t\t\t<option value=\"GI\">Gibraltar</option>\n\t\t\t<option value=\"GR\">Greece</option>\n\t\t\t<option value=\"GL\">Greenland</option>\n\t\t\t<option value=\"GD\">Grenada</option>\n\t\t\t<option value=\"GP\">Guadeloupe</option>\n\t\t\t<option value=\"GU\">Guam</option>\n\t\t\t<option value=\"GT\">Guatemala</option>\n\t\t\t<option value=\"GN\">Guinea</option>\n\t\t\t<option value=\"GW\">Guinea-Bissau</option>\n\t\t\t<option value=\"GY\">Guyana</option>\n\t\t\t<option value=\"HT\">Haiti</option>\n\t\t\t<option value=\"HM\">Heard and McDonald Islands</option>\n\t\t\t<option value=\"HN\">Honduras</option>\n\t\t\t<option value=\"HK\">Hong Kong S.A.R.</option>\n\t\t\t<option value=\"HU\">Hungary</option>\n\t\t\t<option value=\"IS\">Iceland</option>\n\t\t\t<option value=\"IN\">India</option>\n\t\t\t<option value=\"ID\">Indonesia</option>\n\t\t\t<option value=\"IR\">Iran</option>\n\t\t\t<option value=\"IQ\">Iraq</option>\n\t\t\t<option value=\"IE\">Ireland</option>\n\t\t\t<option value=\"IL\">Israel</option>\n\t\t\t<option value=\"IT\">Italy</option>\n\t\t\t<option value=\"JM\">Jamaica</option>\n\t\t\t<option value=\"JP\">Japan</option>\n\t\t\t<option value=\"JO\">Jordan</option>\n\t\t\t<option value=\"KZ\">Kazakhstan</option>\n\t\t\t<option value=\"KE\">Kenya</option>\n\t\t\t<option value=\"KI\">Kiribati</option>\n\t\t\t<option value=\"KR\">Korea</option>\n\t\t\t<option value=\"KP\">Korea, North</option>\n\t\t\t<option value=\"KW\">Kuwait</option>\n\t\t\t<option value=\"KG\">Kyrgyzstan</option>\n\t\t\t<option value=\"LA\">Laos</option>\n\t\t\t<option value=\"LV\">Latvia</option>\n\t\t\t<option value=\"LB\">Lebanon</option>\n\t\t\t<option value=\"LS\">Lesotho</option>\n\t\t\t<option value=\"LR\">Liberia</option>\n\t\t\t<option value=\"LY\">Libya</option>\n\t\t\t<option value=\"LI\">Liechtenstein</option>\n\t\t\t<option value=\"LT\">Lithuania</option>\n\t\t\t<option value=\"LU\">Luxembourg</option>\n\t\t\t<option value=\"MO\">Macau S.A.R.</option>\n\t\t\t<option value=\"MK\">Macedonia</option>\n\t\t\t<option value=\"MG\">Madagascar</option>\n\t\t\t<option value=\"MW\">Malawi</option>\n\t\t\t<option value=\"MY\">Malaysia</option>\n\t\t\t<option value=\"MV\">Maldives</option>\n\t\t\t<option value=\"ML\">Mali</option>\n\t\t\t<option value=\"MT\">Malta</option>\n\t\t\t<option value=\"MH\">Marshall Islands</option>\n\t\t\t<option value=\"MQ\">Martinique</option>\n\t\t\t<option value=\"MR\">Mauritania</option>\n\t\t\t<option value=\"MU\">Mauritius</option>\n\t\t\t<option value=\"YT\">Mayotte</option>\n\t\t\t<option value=\"MX\">Mexico</option>\n\t\t\t<option value=\"FM\">Micronesia</option>\n\t\t\t<option value=\"MD\">Moldova</option>\n\t\t\t<option value=\"MC\">Monaco</option>\n\t\t\t<option value=\"MN\">Mongolia</option>\n\t\t\t<option value=\"ME\">Montenegro</option>\n\t\t\t<option value=\"MS\">Montserrat</option>\n\t\t\t<option value=\"MA\">Morocco</option>\n\t\t\t<option value=\"MZ\">Mozambique</option>\n\t\t\t<option value=\"MM\">Myanmar</option>\n\t\t\t<option value=\"NA\">Namibia</option>\n\t\t\t<option value=\"NR\">Nauru</option>\n\t\t\t<option value=\"NP\">Nepal</option>\n\t\t\t<option value=\"NL\">Netherlands</option>\n\t\t\t<option value=\"AN\">Netherlands Antilles</option>\n\t\t\t<option value=\"NC\">New Caledonia</option>\n\t\t\t<option value=\"NZ\">New Zealand</option>\n\t\t\t<option value=\"NI\">Nicaragua</option>\n\t\t\t<option value=\"NE\">Niger</option>\n\t\t\t<option value=\"NG\">Nigeria</option>\n\t\t\t<option value=\"NU\">Niue</option>\n\t\t\t<option value=\"NF\">Norfolk Island</option>\n\t\t\t<option value=\"MP\">Northern Mariana Islands</option>\n\t\t\t<option value=\"NO\">Norway</option>\n\t\t\t<option value=\"OM\">Oman</option>\n\t\t\t<option value=\"PK\">Pakistan</option>\n\t\t\t<option value=\"PW\">Palau</option>\n\t\t\t<option value=\"PS\">Palestinian Territory</option>\n\t\t\t<option value=\"PA\">Panama</option>\n\t\t\t<option value=\"PG\">Papua new Guinea</option>\n\t\t\t<option value=\"PY\">Paraguay</option>\n\t\t\t<option value=\"PE\">Peru</option>\n\t\t\t<option value=\"PH\">Philippines</option>\n\t\t\t<option value=\"PN\">Pitcairn Island</option>\n\t\t\t<option value=\"PL\">Poland</option>\n\t\t\t<option value=\"PT\">Portugal</option>\n\t\t\t<option value=\"PR\">Puerto Rico</option>\n\t\t\t<option value=\"QA\">Qatar</option>\n\t\t\t<option value=\"RE\">Reunion</option>\n\t\t\t<option value=\"RO\">Romania</option>\n\t\t\t<option value=\"RU\">Russia</option>\n\t\t\t<option value=\"RW\">Rwanda</option>\n\t\t\t<option value=\"SH\">Saint Helena</option>\n\t\t\t<option value=\"KN\">Saint Kitts And Nevis</option>\n\t\t\t<option value=\"LC\">Saint Lucia</option>\n\t\t\t<option value=\"PM\">Saint Pierre and Miquelon</option>\n\t\t\t<option value=\"VC\">Saint Vincent And The Grenadines</option>\n\t\t\t<option value=\"WS\">Samoa</option>\n\t\t\t<option value=\"SM\">San Marino</option>\n\t\t\t<option value=\"ST\">Sao Tome and Principe</option>\n\t\t\t<option value=\"SA\">Saudi Arabia</option>\n\t\t\t<option value=\"SN\">Senegal</option>\n\t\t\t<option value=\"RS\">Serbia</option>\n\t\t\t<option value=\"SC\">Seychelles</option>\n\t\t\t<option value=\"SL\">Sierra Leone</option>\n\t\t\t<option value=\"SG\">Singapore</option>\n\t\t\t<option value=\"SK\">Slovakia</option>\n\t\t\t<option value=\"SI\">Slovenia</option>\n\t\t\t<option value=\"SB\">Solomon Islands</option>\n\t\t\t<option value=\"SO\">Somalia</option>\n\t\t\t<option value=\"ZA\">South Africa</option>\n\t\t\t<option value=\"GS\">South Georgia And The S.S Islands</option>\n\t\t\t<option value=\"ES\">Spain</option>\n\t\t\t<option value=\"LK\">Sri Lanka</option>\n\t\t\t<option value=\"SD\">Sudan</option>\n\t\t\t<option value=\"SR\">Suriname</option>\n\t\t\t<option value=\"SJ\">Svalbard And Jan Mayen Islands</option>\n\t\t\t<option value=\"SZ\">Swaziland</option>\n\t\t\t<option value=\"SE\">Sweden</option>\n\t\t\t<option value=\"CH\">Switzerland</option>\n\t\t\t<option value=\"SY\">Syria</option>\n\t\t\t<option value=\"TW\">Taiwan</option>\n\t\t\t<option value=\"TJ\">Tajikistan</option>\n\t\t\t<option value=\"TZ\">Tanzania</option>\n\t\t\t<option value=\"TH\">Thailand</option>\n\t\t\t<option value=\"TL\">Timor-Leste</option>\n\t\t\t<option value=\"TG\">Togo</option>\n\t\t\t<option value=\"TK\">Tokelau</option>\n\t\t\t<option value=\"TO\">Tonga</option>\n\t\t\t<option value=\"TT\">Trinidad And Tobago</option>\n\t\t\t<option value=\"TN\">Tunisia</option>\n\t\t\t<option value=\"TR\">Turkey</option>\n\t\t\t<option value=\"TM\">Turkmenistan</option>\n\t\t\t<option value=\"TC\">Turks And Caicos Islands</option>\n\t\t\t<option value=\"TV\">Tuvalu</option>\n\t\t\t<option value=\"UG\">Uganda</option>\n\t\t\t<option value=\"UA\">Ukraine</option>\n\t\t\t<option value=\"AE\">United Arab Emirates</option>\n\t\t\t<option value=\"GB\">United Kingdom</option>\n\t\t\t<option value=\"US\">United States</option>\n\t\t\t<option value=\"UM\">United States Minor Outlying Islands</option>\n\t\t\t<option value=\"UY\">Uruguay</option>\n\t\t\t<option value=\"UZ\">Uzbekistan</option>\n\t\t\t<option value=\"VU\">Vanuatu</option>\n\t\t\t<option value=\"VA\">Vatican City State (Holy See)</option>\n\t\t\t<option value=\"VE\">Venezuela</option>\n\t\t\t<option value=\"VN\">Vietnam</option>\n\t\t\t<option value=\"VG\">Virgin Islands (British)</option>\n\t\t\t<option value=\"VI\">Virgin Islands (US)</option>\n\t\t\t<option value=\"EH\">Western Sahara</option>\n\t\t\t<option value=\"WF\">Wallis And Futuna Islands</option>\n\t\t\t<option value=\"YE\">Yemen</option>\n\t\t\t<option value=\"ZM\">Zambia</option>\n\t\t\t<option value=\"ZW\">Zimbabwe</option>\n\t\t</select>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<button type=\"reset\" value=\"Reset\" class=\"btn btn-default\">Reset</button>\n\t\t<button name=\"Submit\" type=\"button\" class=\"btn btn-primary pull-right save_data\">Save</button>\n\t</li>\n</ul>";
 
 /***/ },
 /* 11 */
@@ -15717,78 +15714,7 @@
 	     * */
 	    var Rules = function () {
 	
-	        var this_validation = this;
-	
-	        /**
-	         *
-	         * get object for validation & run validation for every key in object
-	         *
-	         * @to_validate {object} - simply {key:value}
-	         * */
-	        // this.execute = function (to_validate) {
-	        //
-	        //     var i;
-	        //     var j;
-	        //     var default_validate;
-	        //     var default_validate_result;
-	        //
-	        //     for (i = 0; i<to_validate.length; i++) {
-	        //         if(to_validate[i].hasOwnProperty('dependencies') && to_validate[i].dependencies.val === false){
-	        //             // do not validate
-	        //         }else{
-	        //             // select rules to use
-	        //
-	        //             this.value = to_validate[i].val;
-	        //
-	        //             if (to_validate[i].hasOwnProperty('rules')) {
-	        //                 // use incoming rules
-	        //                 for(j=0; j<to_validate[i].rules.length; j++){
-	        //
-	        //                     if(this.list.hasOwnProperty(to_validate[i].rules[j])){
-	        //
-	        //                         if(this.list[to_validate[i].rules[j]].execute() === false){
-	        //                             to_validate[i]['error'] = this.list[to_validate[i].rules[j]].message;
-	        //                             break;
-	        //                         }else{
-	        //                             to_validate[i]['error'] = false;
-	        //                         }
-	        //                     }else{
-	        //                         console.error('NO such rule to validate: '+to_validate[i].rules[j]);
-	        //                     }
-	        //                 }
-	        //             }else{
-	        //                 // find pre-defined rules (username, password)
-	        //
-	        //                 if(this.defaults.elements.hasOwnProperty(to_validate[i].key)){
-	        //
-	        //                     default_validate = this.defaults.elements[to_validate[i].key];
-	        //
-	        //                     for(j=0; j<default_validate.length; j++){
-	        //
-	        //                         if(typeof default_validate === 'string'){
-	        //                             // simple rule, just execute
-	        //                             default_validate_result = this.list[default_validate].execute();
-	        //                         }else{
-	        //                             // rule with data (min, max...)
-	        //                             default_validate_result = this.list[default_validate.name].execute(default_validate.value);
-	        //                         }
-	        //
-	        //                         if(default_validate_result === false){
-	        //                             to_validate[i]['error'] = this.list[default_validate.name].message;
-	        //                         }else{
-	        //                             to_validate[i]['error'] = false;
-	        //                         }
-	        //                     }
-	        //                 }else{
-	        //                     console.error('NO such default rule to validate: '+to_validate[i].key);
-	        //                 }
-	        //
-	        //             }
-	        //         }
-	        //     }
-	        //
-	        //     return to_validate;
-	        // };
+	        //var this = this;
 	
 	        this.check_valid = function (to_validate) {
 	
@@ -15796,7 +15722,7 @@
 	            console.log('RUN validation');
 	
 	
-	            var validate_summ = {};
+	            var validate_sum = {};
 	            var key, validate_result, dependencies_key;
 	
 	
@@ -15805,13 +15731,13 @@
 	                validate_result = null;
 	                dependencies_key = null;
 	
-	                if(this_validation.defaults.elements.hasOwnProperty(key)){
+	                if(this.defaults.elements.hasOwnProperty(key)){
 	                    // there is such predefined rule
 	
-	                    if (this_validation.defaults.elements[key].dependencies !== false) {
+	                    if (this.defaults.elements[key].dependencies !== false) {
 	                        // check dependence field
 	
-	                        dependencies_key = this_validation.defaults.elements[key].dependencies;
+	                        dependencies_key = this.defaults.elements[key].dependencies;
 	
 	                        if(to_validate.hasOwnProperty(dependencies_key.name)) {
 	                            // there is such dependence field
@@ -15819,10 +15745,10 @@
 	                            if (to_validate[dependencies_key.name] === dependencies_key.value) {
 	                                // check dependence field value
 	
-	                                validate_result = this_validation.makeValidation(key,to_validate[key]);
+	                                validate_result = this.makeValidation(key,to_validate[key]);
 	
 	                                if (validate_result) {
-	                                    validate_summ[key] = validate_result;
+	                                    validate_sum[key] = validate_result;
 	                                }
 	                            }
 	                        }else{
@@ -15830,17 +15756,19 @@
 	                            console.error('validation error - no dependencies field');
 	                        }
 	                    }else{
-	                        validate_result = this_validation.makeValidation(key,to_validate[key]);
+	                        validate_result = this.makeValidation(key,to_validate[key]);
 	
 	                        if (validate_result) {
-	                            validate_summ[key] = validate_result;
+	                            validate_sum[key] = validate_result;
 	                        }
 	                    }
 	                }
 	            }
 	
-	            if(Object.keys(validate_summ).length > 0){
-	                return validate_summ;
+	            if(Object.keys(validate_sum).length > 0){
+	                console.log('VALIDATION RESULT !!! ');
+	                console.log(validate_sum);
+	                return validate_sum;
 	            }
 	        };
 	
@@ -15855,7 +15783,7 @@
 	            var i;
 	            var rule_name;
 	            var result;
-	            var rules = this_validation.defaults.elements[key].rules;
+	            var rules = this.defaults.elements[key].rules;
 	            var return_message = null;
 	
 	            console.log(key+' : '+value);
@@ -15867,17 +15795,17 @@
 	                rule_name = rules[i];
 	
 	                if(typeof rule_name === 'object'){
-	                    result = this_validation.list[rule_name.name].execute.call(this, rule_name.value);
+	                    result = this.list[rule_name.name].execute.call(this, rule_name.value);
 	                }else{
-	                    result = this_validation.list[rule_name].execute.call(this);
+	                    result = this.list[rule_name].execute.call(this);
 	                }
 	
 	                if (!result) {
 	
-	                    if(this_validation.list[rule_name]){
-	                        return_message = this_validation.list[rule_name].message;
+	                    if(this.list[rule_name]){
+	                        return_message = this.list[rule_name].message;
 	                    }else{
-	                        return_message = this_validation.list[rule_name.name].message(rule_name.value);
+	                        return_message = this.list[rule_name.name].message(rule_name.value);
 	                    }
 	
 	                    return return_message;
@@ -16100,7 +16028,8 @@
 	    Rules.prototype.defaults = {};
 	
 	    Rules.prototype.defaults.elements = {
-	        username: {rules: ['not_empty', {name: 'min', value: 8}, {name: 'max', value: 100}], dependencies: false},
+	        //username: {rules: ['not_empty', {name: 'min', value: 8}, {name: 'max', value: 100}], dependencies: false},
+	        first_name: {rules: ['not_empty', {name: 'min', value: 8}, {name: 'max', value: 100}], dependencies: false},
 	        password: {rules: ['not_empty', {name: 'min', value: 6}, {name: 'max', value: 100}], dependencies: false},
 	        // domain: ['not_empty', {name: 'min', value: 3}, {name: 'max', value: 255} , 'is_domain'],
 	        // bulk_domains: ['not_empty', 'is_bulk_domains'],
@@ -16254,7 +16183,7 @@
 	
 			users_list.fetch();
 	
-			window.users_list = users_list;
+			//window.users_list = users_list;
 	
 			var Button = Backbone.View.extend({
 				initialize: function(){
@@ -16309,9 +16238,13 @@
 			        					'el': this.$el.find('[name="Submit"]')
 			        				});
 	
-					this.listenTo(this.new_user, 'invalid', function(){
-			        	console.log('INVALID VALIDATION');
-			        } );
+	
+					this.listenTo(window.users_list, 'change', function(){
+						var last_model_in_collection = arguments[0].collection.last();
+						if (last_model_in_collection) {
+							this.render(last_model_in_collection);
+						}
+					} );
 			    },
 			    model: User,
 				el: '#registerCustomerForm2',
@@ -16397,8 +16330,13 @@
 							wait: true
 						}); 
 				},
-				render: function(){
-					this.$el.html(this.template({data:this.new_user.attributes}));
+				render: function(model){
+					if(model){
+						this.$el.html(this.template({data:model.attributes}));
+					}else{
+						this.$el.html(this.template({data:this.new_user.attributes}));
+					}
+	
 					return this;		
 				}
 			});

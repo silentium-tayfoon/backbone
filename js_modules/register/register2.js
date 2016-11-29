@@ -103,7 +103,7 @@ module.exports = function(){
 
 		users_list.fetch();
 
-		window.users_list = users_list;
+		//window.users_list = users_list;
 
 		var Button = Backbone.View.extend({
 			initialize: function(){
@@ -158,9 +158,13 @@ module.exports = function(){
 		        					'el': this.$el.find('[name="Submit"]')
 		        				});
 
-				this.listenTo(this.new_user, 'invalid', function(){
-		        	console.log('INVALID VALIDATION');
-		        } );
+
+				this.listenTo(window.users_list, 'change', function(){
+					var last_model_in_collection = arguments[0].collection.last();
+					if (last_model_in_collection) {
+						this.render(last_model_in_collection);
+					}
+				} );
 		    },
 		    model: User,
 			el: '#registerCustomerForm2',
@@ -246,8 +250,13 @@ module.exports = function(){
 						wait: true
 					}); 
 			},
-			render: function(){
-				this.$el.html(this.template({data:this.new_user.attributes}));
+			render: function(model){
+				if(model){
+					this.$el.html(this.template({data:model.attributes}));
+				}else{
+					this.$el.html(this.template({data:this.new_user.attributes}));
+				}
+
 				return this;		
 			}
 		});

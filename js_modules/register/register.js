@@ -26,28 +26,6 @@ module.exports = function(){
 		var save_data = document.querySelector('.save_data');
 		var navbar = document.querySelector('.navbar');
 
-		var min = function(val){
-			var pass = false;
-			if(val.length && val.length > 1){
-				pass = true;
-			}
-			return pass;
-		};
-
-
-		var View = Backbone.Model.extend({
-			defaults: {
-				model: null,
-				link: null,
-				somestrange: 'blabla'
-			},
-			initialize: function (options) {
-				this.on('change', function (model) {
-					debugger;
-				});
-			}
-		});
-
 		var User = Backbone.Model.extend({
 			url:'/api/users',
 	       	defaults: {
@@ -149,6 +127,23 @@ module.exports = function(){
 		        				});
 
 				this.listenTo(this.new_user, 'invalid', function(){
+					var error_list = arguments[1];
+					var i;
+					/**
+					 * {
+						first_name: "Must be at least 8 characters.",
+						business_name: "Must be at least 2 characters."
+					 * }
+					 * */
+
+					// showErrors(arguments[1]);
+                    //
+                    //
+					// if (error_list.length > 0) {
+					// 	for (i=0; i<error_list.length; i++) {
+                    //
+					// 	}
+					// }
 		        	console.log('INVALID VALIDATION');
 		        } );
 		    },
@@ -215,10 +210,11 @@ module.exports = function(){
 
 				//var validate_result = this.new_user.validate(data_from_dom);
 
-				this.new_user.set(data_from_dom, {validate:true});
+				//this.new_user.set(data_from_dom, {validate:true});
 
-				this.new_user.save(null,null,{
+				this.new_user.save(data_from_dom,{
 						success: function(){
+							debugger;
 							console.log('!!!!! all good');
 
 							list_view.collection.add(list_view.new_user);
@@ -234,6 +230,7 @@ module.exports = function(){
 							//list_view.$el.find('[name="Submit"]').removeClass('btn-danger').addClass('btn-default');
 						},
 						error: function(){
+							debugger;
 							console.log('Save new user on server FAILL');
 						},
 						wait: true

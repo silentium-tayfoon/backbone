@@ -9,78 +9,7 @@
      * */
     var Rules = function () {
 
-        var this_validation = this;
-
-        /**
-         *
-         * get object for validation & run validation for every key in object
-         *
-         * @to_validate {object} - simply {key:value}
-         * */
-        // this.execute = function (to_validate) {
-        //
-        //     var i;
-        //     var j;
-        //     var default_validate;
-        //     var default_validate_result;
-        //
-        //     for (i = 0; i<to_validate.length; i++) {
-        //         if(to_validate[i].hasOwnProperty('dependencies') && to_validate[i].dependencies.val === false){
-        //             // do not validate
-        //         }else{
-        //             // select rules to use
-        //
-        //             this.value = to_validate[i].val;
-        //
-        //             if (to_validate[i].hasOwnProperty('rules')) {
-        //                 // use incoming rules
-        //                 for(j=0; j<to_validate[i].rules.length; j++){
-        //
-        //                     if(this.list.hasOwnProperty(to_validate[i].rules[j])){
-        //
-        //                         if(this.list[to_validate[i].rules[j]].execute() === false){
-        //                             to_validate[i]['error'] = this.list[to_validate[i].rules[j]].message;
-        //                             break;
-        //                         }else{
-        //                             to_validate[i]['error'] = false;
-        //                         }
-        //                     }else{
-        //                         console.error('NO such rule to validate: '+to_validate[i].rules[j]);
-        //                     }
-        //                 }
-        //             }else{
-        //                 // find pre-defined rules (username, password)
-        //
-        //                 if(this.defaults.elements.hasOwnProperty(to_validate[i].key)){
-        //
-        //                     default_validate = this.defaults.elements[to_validate[i].key];
-        //
-        //                     for(j=0; j<default_validate.length; j++){
-        //
-        //                         if(typeof default_validate === 'string'){
-        //                             // simple rule, just execute
-        //                             default_validate_result = this.list[default_validate].execute();
-        //                         }else{
-        //                             // rule with data (min, max...)
-        //                             default_validate_result = this.list[default_validate.name].execute(default_validate.value);
-        //                         }
-        //
-        //                         if(default_validate_result === false){
-        //                             to_validate[i]['error'] = this.list[default_validate.name].message;
-        //                         }else{
-        //                             to_validate[i]['error'] = false;
-        //                         }
-        //                     }
-        //                 }else{
-        //                     console.error('NO such default rule to validate: '+to_validate[i].key);
-        //                 }
-        //
-        //             }
-        //         }
-        //     }
-        //
-        //     return to_validate;
-        // };
+        //var this = this;
 
         this.check_valid = function (to_validate) {
 
@@ -88,7 +17,7 @@
             console.log('RUN validation');
 
 
-            var validate_summ = {};
+            var validate_sum = {};
             var key, validate_result, dependencies_key;
 
 
@@ -97,13 +26,13 @@
                 validate_result = null;
                 dependencies_key = null;
 
-                if(this_validation.defaults.elements.hasOwnProperty(key)){
+                if(this.defaults.elements.hasOwnProperty(key)){
                     // there is such predefined rule
 
-                    if (this_validation.defaults.elements[key].dependencies !== false) {
+                    if (this.defaults.elements[key].dependencies !== false) {
                         // check dependence field
 
-                        dependencies_key = this_validation.defaults.elements[key].dependencies;
+                        dependencies_key = this.defaults.elements[key].dependencies;
 
                         if(to_validate.hasOwnProperty(dependencies_key.name)) {
                             // there is such dependence field
@@ -111,10 +40,10 @@
                             if (to_validate[dependencies_key.name] === dependencies_key.value) {
                                 // check dependence field value
 
-                                validate_result = this_validation.makeValidation(key,to_validate[key]);
+                                validate_result = this.makeValidation(key,to_validate[key]);
 
                                 if (validate_result) {
-                                    validate_summ[key] = validate_result;
+                                    validate_sum[key] = validate_result;
                                 }
                             }
                         }else{
@@ -122,17 +51,19 @@
                             console.error('validation error - no dependencies field');
                         }
                     }else{
-                        validate_result = this_validation.makeValidation(key,to_validate[key]);
+                        validate_result = this.makeValidation(key,to_validate[key]);
 
                         if (validate_result) {
-                            validate_summ[key] = validate_result;
+                            validate_sum[key] = validate_result;
                         }
                     }
                 }
             }
 
-            if(Object.keys(validate_summ).length > 0){
-                return validate_summ;
+            if(Object.keys(validate_sum).length > 0){
+                console.log('VALIDATION RESULT !!! ');
+                console.log(validate_sum);
+                return validate_sum;
             }
         };
 
@@ -147,7 +78,7 @@
             var i;
             var rule_name;
             var result;
-            var rules = this_validation.defaults.elements[key].rules;
+            var rules = this.defaults.elements[key].rules;
             var return_message = null;
 
             console.log(key+' : '+value);
@@ -159,17 +90,17 @@
                 rule_name = rules[i];
 
                 if(typeof rule_name === 'object'){
-                    result = this_validation.list[rule_name.name].execute.call(this, rule_name.value);
+                    result = this.list[rule_name.name].execute.call(this, rule_name.value);
                 }else{
-                    result = this_validation.list[rule_name].execute.call(this);
+                    result = this.list[rule_name].execute.call(this);
                 }
 
                 if (!result) {
 
-                    if(this_validation.list[rule_name]){
-                        return_message = this_validation.list[rule_name].message;
+                    if(this.list[rule_name]){
+                        return_message = this.list[rule_name].message;
                     }else{
-                        return_message = this_validation.list[rule_name.name].message(rule_name.value);
+                        return_message = this.list[rule_name.name].message(rule_name.value);
                     }
 
                     return return_message;
@@ -392,7 +323,8 @@
     Rules.prototype.defaults = {};
 
     Rules.prototype.defaults.elements = {
-        username: {rules: ['not_empty', {name: 'min', value: 8}, {name: 'max', value: 100}], dependencies: false},
+        //username: {rules: ['not_empty', {name: 'min', value: 8}, {name: 'max', value: 100}], dependencies: false},
+        first_name: {rules: ['not_empty', {name: 'min', value: 8}, {name: 'max', value: 100}], dependencies: false},
         password: {rules: ['not_empty', {name: 'min', value: 6}, {name: 'max', value: 100}], dependencies: false},
         // domain: ['not_empty', {name: 'min', value: 3}, {name: 'max', value: 255} , 'is_domain'],
         // bulk_domains: ['not_empty', 'is_bulk_domains'],

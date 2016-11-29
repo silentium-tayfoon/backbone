@@ -176,15 +176,23 @@ app.delete( '/api/users/:id', function( request, response ) {
 */
 
 	var create = function(request, response){
+
+		var options = {
+			'last_name': 'some Error HERE',
+			'last_name2': [{value:'some domain', error:'some error'}, {value:'some domain2', error:'some error2'}]
+		};
+
 		var user = new UserModel({
 			id: UserModel.length,
-			first_name: request.body.first_name,
+			//first_name: request.body.first_name,
+			first_name: 'SERVER FIRST NAME',
 	        last_name: request.body.last_name,
 			country: request.body.country,
 			vehicle1: request.body.vehicle1,
 			vehicle2: request.body.vehicle2,
 			gender: request.body.gender
 		});
+
 		user.save( function( err ) {
 			if( !err ) {
 				return console.log( 'New user with id: ' + user.id );
@@ -192,7 +200,14 @@ app.delete( '/api/users/:id', function( request, response ) {
 				return console.log( err );
 			}
 		});
+
+		user['error'] = JSON.stringify({
+			first_name: 'not walid'
+		});
+
 		return response.send( user );
+
+		//return response.status(500).send( error_model );
 	};
 
 	var read = function(request, response) {

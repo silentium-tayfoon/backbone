@@ -1,4 +1,7 @@
 mongodb start demon
+
+# MONGO DB - to start mong database just run in console: mongod
+
 https://docs.mongodb.com/manual/tutorial/manage-mongodb-processes/
 # mongod
 

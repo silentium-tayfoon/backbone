@@ -1,9 +1,10 @@
 <input type="hidden" value="<%= (data.id) ? data.id : 'null' %>" name="id" />
 
 <ul class="list-group">
-	<li class="list-group-item">
-		<label class='highLabel' data-label='first_name' for="first_name">First name</label>
-		<input type="text" value="<%= data.first_name %>" name="first_name" class="form-control" placeholder="first name" id='first_name' required />
+	<li class="list-group-item v_element">
+		<label class='highLabel v_title' data-label='first_name' for="first_name">First name</label>
+		<input type="text" value="<%= data.first_name %>" name="first_name" class="form-control v_input" placeholder="first name" id='first_name' required />
+		<span class="v_error hidden"></span>
 	</li>
 	<li class="list-group-item">
 		<span class='highLabel' data-label='last_name'>Last name</span>
@@ -32,10 +33,10 @@
 		<label><input type="radio" name="acc_type" value="business"
 			<% if(data.acc_type === 'business'){%> checked <% } %>> business</label>
 	</li>
-	<li class="list-group-item acc_type_toggle <% if(data.acc_type === 'personal'){%> hidden <% } %>" >
-		<span class='highLabel' data-label='business_name'>business</span><br>
+	<li class="v_element list-group-item acc_type_toggle <% if(data.acc_type === 'personal'){%> hidden <% } %>" >
+		<span class='highLabel v_title' data-label='business_name'>business</span><br>
 		<label>
-		<input type="text" name="business_name" value="<% if(data.business_name){%> data.business_name <% } %>" class="form-control"> business name
+		<input type="text" name="business_name" value="<% if(data.business_name){%> data.business_name <% } %>" class="v_input form-control"> business name
 		</label>
 	</li>
 	<li class="list-group-item">
