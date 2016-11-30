@@ -13,3 +13,11 @@ p {
 .container {
 	margin-top: 50px;
 }
+
+.form_validation_error{
+    border-color: red;
+}
+
+.validation_error, .label_validation_error  {
+    color: red;
+}

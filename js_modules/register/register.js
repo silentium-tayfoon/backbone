@@ -4,6 +4,9 @@ var Backbone = require('imports?$=jquery&_=underscore!./../../frameworks/backbon
 var vendor_update = require('imports?$=jquery&_=underscore!./../../frameworks/vendor_update.js');
 var Validate = require('./../../frameworks/set_validate.js');
 
+var gl = require('imports?$=jquery!./../../frameworks/global.js');
+
+
 var register_form_template = require('html!./../../tpl/register_form_template.tpl');
 var register_template = require('html!./../../tpl/register_template.tpl');
 
@@ -14,6 +17,58 @@ module.exports = function(){
 	console.log('Backbone = '+Backbone.VERSION);
 	console.log(Backbone.sync);
 	console.log(Validate.VERSION);
+
+	var showErrors = function (errors, form_dom) {
+
+		var validation_element_dom,
+			validation_input_dom,
+			validation_title_dom,
+			validation_error_dom;
+
+		for (var error in errors) {
+
+			validation_input_dom = form_dom.querySelector('[name=' + error + ']');
+
+			if(validation_input_dom){
+				// there is such element, find all other elements
+
+				validation_element_dom = Global.helpers.findParent(validation_input_dom, 'validation_element');
+
+				if(validation_element_dom){
+					// there is container for all other fields
+
+					validation_title_dom = validation_element_dom.querySelector('.validation_title');
+					validation_error_dom = validation_element_dom.querySelector('.validation_error');
+
+					if (validation_title_dom && validation_error_dom) {
+						// there is all needed elements, to show error
+
+						// 1) red border for input
+						validation_input_dom.classList.add(Global.predefine_values.class.ERROR_HIGHLIGHT_CLASS);
+
+						// 2) red color for title
+						validation_title_dom.classList.add(Global.predefine_values.class.ERROR_LABEL_CLASS);
+
+						// 3) put text and remove hidden class
+						validation_error_dom.innerHTML = errors[error];
+						validation_error_dom.classList.remove(Global.predefine_values.class.HIDDEN);
+
+					} else {
+
+						console.error('validation error - can\'t find dom some of element: validation_title_dom or validation_error_dom');
+					}
+
+				} else {
+
+					console.error('validation error - can\'t find dom parent of element: '+ error);
+				}
+			} else {
+
+				console.error('validation error - no such element in dom: '+ error);
+			}
+		}
+	};
+
 
 	$(function(){
 
@@ -44,8 +99,8 @@ module.exports = function(){
 				// 	console.log('saved');
 				// });
 
-				this.validate = function(attr){
-					return Validate.check_valid.call(Validate, attr);
+				this.validate = function(attr,options){
+					return Validate.check_valid.call(Validate, attr, options );
 				};
 	       	}
 		});
@@ -106,7 +161,7 @@ module.exports = function(){
 					if(e.target.type === 'button' || e.target.type === 'checkbox' || e.target.type === 'radio'){
 						self.new_user.set(data);
 					}else{
-						self.new_user.set(data, {validate:true});
+						self.new_user.set(data, {validate:true, target_dom:e.target, field: data});
 					}
 
 				});
@@ -136,7 +191,8 @@ module.exports = function(){
 					 * }
 					 * */
 
-					// showErrors(arguments[1]);
+					//showErrors(arguments[1], this.el);
+
                     //
                     //
 					// if (error_list.length > 0) {
@@ -208,7 +264,7 @@ module.exports = function(){
 
 				// recive formated data from dom - now validate
 
-				//var validate_result = this.new_user.validate(data_from_dom);
+				//var validation_result = this.new_user.validate(data_from_dom);
 
 				//this.new_user.set(data_from_dom, {validate:true});
 

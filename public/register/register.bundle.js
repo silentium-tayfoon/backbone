@@ -49,7 +49,7 @@
 	//delete require.cache[require.resolve('./../../js_modules/register/register.js')];
 	
 	var register = __webpack_require__(8);
-	var register2 = __webpack_require__(14);
+	var register2 = __webpack_require__(13);
 	
 	register();
 	register2();
@@ -15256,10 +15256,13 @@
 	var _ = __webpack_require__(3);
 	var Backbone = __webpack_require__(4);
 	var vendor_update = __webpack_require__(9);
-	var Validate = __webpack_require__(13);
+	var Validate = __webpack_require__(10);
 	
-	var register_form_template = __webpack_require__(10);
-	var register_template = __webpack_require__(11);
+	var gl = __webpack_require__(14);
+	
+	
+	var register_form_template = __webpack_require__(11);
+	var register_template = __webpack_require__(12);
 	
 	module.exports = function(){
 	
@@ -15268,6 +15271,58 @@
 		console.log('Backbone = '+Backbone.VERSION);
 		console.log(Backbone.sync);
 		console.log(Validate.VERSION);
+	
+		var showErrors = function (errors, form_dom) {
+	
+			var validation_element_dom,
+				validation_input_dom,
+				validation_title_dom,
+				validation_error_dom;
+	
+			for (var error in errors) {
+	
+				validation_input_dom = form_dom.querySelector('[name=' + error + ']');
+	
+				if(validation_input_dom){
+					// there is such element, find all other elements
+	
+					validation_element_dom = Global.helpers.findParent(validation_input_dom, 'validation_element');
+	
+					if(validation_element_dom){
+						// there is container for all other fields
+	
+						validation_title_dom = validation_element_dom.querySelector('.validation_title');
+						validation_error_dom = validation_element_dom.querySelector('.validation_error');
+	
+						if (validation_title_dom && validation_error_dom) {
+							// there is all needed elements, to show error
+	
+							// 1) red border for input
+							validation_input_dom.classList.add(Global.predefine_values.class.ERROR_HIGHLIGHT_CLASS);
+	
+							// 2) red color for title
+							validation_title_dom.classList.add(Global.predefine_values.class.ERROR_LABEL_CLASS);
+	
+							// 3) put text and remove hidden class
+							validation_error_dom.innerHTML = errors[error];
+							validation_error_dom.classList.remove(Global.predefine_values.class.HIDDEN);
+	
+						} else {
+	
+							console.error('validation error - can\'t find dom some of element: validation_title_dom or validation_error_dom');
+						}
+	
+					} else {
+	
+						console.error('validation error - can\'t find dom parent of element: '+ error);
+					}
+				} else {
+	
+					console.error('validation error - no such element in dom: '+ error);
+				}
+			}
+		};
+	
 	
 		$(function(){
 	
@@ -15298,8 +15353,8 @@
 					// 	console.log('saved');
 					// });
 	
-					this.validate = function(attr){
-						return Validate.check_valid.call(Validate, attr);
+					this.validate = function(attr,options){
+						return Validate.check_valid.call(Validate, attr, options );
 					};
 		       	}
 			});
@@ -15360,7 +15415,7 @@
 						if(e.target.type === 'button' || e.target.type === 'checkbox' || e.target.type === 'radio'){
 							self.new_user.set(data);
 						}else{
-							self.new_user.set(data, {validate:true});
+							self.new_user.set(data, {validate:true, target_dom:e.target, field: data});
 						}
 	
 					});
@@ -15390,7 +15445,8 @@
 						 * }
 						 * */
 	
-						// showErrors(arguments[1]);
+						//showErrors(arguments[1], this.el);
+	
 	                    //
 	                    //
 						// if (error_list.length > 0) {
@@ -15462,7 +15518,7 @@
 	
 					// recive formated data from dom - now validate
 	
-					//var validate_result = this.new_user.validate(data_from_dom);
+					//var validation_result = this.new_user.validate(data_from_dom);
 	
 					//this.new_user.set(data_from_dom, {validate:true});
 	
@@ -15688,22 +15744,94 @@
 
 /***/ },
 /* 10 */
-/***/ function(module, exports) {
-
-	module.exports = "<input type=\"hidden\" value=\"<%= (data.id) ? data.id : 'null' %>\" name=\"id\" />\n\n<ul class=\"list-group\">\n\t<li class=\"list-group-item v_element\">\n\t\t<label class='highLabel v_title' data-label='first_name' for=\"first_name\">First name</label>\n\t\t<input type=\"text\" value=\"<%= data.first_name %>\" name=\"first_name\" class=\"form-control v_input\" placeholder=\"first name\" id='first_name' required />\n\t\t<span class=\"v_error hidden\"></span>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel' data-label='last_name'>Last name</span>\n\t\t<input type=\"text\" value=\"<%= data.last_name %>\" name=\"last_name\" class=\"form-control\" placeholder=\"last name\" />\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel'>Transport</span><br>\n\t\t<label><input type=\"checkbox\" name=\"vehicle1\" value=\"true\" \n\t\t<% if(data.vehicle1){%> checked <% } %>> I have a bike</label><br>\n\t\t\t<label><input type=\"checkbox\" name=\"vehicle2\" value=\"true\"\n\t\t\t<% if(data.vehicle2){%> checked <% } %>> I have a car</label>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel' data-label='access'>Gender</span><br>\n\t\t<label><input type=\"radio\" name=\"gender\" value=\"male\" \n\t\t<% if(data.gender === 'male'){%> checked <% } %>> Male</label><br>\n\t\t<label><input type=\"radio\" name=\"gender\" value=\"female\"\n\t\t<% if(data.gender === 'female'){%> checked <% } %>> Female</label><br>\n\t\t<label><input type=\"radio\" name=\"gender\" value=\"other\"\n\t\t<% if(data.gender === 'other'){%> checked <% } %>> Other</label>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel' data-label='acc_type'>private/business</span><br>\n\t\t<label><input type=\"radio\" name=\"acc_type\" value=\"personal\"\n\t\t\t<% if(data.acc_type === 'personal'){%> checked <% } %>> personal</label><br>\n\t\t<label><input type=\"radio\" name=\"acc_type\" value=\"business\"\n\t\t\t<% if(data.acc_type === 'business'){%> checked <% } %>> business</label>\n\t</li>\n\t<li class=\"v_element list-group-item acc_type_toggle <% if(data.acc_type === 'personal'){%> hidden <% } %>\" >\n\t\t<span class='highLabel v_title' data-label='business_name'>business</span><br>\n\t\t<label>\n\t\t<input type=\"text\" name=\"business_name\" value=\"<% if(data.business_name){%> data.business_name <% } %>\" class=\"v_input form-control\"> business name\n\t\t</label>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel'>Country</span>\n\t\t<select name=\"country\" value=\"<%= (data.country) ? data.country : '' %>\" class=\"select_standart select2-hidden-accessible form-control\">\n\t\t\t<option value=\"AX\">Åland Islands</option>\n\t\t\t<option value=\"AF\">Afghanistan</option>\n\t\t\t<option value=\"AL\">Albania</option>\n\t\t\t<option value=\"DZ\">Algeria</option>\n\t\t\t<option value=\"AS\">American Samoa</option>\n\t\t\t<option value=\"AD\">Andorra</option>\n\t\t\t<option value=\"AO\">Angola</option>\n\t\t\t<option value=\"AI\">Anguilla</option>\n\t\t\t<option value=\"AQ\">Antarctica</option>\n\t\t\t<option value=\"AG\">Antigua And Barbuda</option>\n\t\t\t<option value=\"AR\">Argentina</option>\n\t\t\t<option value=\"AM\">Armenia</option>\n\t\t\t<option value=\"AW\">Aruba</option>\n\t\t\t<option value=\"AU\">Australia</option>\n\t\t\t<option value=\"AT\">Austria</option>\n\t\t\t<option value=\"AZ\">Azerbaijan</option>\n\t\t\t<option value=\"BS\">Bahamas</option>\n\t\t\t<option value=\"BH\">Bahrain</option>\n\t\t\t<option value=\"BD\">Bangladesh</option>\n\t\t\t<option value=\"BB\">Barbados</option>\n\t\t\t<option value=\"BY\">Belarus</option>\n\t\t\t<option value=\"BE\">Belgium</option>\n\t\t\t<option value=\"BZ\">Belize</option>\n\t\t\t<option value=\"BJ\">Benin</option>\n\t\t\t<option value=\"BM\">Bermuda</option>\n\t\t\t<option value=\"BT\">Bhutan</option>\n\t\t\t<option value=\"BO\">Bolivia</option>\n\t\t\t<option value=\"BA\">Bosnia and Herzegovina</option>\n\t\t\t<option value=\"BW\">Botswana</option>\n\t\t\t<option value=\"BV\">Bouvet Island</option>\n\t\t\t<option value=\"BR\">Brazil</option>\n\t\t\t<option value=\"IO\">British Indian Ocean Territory</option>\n\t\t\t<option value=\"BN\">Brunei</option>\n\t\t\t<option value=\"BG\">Bulgaria</option>\n\t\t\t<option value=\"BF\">Burkina Faso</option>\n\t\t\t<option value=\"BI\">Burundi</option>\n\t\t\t<option value=\"KH\">Cambodia</option>\n\t\t\t<option value=\"CM\">Cameroon</option>\n\t\t\t<option value=\"CA\">Canada</option>\n\t\t\t<option value=\"CV\">Cape Verde</option>\n\t\t\t<option value=\"KY\">Cayman Islands</option>\n\t\t\t<option value=\"CF\">Central African Republic</option>\n\t\t\t<option value=\"TD\">Chad</option>\n\t\t\t<option value=\"CL\">Chile</option>\n\t\t\t<option value=\"CN\">China</option>\n\t\t\t<option value=\"CX\">Christmas Island</option>\n\t\t\t<option value=\"CC\">Cocos (Keeling) Islands</option>\n\t\t\t<option value=\"CO\">Colombia</option>\n\t\t\t<option value=\"KM\">Comoros</option>\n\t\t\t<option value=\"CG\">Congo</option>\n\t\t\t<option value=\"CD\">Congo, Democractic Republic</option>\n\t\t\t<option value=\"CK\">Cook Islands</option>\n\t\t\t<option value=\"CR\">Costa Rica</option>\n\t\t\t<option value=\"CI\">Cote D'Ivoire (Ivory Coast)</option>\n\t\t\t<option value=\"HR\">Croatia (Hrvatska)</option>\n\t\t\t<option value=\"CU\">Cuba</option>\n\t\t\t<option value=\"CY\">Cyprus</option>\n\t\t\t<option value=\"CZ\">Czech Republic</option>\n\t\t\t<option value=\"DK\">Denmark</option>\n\t\t\t<option value=\"DJ\">Djibouti</option>\n\t\t\t<option value=\"DM\">Dominica</option>\n\t\t\t<option value=\"DO\">Dominican Republic</option>\n\t\t\t<option value=\"EC\">Ecuador</option>\n\t\t\t<option value=\"EG\">Egypt</option>\n\t\t\t<option value=\"SV\">El Salvador</option>\n\t\t\t<option value=\"GQ\">Equatorial Guinea</option>\n\t\t\t<option value=\"ER\">Eritrea</option>\n\t\t\t<option value=\"EE\">Estonia</option>\n\t\t\t<option value=\"ET\">Ethiopia</option>\n\t\t\t<option value=\"FK\">Falkland Islands</option>\n\t\t\t<option value=\"FO\">Faroe Islands</option>\n\t\t\t<option value=\"FJ\">Fiji Islands</option>\n\t\t\t<option value=\"FI\">Finland</option>\n\t\t\t<option value=\"FR\">France</option>\n\t\t\t<option value=\"GF\">French Guiana</option>\n\t\t\t<option value=\"PF\">French Polynesia</option>\n\t\t\t<option value=\"TF\">French Southern Territories</option>\n\t\t\t<option value=\"GA\">Gabon</option>\n\t\t\t<option value=\"GM\">Gambia, The</option>\n\t\t\t<option value=\"GE\">Georgia</option>\n\t\t\t<option value=\"DE\">Germany</option>\n\t\t\t<option value=\"GH\">Ghana</option>\n\t\t\t<option value=\"GI\">Gibraltar</option>\n\t\t\t<option value=\"GR\">Greece</option>\n\t\t\t<option value=\"GL\">Greenland</option>\n\t\t\t<option value=\"GD\">Grenada</option>\n\t\t\t<option value=\"GP\">Guadeloupe</option>\n\t\t\t<option value=\"GU\">Guam</option>\n\t\t\t<option value=\"GT\">Guatemala</option>\n\t\t\t<option value=\"GN\">Guinea</option>\n\t\t\t<option value=\"GW\">Guinea-Bissau</option>\n\t\t\t<option value=\"GY\">Guyana</option>\n\t\t\t<option value=\"HT\">Haiti</option>\n\t\t\t<option value=\"HM\">Heard and McDonald Islands</option>\n\t\t\t<option value=\"HN\">Honduras</option>\n\t\t\t<option value=\"HK\">Hong Kong S.A.R.</option>\n\t\t\t<option value=\"HU\">Hungary</option>\n\t\t\t<option value=\"IS\">Iceland</option>\n\t\t\t<option value=\"IN\">India</option>\n\t\t\t<option value=\"ID\">Indonesia</option>\n\t\t\t<option value=\"IR\">Iran</option>\n\t\t\t<option value=\"IQ\">Iraq</option>\n\t\t\t<option value=\"IE\">Ireland</option>\n\t\t\t<option value=\"IL\">Israel</option>\n\t\t\t<option value=\"IT\">Italy</option>\n\t\t\t<option value=\"JM\">Jamaica</option>\n\t\t\t<option value=\"JP\">Japan</option>\n\t\t\t<option value=\"JO\">Jordan</option>\n\t\t\t<option value=\"KZ\">Kazakhstan</option>\n\t\t\t<option value=\"KE\">Kenya</option>\n\t\t\t<option value=\"KI\">Kiribati</option>\n\t\t\t<option value=\"KR\">Korea</option>\n\t\t\t<option value=\"KP\">Korea, North</option>\n\t\t\t<option value=\"KW\">Kuwait</option>\n\t\t\t<option value=\"KG\">Kyrgyzstan</option>\n\t\t\t<option value=\"LA\">Laos</option>\n\t\t\t<option value=\"LV\">Latvia</option>\n\t\t\t<option value=\"LB\">Lebanon</option>\n\t\t\t<option value=\"LS\">Lesotho</option>\n\t\t\t<option value=\"LR\">Liberia</option>\n\t\t\t<option value=\"LY\">Libya</option>\n\t\t\t<option value=\"LI\">Liechtenstein</option>\n\t\t\t<option value=\"LT\">Lithuania</option>\n\t\t\t<option value=\"LU\">Luxembourg</option>\n\t\t\t<option value=\"MO\">Macau S.A.R.</option>\n\t\t\t<option value=\"MK\">Macedonia</option>\n\t\t\t<option value=\"MG\">Madagascar</option>\n\t\t\t<option value=\"MW\">Malawi</option>\n\t\t\t<option value=\"MY\">Malaysia</option>\n\t\t\t<option value=\"MV\">Maldives</option>\n\t\t\t<option value=\"ML\">Mali</option>\n\t\t\t<option value=\"MT\">Malta</option>\n\t\t\t<option value=\"MH\">Marshall Islands</option>\n\t\t\t<option value=\"MQ\">Martinique</option>\n\t\t\t<option value=\"MR\">Mauritania</option>\n\t\t\t<option value=\"MU\">Mauritius</option>\n\t\t\t<option value=\"YT\">Mayotte</option>\n\t\t\t<option value=\"MX\">Mexico</option>\n\t\t\t<option value=\"FM\">Micronesia</option>\n\t\t\t<option value=\"MD\">Moldova</option>\n\t\t\t<option value=\"MC\">Monaco</option>\n\t\t\t<option value=\"MN\">Mongolia</option>\n\t\t\t<option value=\"ME\">Montenegro</option>\n\t\t\t<option value=\"MS\">Montserrat</option>\n\t\t\t<option value=\"MA\">Morocco</option>\n\t\t\t<option value=\"MZ\">Mozambique</option>\n\t\t\t<option value=\"MM\">Myanmar</option>\n\t\t\t<option value=\"NA\">Namibia</option>\n\t\t\t<option value=\"NR\">Nauru</option>\n\t\t\t<option value=\"NP\">Nepal</option>\n\t\t\t<option value=\"NL\">Netherlands</option>\n\t\t\t<option value=\"AN\">Netherlands Antilles</option>\n\t\t\t<option value=\"NC\">New Caledonia</option>\n\t\t\t<option value=\"NZ\">New Zealand</option>\n\t\t\t<option value=\"NI\">Nicaragua</option>\n\t\t\t<option value=\"NE\">Niger</option>\n\t\t\t<option value=\"NG\">Nigeria</option>\n\t\t\t<option value=\"NU\">Niue</option>\n\t\t\t<option value=\"NF\">Norfolk Island</option>\n\t\t\t<option value=\"MP\">Northern Mariana Islands</option>\n\t\t\t<option value=\"NO\">Norway</option>\n\t\t\t<option value=\"OM\">Oman</option>\n\t\t\t<option value=\"PK\">Pakistan</option>\n\t\t\t<option value=\"PW\">Palau</option>\n\t\t\t<option value=\"PS\">Palestinian Territory</option>\n\t\t\t<option value=\"PA\">Panama</option>\n\t\t\t<option value=\"PG\">Papua new Guinea</option>\n\t\t\t<option value=\"PY\">Paraguay</option>\n\t\t\t<option value=\"PE\">Peru</option>\n\t\t\t<option value=\"PH\">Philippines</option>\n\t\t\t<option value=\"PN\">Pitcairn Island</option>\n\t\t\t<option value=\"PL\">Poland</option>\n\t\t\t<option value=\"PT\">Portugal</option>\n\t\t\t<option value=\"PR\">Puerto Rico</option>\n\t\t\t<option value=\"QA\">Qatar</option>\n\t\t\t<option value=\"RE\">Reunion</option>\n\t\t\t<option value=\"RO\">Romania</option>\n\t\t\t<option value=\"RU\">Russia</option>\n\t\t\t<option value=\"RW\">Rwanda</option>\n\t\t\t<option value=\"SH\">Saint Helena</option>\n\t\t\t<option value=\"KN\">Saint Kitts And Nevis</option>\n\t\t\t<option value=\"LC\">Saint Lucia</option>\n\t\t\t<option value=\"PM\">Saint Pierre and Miquelon</option>\n\t\t\t<option value=\"VC\">Saint Vincent And The Grenadines</option>\n\t\t\t<option value=\"WS\">Samoa</option>\n\t\t\t<option value=\"SM\">San Marino</option>\n\t\t\t<option value=\"ST\">Sao Tome and Principe</option>\n\t\t\t<option value=\"SA\">Saudi Arabia</option>\n\t\t\t<option value=\"SN\">Senegal</option>\n\t\t\t<option value=\"RS\">Serbia</option>\n\t\t\t<option value=\"SC\">Seychelles</option>\n\t\t\t<option value=\"SL\">Sierra Leone</option>\n\t\t\t<option value=\"SG\">Singapore</option>\n\t\t\t<option value=\"SK\">Slovakia</option>\n\t\t\t<option value=\"SI\">Slovenia</option>\n\t\t\t<option value=\"SB\">Solomon Islands</option>\n\t\t\t<option value=\"SO\">Somalia</option>\n\t\t\t<option value=\"ZA\">South Africa</option>\n\t\t\t<option value=\"GS\">South Georgia And The S.S Islands</option>\n\t\t\t<option value=\"ES\">Spain</option>\n\t\t\t<option value=\"LK\">Sri Lanka</option>\n\t\t\t<option value=\"SD\">Sudan</option>\n\t\t\t<option value=\"SR\">Suriname</option>\n\t\t\t<option value=\"SJ\">Svalbard And Jan Mayen Islands</option>\n\t\t\t<option value=\"SZ\">Swaziland</option>\n\t\t\t<option value=\"SE\">Sweden</option>\n\t\t\t<option value=\"CH\">Switzerland</option>\n\t\t\t<option value=\"SY\">Syria</option>\n\t\t\t<option value=\"TW\">Taiwan</option>\n\t\t\t<option value=\"TJ\">Tajikistan</option>\n\t\t\t<option value=\"TZ\">Tanzania</option>\n\t\t\t<option value=\"TH\">Thailand</option>\n\t\t\t<option value=\"TL\">Timor-Leste</option>\n\t\t\t<option value=\"TG\">Togo</option>\n\t\t\t<option value=\"TK\">Tokelau</option>\n\t\t\t<option value=\"TO\">Tonga</option>\n\t\t\t<option value=\"TT\">Trinidad And Tobago</option>\n\t\t\t<option value=\"TN\">Tunisia</option>\n\t\t\t<option value=\"TR\">Turkey</option>\n\t\t\t<option value=\"TM\">Turkmenistan</option>\n\t\t\t<option value=\"TC\">Turks And Caicos Islands</option>\n\t\t\t<option value=\"TV\">Tuvalu</option>\n\t\t\t<option value=\"UG\">Uganda</option>\n\t\t\t<option value=\"UA\">Ukraine</option>\n\t\t\t<option value=\"AE\">United Arab Emirates</option>\n\t\t\t<option value=\"GB\">United Kingdom</option>\n\t\t\t<option value=\"US\">United States</option>\n\t\t\t<option value=\"UM\">United States Minor Outlying Islands</option>\n\t\t\t<option value=\"UY\">Uruguay</option>\n\t\t\t<option value=\"UZ\">Uzbekistan</option>\n\t\t\t<option value=\"VU\">Vanuatu</option>\n\t\t\t<option value=\"VA\">Vatican City State (Holy See)</option>\n\t\t\t<option value=\"VE\">Venezuela</option>\n\t\t\t<option value=\"VN\">Vietnam</option>\n\t\t\t<option value=\"VG\">Virgin Islands (British)</option>\n\t\t\t<option value=\"VI\">Virgin Islands (US)</option>\n\t\t\t<option value=\"EH\">Western Sahara</option>\n\t\t\t<option value=\"WF\">Wallis And Futuna Islands</option>\n\t\t\t<option value=\"YE\">Yemen</option>\n\t\t\t<option value=\"ZM\">Zambia</option>\n\t\t\t<option value=\"ZW\">Zimbabwe</option>\n\t\t</select>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<button type=\"reset\" value=\"Reset\" class=\"btn btn-default\">Reset</button>\n\t\t<button name=\"Submit\" type=\"button\" class=\"btn btn-primary pull-right save_data\">Save</button>\n\t</li>\n</ul>";
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	module.exports = "<div class=\"entry\">\n\t<span>User № <%= d._id %></span>\n\t<ul class=\"list-group\">\n\t\t<li class=\"list-group-item\">\n\t\t\tFirst name : <%= d.first_name %>\n\t\t</li>\t\n\t\t<li class=\"list-group-item\">\n\t\t\tLast name : <%= d.last_name %>\n\t\t</li>\n\t\t<li class=\"list-group-item\">\n\t\t\tTransport : <%= (d.vehicle1) ? \"bike\" : '' \n\t\t\t\t\t\t%><%= (d.vehicle1 && d.vehicle2) ? \", \" : '' \n\t\t\t\t\t\t%><%= (d.vehicle2) ? \"car\" : '' %>\n\t\t</li>\n\t\t<li class=\"list-group-item\">\n\t\t\tGender : <%= d.gender %>\n\t\t</li>\n\t\t<li class=\"list-group-item\">\n\t\t\tCountry : <%= d.country %>\n\t\t</li>\n\t</ul>\n</div>";
-
-/***/ },
-/* 12 */,
-/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function() {
+	
+	
+	    var showVisualErrors = function (validation_input_dom, validation_title_dom, validation_error_dom, error_text) {
+	        // 1) red border for input
+	        validation_input_dom.classList.add(Global.predefine_values.class.ERROR_HIGHLIGHT_CLASS);
+	
+	        // 2) red color for title
+	        validation_title_dom.classList.add(Global.predefine_values.class.ERROR_LABEL_CLASS);
+	
+	        // 3) put text and remove hidden class
+	        validation_error_dom.innerHTML = error_text;
+	        validation_error_dom.classList.remove(Global.predefine_values.class.HIDDEN);
+	    };
+	
+	    var hideVisualErrors = function (validation_input_dom, validation_title_dom, validation_error_dom) {
+	        // 1) remove red border for input
+	        validation_input_dom.classList.remove(Global.predefine_values.class.ERROR_HIGHLIGHT_CLASS);
+	
+	        // 2) remove red color for title
+	        validation_title_dom.classList.remove(Global.predefine_values.class.ERROR_LABEL_CLASS);
+	
+	        // 3) add hidden class
+	        //validation_error_dom.innerHTML = ''; // do not need to clear it - because no one can see it
+	        validation_error_dom.classList.add(Global.predefine_values.class.HIDDEN);
+	    };
+	
+	    var visualErrors = function (error, target_dom, show) {
+	
+	        var validation_element_dom,
+	            validation_input_dom,
+	            validation_title_dom,
+	            validation_error_dom;
+	
+	        var field_has_error_class;
+	
+	            if(target_dom.name && target_dom.name === error.key){
+	                // target_dom - we have dom of input field
+	                validation_input_dom = target_dom;
+	            }else{
+	                // target_dom - we have dom of form
+	                validation_input_dom = target_dom.querySelector('[name=' + error.key + ']');
+	            }
+	
+	            field_has_error_class = validation_input_dom.classList.contains(Global.predefine_values.class.ERROR_HIGHLIGHT_CLASS);
+	
+	            if(validation_input_dom){
+	                // there is such element, find all other elements
+	
+	                validation_element_dom = Global.helpers.findParent(validation_input_dom, 'validation_element');
+	
+	                if(validation_element_dom){
+	                    // there is container for all other fields
+	
+	                    validation_title_dom = validation_element_dom.querySelector('.validation_title');
+	                    validation_error_dom = validation_element_dom.querySelector('.validation_error');
+	
+	                    if (validation_title_dom && validation_error_dom) {
+	                        // there is all needed elements, to show/hide error
+	
+	                        if(show){
+	                            showVisualErrors(validation_input_dom, validation_title_dom, validation_error_dom, error.value);
+	                        } else {
+	                            // show === false => need to hide visual error
+	                            // field_has_error_class === true => the field is not clear
+	                            // ==> there need to remove error classes
+	                            if (field_has_error_class === true) {
+	                                hideVisualErrors(validation_input_dom, validation_title_dom, validation_error_dom);
+	                            }
+	                        }
+	                    } else {
+	
+	                        console.error('validation error - can\'t find dom some of element: validation_title_dom or validation_error_dom');
+	                    }
+	
+	                } else {
+	
+	                    console.error('validation error - can\'t find dom parent of element: '+ error.key);
+	                }
+	            } else {
+	
+	                console.error('validation error - no such element in dom: '+ error.key);
+	            }
+	
+	    };
+	
 	
 	    /**
 	     * @param {array} to_validate - array of objects to validate;
@@ -15716,20 +15844,28 @@
 	
 	        //var this = this;
 	
-	        this.check_valid = function (to_validate) {
-	
+	        this.check_valid = function (all_fields, options) {
 	
 	            console.log('RUN validation');
 	
-	
 	            var validate_sum = {};
 	            var key, validate_result, dependencies_key;
+	            var target_dom = options.target_dom;
 	
+	            // if we pass options.field = {first_name:'some name'} => so need to check only one field,
+	            // else check all that bunch of fields
+	            var to_validate = (options.field) ? options.field : all_fields;
 	
 	            for(key in to_validate){
 	
 	                validate_result = null;
 	                dependencies_key = null;
+	
+	                var error = {
+	                    key: key,
+	                    value: ''
+	                };
+	                visualErrors(error,target_dom,false);
 	
 	                if(this.defaults.elements.hasOwnProperty(key)){
 	                    // there is such predefined rule
@@ -15739,16 +15875,22 @@
 	
 	                        dependencies_key = this.defaults.elements[key].dependencies;
 	
-	                        if(to_validate.hasOwnProperty(dependencies_key.name)) {
+	                        if(all_fields.hasOwnProperty(dependencies_key.name)) {
 	                            // there is such dependence field
 	
-	                            if (to_validate[dependencies_key.name] === dependencies_key.value) {
+	                            if (all_fields[dependencies_key.name] === dependencies_key.value) {
 	                                // check dependence field value
 	
+	                                // validate_result - string with error description
 	                                validate_result = this.makeValidation(key,to_validate[key]);
 	
 	                                if (validate_result) {
+	                                    // store error to the validate_sum object
 	                                    validate_sum[key] = validate_result;
+	
+	                                    // show error to user
+	                                    error[key] = validate_result;
+	                                    visualErrors(error,target_dom,true);
 	                                }
 	                            }
 	                        }else{
@@ -15756,14 +15898,24 @@
 	                            console.error('validation error - no dependencies field');
 	                        }
 	                    }else{
+	
+	                        // validate_result - string with error description
 	                        validate_result = this.makeValidation(key,to_validate[key]);
 	
 	                        if (validate_result) {
+	                            // store error to the validate_sum object
 	                            validate_sum[key] = validate_result;
+	
+	                            // show error to user
+	                            error['value'] = validate_result;
+	                            visualErrors(error,target_dom,true);
 	                        }
 	                    }
 	                }
 	            }
+	
+	
+	
 	
 	            if(Object.keys(validate_sum).length > 0){
 	                console.log('VALIDATION RESULT !!! ');
@@ -16075,17 +16227,29 @@
 	})();
 
 /***/ },
-/* 14 */
+/* 11 */
+/***/ function(module, exports) {
+
+	module.exports = "<input type=\"hidden\" value=\"<%= (data.id) ? data.id : 'null' %>\" name=\"id\" />\n\n<ul class=\"list-group\">\n\t<li class=\"list-group-item validation_element\">\n\t\t<label class='highLabel validation_title' data-label='first_name' for=\"first_name\">First name</label>\n\t\t<input type=\"text\" value=\"<%= data.first_name %>\" name=\"first_name\" class=\"form-control validation_input\" placeholder=\"first name\" id='first_name' required />\n\t\t<span class=\"validation_error hidden\"></span>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel' data-label='last_name'>Last name</span>\n\t\t<input type=\"text\" value=\"<%= data.last_name %>\" name=\"last_name\" class=\"form-control\" placeholder=\"last name\" />\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel'>Transport</span><br>\n\t\t<label><input type=\"checkbox\" name=\"vehicle1\" value=\"true\" \n\t\t<% if(data.vehicle1){%> checked <% } %>> I have a bike</label><br>\n\t\t\t<label><input type=\"checkbox\" name=\"vehicle2\" value=\"true\"\n\t\t\t<% if(data.vehicle2){%> checked <% } %>> I have a car</label>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel' data-label='access'>Gender</span><br>\n\t\t<label><input type=\"radio\" name=\"gender\" value=\"male\" \n\t\t<% if(data.gender === 'male'){%> checked <% } %>> Male</label><br>\n\t\t<label><input type=\"radio\" name=\"gender\" value=\"female\"\n\t\t<% if(data.gender === 'female'){%> checked <% } %>> Female</label><br>\n\t\t<label><input type=\"radio\" name=\"gender\" value=\"other\"\n\t\t<% if(data.gender === 'other'){%> checked <% } %>> Other</label>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel' data-label='acc_type'>private/business</span><br>\n\t\t<label><input type=\"radio\" name=\"acc_type\" value=\"personal\"\n\t\t\t<% if(data.acc_type === 'personal'){%> checked <% } %>> personal</label><br>\n\t\t<label><input type=\"radio\" name=\"acc_type\" value=\"business\"\n\t\t\t<% if(data.acc_type === 'business'){%> checked <% } %>> business</label>\n\t</li>\n\t<li class=\"validation_element list-group-item acc_type_toggle <% if(data.acc_type === 'personal'){%> hidden <% } %> validation_element\" >\n\t\t<span class='highLabel validation_title' data-label='business_name'>business</span><br>\n\t\t<label class='highLabel validation_title'>\n\t\t<input type=\"text\" name=\"business_name\" value=\"<% if(data.business_name){%> data.business_name <% } %>\" class=\"validation_input form-control\"> business name\n\t\t\t<span class=\"validation_error hidden\"></span>\n\t\t</label>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<span class='highLabel'>Country</span>\n\t\t<select name=\"country\" value=\"<%= (data.country) ? data.country : '' %>\" class=\"select_standart select2-hidden-accessible form-control\">\n\t\t\t<option value=\"AX\">Åland Islands</option>\n\t\t\t<option value=\"AF\">Afghanistan</option>\n\t\t\t<option value=\"AL\">Albania</option>\n\t\t\t<option value=\"DZ\">Algeria</option>\n\t\t\t<option value=\"AS\">American Samoa</option>\n\t\t\t<option value=\"AD\">Andorra</option>\n\t\t\t<option value=\"AO\">Angola</option>\n\t\t\t<option value=\"AI\">Anguilla</option>\n\t\t\t<option value=\"AQ\">Antarctica</option>\n\t\t\t<option value=\"AG\">Antigua And Barbuda</option>\n\t\t\t<option value=\"AR\">Argentina</option>\n\t\t\t<option value=\"AM\">Armenia</option>\n\t\t\t<option value=\"AW\">Aruba</option>\n\t\t\t<option value=\"AU\">Australia</option>\n\t\t\t<option value=\"AT\">Austria</option>\n\t\t\t<option value=\"AZ\">Azerbaijan</option>\n\t\t\t<option value=\"BS\">Bahamas</option>\n\t\t\t<option value=\"BH\">Bahrain</option>\n\t\t\t<option value=\"BD\">Bangladesh</option>\n\t\t\t<option value=\"BB\">Barbados</option>\n\t\t\t<option value=\"BY\">Belarus</option>\n\t\t\t<option value=\"BE\">Belgium</option>\n\t\t\t<option value=\"BZ\">Belize</option>\n\t\t\t<option value=\"BJ\">Benin</option>\n\t\t\t<option value=\"BM\">Bermuda</option>\n\t\t\t<option value=\"BT\">Bhutan</option>\n\t\t\t<option value=\"BO\">Bolivia</option>\n\t\t\t<option value=\"BA\">Bosnia and Herzegovina</option>\n\t\t\t<option value=\"BW\">Botswana</option>\n\t\t\t<option value=\"BV\">Bouvet Island</option>\n\t\t\t<option value=\"BR\">Brazil</option>\n\t\t\t<option value=\"IO\">British Indian Ocean Territory</option>\n\t\t\t<option value=\"BN\">Brunei</option>\n\t\t\t<option value=\"BG\">Bulgaria</option>\n\t\t\t<option value=\"BF\">Burkina Faso</option>\n\t\t\t<option value=\"BI\">Burundi</option>\n\t\t\t<option value=\"KH\">Cambodia</option>\n\t\t\t<option value=\"CM\">Cameroon</option>\n\t\t\t<option value=\"CA\">Canada</option>\n\t\t\t<option value=\"CV\">Cape Verde</option>\n\t\t\t<option value=\"KY\">Cayman Islands</option>\n\t\t\t<option value=\"CF\">Central African Republic</option>\n\t\t\t<option value=\"TD\">Chad</option>\n\t\t\t<option value=\"CL\">Chile</option>\n\t\t\t<option value=\"CN\">China</option>\n\t\t\t<option value=\"CX\">Christmas Island</option>\n\t\t\t<option value=\"CC\">Cocos (Keeling) Islands</option>\n\t\t\t<option value=\"CO\">Colombia</option>\n\t\t\t<option value=\"KM\">Comoros</option>\n\t\t\t<option value=\"CG\">Congo</option>\n\t\t\t<option value=\"CD\">Congo, Democractic Republic</option>\n\t\t\t<option value=\"CK\">Cook Islands</option>\n\t\t\t<option value=\"CR\">Costa Rica</option>\n\t\t\t<option value=\"CI\">Cote D'Ivoire (Ivory Coast)</option>\n\t\t\t<option value=\"HR\">Croatia (Hrvatska)</option>\n\t\t\t<option value=\"CU\">Cuba</option>\n\t\t\t<option value=\"CY\">Cyprus</option>\n\t\t\t<option value=\"CZ\">Czech Republic</option>\n\t\t\t<option value=\"DK\">Denmark</option>\n\t\t\t<option value=\"DJ\">Djibouti</option>\n\t\t\t<option value=\"DM\">Dominica</option>\n\t\t\t<option value=\"DO\">Dominican Republic</option>\n\t\t\t<option value=\"EC\">Ecuador</option>\n\t\t\t<option value=\"EG\">Egypt</option>\n\t\t\t<option value=\"SV\">El Salvador</option>\n\t\t\t<option value=\"GQ\">Equatorial Guinea</option>\n\t\t\t<option value=\"ER\">Eritrea</option>\n\t\t\t<option value=\"EE\">Estonia</option>\n\t\t\t<option value=\"ET\">Ethiopia</option>\n\t\t\t<option value=\"FK\">Falkland Islands</option>\n\t\t\t<option value=\"FO\">Faroe Islands</option>\n\t\t\t<option value=\"FJ\">Fiji Islands</option>\n\t\t\t<option value=\"FI\">Finland</option>\n\t\t\t<option value=\"FR\">France</option>\n\t\t\t<option value=\"GF\">French Guiana</option>\n\t\t\t<option value=\"PF\">French Polynesia</option>\n\t\t\t<option value=\"TF\">French Southern Territories</option>\n\t\t\t<option value=\"GA\">Gabon</option>\n\t\t\t<option value=\"GM\">Gambia, The</option>\n\t\t\t<option value=\"GE\">Georgia</option>\n\t\t\t<option value=\"DE\">Germany</option>\n\t\t\t<option value=\"GH\">Ghana</option>\n\t\t\t<option value=\"GI\">Gibraltar</option>\n\t\t\t<option value=\"GR\">Greece</option>\n\t\t\t<option value=\"GL\">Greenland</option>\n\t\t\t<option value=\"GD\">Grenada</option>\n\t\t\t<option value=\"GP\">Guadeloupe</option>\n\t\t\t<option value=\"GU\">Guam</option>\n\t\t\t<option value=\"GT\">Guatemala</option>\n\t\t\t<option value=\"GN\">Guinea</option>\n\t\t\t<option value=\"GW\">Guinea-Bissau</option>\n\t\t\t<option value=\"GY\">Guyana</option>\n\t\t\t<option value=\"HT\">Haiti</option>\n\t\t\t<option value=\"HM\">Heard and McDonald Islands</option>\n\t\t\t<option value=\"HN\">Honduras</option>\n\t\t\t<option value=\"HK\">Hong Kong S.A.R.</option>\n\t\t\t<option value=\"HU\">Hungary</option>\n\t\t\t<option value=\"IS\">Iceland</option>\n\t\t\t<option value=\"IN\">India</option>\n\t\t\t<option value=\"ID\">Indonesia</option>\n\t\t\t<option value=\"IR\">Iran</option>\n\t\t\t<option value=\"IQ\">Iraq</option>\n\t\t\t<option value=\"IE\">Ireland</option>\n\t\t\t<option value=\"IL\">Israel</option>\n\t\t\t<option value=\"IT\">Italy</option>\n\t\t\t<option value=\"JM\">Jamaica</option>\n\t\t\t<option value=\"JP\">Japan</option>\n\t\t\t<option value=\"JO\">Jordan</option>\n\t\t\t<option value=\"KZ\">Kazakhstan</option>\n\t\t\t<option value=\"KE\">Kenya</option>\n\t\t\t<option value=\"KI\">Kiribati</option>\n\t\t\t<option value=\"KR\">Korea</option>\n\t\t\t<option value=\"KP\">Korea, North</option>\n\t\t\t<option value=\"KW\">Kuwait</option>\n\t\t\t<option value=\"KG\">Kyrgyzstan</option>\n\t\t\t<option value=\"LA\">Laos</option>\n\t\t\t<option value=\"LV\">Latvia</option>\n\t\t\t<option value=\"LB\">Lebanon</option>\n\t\t\t<option value=\"LS\">Lesotho</option>\n\t\t\t<option value=\"LR\">Liberia</option>\n\t\t\t<option value=\"LY\">Libya</option>\n\t\t\t<option value=\"LI\">Liechtenstein</option>\n\t\t\t<option value=\"LT\">Lithuania</option>\n\t\t\t<option value=\"LU\">Luxembourg</option>\n\t\t\t<option value=\"MO\">Macau S.A.R.</option>\n\t\t\t<option value=\"MK\">Macedonia</option>\n\t\t\t<option value=\"MG\">Madagascar</option>\n\t\t\t<option value=\"MW\">Malawi</option>\n\t\t\t<option value=\"MY\">Malaysia</option>\n\t\t\t<option value=\"MV\">Maldives</option>\n\t\t\t<option value=\"ML\">Mali</option>\n\t\t\t<option value=\"MT\">Malta</option>\n\t\t\t<option value=\"MH\">Marshall Islands</option>\n\t\t\t<option value=\"MQ\">Martinique</option>\n\t\t\t<option value=\"MR\">Mauritania</option>\n\t\t\t<option value=\"MU\">Mauritius</option>\n\t\t\t<option value=\"YT\">Mayotte</option>\n\t\t\t<option value=\"MX\">Mexico</option>\n\t\t\t<option value=\"FM\">Micronesia</option>\n\t\t\t<option value=\"MD\">Moldova</option>\n\t\t\t<option value=\"MC\">Monaco</option>\n\t\t\t<option value=\"MN\">Mongolia</option>\n\t\t\t<option value=\"ME\">Montenegro</option>\n\t\t\t<option value=\"MS\">Montserrat</option>\n\t\t\t<option value=\"MA\">Morocco</option>\n\t\t\t<option value=\"MZ\">Mozambique</option>\n\t\t\t<option value=\"MM\">Myanmar</option>\n\t\t\t<option value=\"NA\">Namibia</option>\n\t\t\t<option value=\"NR\">Nauru</option>\n\t\t\t<option value=\"NP\">Nepal</option>\n\t\t\t<option value=\"NL\">Netherlands</option>\n\t\t\t<option value=\"AN\">Netherlands Antilles</option>\n\t\t\t<option value=\"NC\">New Caledonia</option>\n\t\t\t<option value=\"NZ\">New Zealand</option>\n\t\t\t<option value=\"NI\">Nicaragua</option>\n\t\t\t<option value=\"NE\">Niger</option>\n\t\t\t<option value=\"NG\">Nigeria</option>\n\t\t\t<option value=\"NU\">Niue</option>\n\t\t\t<option value=\"NF\">Norfolk Island</option>\n\t\t\t<option value=\"MP\">Northern Mariana Islands</option>\n\t\t\t<option value=\"NO\">Norway</option>\n\t\t\t<option value=\"OM\">Oman</option>\n\t\t\t<option value=\"PK\">Pakistan</option>\n\t\t\t<option value=\"PW\">Palau</option>\n\t\t\t<option value=\"PS\">Palestinian Territory</option>\n\t\t\t<option value=\"PA\">Panama</option>\n\t\t\t<option value=\"PG\">Papua new Guinea</option>\n\t\t\t<option value=\"PY\">Paraguay</option>\n\t\t\t<option value=\"PE\">Peru</option>\n\t\t\t<option value=\"PH\">Philippines</option>\n\t\t\t<option value=\"PN\">Pitcairn Island</option>\n\t\t\t<option value=\"PL\">Poland</option>\n\t\t\t<option value=\"PT\">Portugal</option>\n\t\t\t<option value=\"PR\">Puerto Rico</option>\n\t\t\t<option value=\"QA\">Qatar</option>\n\t\t\t<option value=\"RE\">Reunion</option>\n\t\t\t<option value=\"RO\">Romania</option>\n\t\t\t<option value=\"RU\">Russia</option>\n\t\t\t<option value=\"RW\">Rwanda</option>\n\t\t\t<option value=\"SH\">Saint Helena</option>\n\t\t\t<option value=\"KN\">Saint Kitts And Nevis</option>\n\t\t\t<option value=\"LC\">Saint Lucia</option>\n\t\t\t<option value=\"PM\">Saint Pierre and Miquelon</option>\n\t\t\t<option value=\"VC\">Saint Vincent And The Grenadines</option>\n\t\t\t<option value=\"WS\">Samoa</option>\n\t\t\t<option value=\"SM\">San Marino</option>\n\t\t\t<option value=\"ST\">Sao Tome and Principe</option>\n\t\t\t<option value=\"SA\">Saudi Arabia</option>\n\t\t\t<option value=\"SN\">Senegal</option>\n\t\t\t<option value=\"RS\">Serbia</option>\n\t\t\t<option value=\"SC\">Seychelles</option>\n\t\t\t<option value=\"SL\">Sierra Leone</option>\n\t\t\t<option value=\"SG\">Singapore</option>\n\t\t\t<option value=\"SK\">Slovakia</option>\n\t\t\t<option value=\"SI\">Slovenia</option>\n\t\t\t<option value=\"SB\">Solomon Islands</option>\n\t\t\t<option value=\"SO\">Somalia</option>\n\t\t\t<option value=\"ZA\">South Africa</option>\n\t\t\t<option value=\"GS\">South Georgia And The S.S Islands</option>\n\t\t\t<option value=\"ES\">Spain</option>\n\t\t\t<option value=\"LK\">Sri Lanka</option>\n\t\t\t<option value=\"SD\">Sudan</option>\n\t\t\t<option value=\"SR\">Suriname</option>\n\t\t\t<option value=\"SJ\">Svalbard And Jan Mayen Islands</option>\n\t\t\t<option value=\"SZ\">Swaziland</option>\n\t\t\t<option value=\"SE\">Sweden</option>\n\t\t\t<option value=\"CH\">Switzerland</option>\n\t\t\t<option value=\"SY\">Syria</option>\n\t\t\t<option value=\"TW\">Taiwan</option>\n\t\t\t<option value=\"TJ\">Tajikistan</option>\n\t\t\t<option value=\"TZ\">Tanzania</option>\n\t\t\t<option value=\"TH\">Thailand</option>\n\t\t\t<option value=\"TL\">Timor-Leste</option>\n\t\t\t<option value=\"TG\">Togo</option>\n\t\t\t<option value=\"TK\">Tokelau</option>\n\t\t\t<option value=\"TO\">Tonga</option>\n\t\t\t<option value=\"TT\">Trinidad And Tobago</option>\n\t\t\t<option value=\"TN\">Tunisia</option>\n\t\t\t<option value=\"TR\">Turkey</option>\n\t\t\t<option value=\"TM\">Turkmenistan</option>\n\t\t\t<option value=\"TC\">Turks And Caicos Islands</option>\n\t\t\t<option value=\"TV\">Tuvalu</option>\n\t\t\t<option value=\"UG\">Uganda</option>\n\t\t\t<option value=\"UA\">Ukraine</option>\n\t\t\t<option value=\"AE\">United Arab Emirates</option>\n\t\t\t<option value=\"GB\">United Kingdom</option>\n\t\t\t<option value=\"US\">United States</option>\n\t\t\t<option value=\"UM\">United States Minor Outlying Islands</option>\n\t\t\t<option value=\"UY\">Uruguay</option>\n\t\t\t<option value=\"UZ\">Uzbekistan</option>\n\t\t\t<option value=\"VU\">Vanuatu</option>\n\t\t\t<option value=\"VA\">Vatican City State (Holy See)</option>\n\t\t\t<option value=\"VE\">Venezuela</option>\n\t\t\t<option value=\"VN\">Vietnam</option>\n\t\t\t<option value=\"VG\">Virgin Islands (British)</option>\n\t\t\t<option value=\"VI\">Virgin Islands (US)</option>\n\t\t\t<option value=\"EH\">Western Sahara</option>\n\t\t\t<option value=\"WF\">Wallis And Futuna Islands</option>\n\t\t\t<option value=\"YE\">Yemen</option>\n\t\t\t<option value=\"ZM\">Zambia</option>\n\t\t\t<option value=\"ZW\">Zimbabwe</option>\n\t\t</select>\n\t</li>\n\t<li class=\"list-group-item\">\n\t\t<button type=\"reset\" value=\"Reset\" class=\"btn btn-default\">Reset</button>\n\t\t<button name=\"Submit\" type=\"button\" class=\"btn btn-primary pull-right save_data\">Save</button>\n\t</li>\n</ul>";
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	module.exports = "<div class=\"entry\">\n\t<span>User № <%= d._id %></span>\n\t<ul class=\"list-group\">\n\t\t<li class=\"list-group-item\">\n\t\t\tFirst name : <%= d.first_name %>\n\t\t</li>\t\n\t\t<li class=\"list-group-item\">\n\t\t\tLast name : <%= d.last_name %>\n\t\t</li>\n\t\t<li class=\"list-group-item\">\n\t\t\tTransport : <%= (d.vehicle1) ? \"bike\" : '' \n\t\t\t\t\t\t%><%= (d.vehicle1 && d.vehicle2) ? \", \" : '' \n\t\t\t\t\t\t%><%= (d.vehicle2) ? \"car\" : '' %>\n\t\t</li>\n\t\t<li class=\"list-group-item\">\n\t\t\tGender : <%= d.gender %>\n\t\t</li>\n\t\t<li class=\"list-group-item\">\n\t\t\tCountry : <%= d.country %>\n\t\t</li>\n\t</ul>\n</div>";
+
+/***/ },
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var $ = __webpack_require__(2);
 	var _ = __webpack_require__(3);
 	var Backbone = __webpack_require__(4);
 	var vendor_update = __webpack_require__(9);
-	var Validate = __webpack_require__(13);
+	var Validate = __webpack_require__(10);
 	
-	var register_form_template = __webpack_require__(10);
-	var register_template = __webpack_require__(11);
+	var register_form_template = __webpack_require__(11);
+	var register_template = __webpack_require__(12);
 	
 	module.exports = function(){
 	
@@ -16427,6 +16591,720 @@
 	
 		});
 	};
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*** IMPORTS FROM imports-loader ***/
+	var $ = __webpack_require__(2);
+	
+	(function($, DebugLog){
+	    'use strict';
+	
+	    var Global = window.Global || {};
+	
+	    window.setGlobal = function(value) {
+	        return value || null;
+	    };
+	
+	    /** Add GLOBAL OBJECT to extend it, and pass data not from window */
+	    $.extend(true, Global, {
+	        helpers:{},
+	        paths: {},
+	        validation:{},
+	        predefine_values:{},
+	        init_objects:{},
+	        old_function:{},
+	        select2LateInit: [],
+	        safeDefineData: function (value, data, value_name) {
+	            /** get data from server in Sigma variable 'data', where store all what we need,
+	             *  so we fix the problem when there is no Sigma variable and in result we have :
+	             *  var define_some_variable =  ; // error here;
+	             *
+	             *  usage example:window.Global.safeDefineData(Global.predefine_values, '{num_domains}', 'num_domains');
+	             *
+	             * @param {object} value
+	             * @param {object} data - can be present or not
+	             * @param {string} value_name
+	             * */
+	
+	            value[value_name] = data || null;
+	        }
+	    });
+	
+	    Global.predefine_values['class'] = {
+	        ERROR_HIGHLIGHT_CLASS: 'form_validation_error',
+	        ERROR_MESSAGE_CLASS: 'validation_error',
+	        ERROR_LABEL_CLASS: 'label_validation_error',
+	        HIDDEN: 'hidden'
+	    };
+	
+	    Global.predefine_values['month'] = [
+	        'January',
+	        'February',
+	        'March',
+	        'April',
+	        'May',
+	        'June',
+	        'July',
+	        'August',
+	        'September',
+	        'October',
+	        'November',
+	        'December'];
+	
+	    Global.predefine_values['chartColors'] = {
+	        colors: [
+	            '#0DA2D0',
+	            '#1FBFF1',
+	            '#4FCDF4',
+	            '#7FDAF7',
+	            '#AFE8FA',
+	            '#DFF6FD'
+	        ],
+	        special: "#FF962A"
+	    };
+	
+	    /**
+	     * Decode HTMLEntities
+	     * replace current currency symbol with decoded
+	     *
+	     * usage: for example to convert currency symbol in script to pass it to further render
+	     */
+	    Global.helpers['decodeEntities'] = (function() {
+	        // this prevents any overhead from creating the object each time
+	        var element = document.createElement('div');
+	
+	        function decodeHTMLEntities(str) {
+	            if (str && typeof str === 'string') {
+	                // strip script/html tags
+	                str = str.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '');
+	                str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
+	                element.innerHTML = str;
+	                str = element.textContent;
+	                element.textContent = '';
+	            }
+	
+	            return str;
+	        }
+	
+	        return decodeHTMLEntities;
+	    })();
+	
+	
+	    /**
+	     * CORPORATE STYLE ( $1,946,369.58 )
+	     *
+	     *  1946369.58 => 1,946,369.58
+	     *  */
+	    Global.helpers['addCommas'] = function(value) {
+	        if (!value) {
+	            return value;
+	        }
+	
+	        // Value must be a number.
+	        value = +value;
+	
+	        // Remove dot if there are no decimal numbers.
+	        value = value.toFixed(2);
+	
+	        // Adding commas every three chars.
+	        value = value.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+	
+	        return value;
+	    };
+	
+	    if(window.hasOwnProperty('Global')) {
+	        debug.error('Global is duplicated!!!');
+	    }
+	
+	    window.Global = Global;
+	
+	    Object.defineProperty(window.Global,'name',{'value':'reseller'});
+	
+	    /**
+	     * view for tooltip
+	     * */
+	    window.Global.predefine_values['tooltip'] = {
+	        'domain': {
+	            skin: 'custom',
+	            closeButton: true,
+	            background: {color: '#FFFFFF'},
+	            maxWidth: '450',
+	            border: {size: 2, color: '#eee'},
+	            radius: {size: 0, position: 'border'},
+	            shadow: false
+	        }
+	    };
+	
+	    /** Detect touch device by touch event */
+	    Global.helpers.isTouchDevice = function() {
+	        try {
+	            document.createEvent("TouchEvent");
+	            return true;
+	        } catch (e) {
+	            return false;
+	        }
+	    };
+	
+	    /** get from underscore.js
+	     * usage:
+	     *      var nameFunctionToRun = Global.helpers.debounce(func, wait);
+	     *      nameFunctionToRun();
+	     * */
+	    Global.helpers['debounce'] = function(func, wait, immediate) {
+	        var timeout;
+	        return function() {
+	            var context = this, args = arguments;
+	            var later = function() {
+	                timeout = null;
+	                if (!immediate) func.apply(context, args);
+	            };
+	            var callNow = immediate && !timeout;
+	            clearTimeout(timeout);
+	            timeout = setTimeout(later, wait);
+	            if (callNow) func.apply(context, args);
+	        };
+	    };
+	
+	
+	    /** Add GLOBAL Flag current mobile device */
+	    window.is_mobile = (navigator.userAgent.match(/Windows Phone/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/Android/i) || Global.helpers.isTouchDevice())? true: false;
+	    $(function(){
+	        if(window.is_mobile === true){
+	            document.querySelector('body').classList.add('is_mobile');
+	        }
+	    });
+	
+	    /** animate scroll to target
+	     * @param {object} $scrollHere - jquery link to dom to where need to scroll;
+	     * */
+	    Global.helpers.scrollTo = function($scrollHere){
+	        $('body').animate({
+	            scrollTop: $scrollHere.offset().top
+	        }, 800);
+	    };
+	
+	    /** check on tld  '.com, .au ...'
+	     * @param {string} domain_name
+	     * @return {boolean}
+	     * */
+	    window.Global.validation.checkOnlyTld = function (domain_name) {
+	        var domain_name_sp = domain_name.split('.');
+	        return domain_name.indexOf(".") > 0 && /^[a-zA-Z]{2,}$/.test(domain_name_sp[domain_name_sp.length - 1]);
+	    };
+	
+	    /** find nearest parent which contains needed class
+	     * @param {object} el - dom element
+	     * @param {string} cls - class to find
+	     * @return {object} / null
+	     * */
+	    window.Global.helpers.findParent = function (el, cls) {
+	        while ((el = el.parentElement) && !el.classList.contains(cls));
+	        return el;
+	    };
+	
+	    /** when click on <tr> checkbox is toggled */
+	    window.Global.helpers.toggle_checkbox_js = function() {
+	
+	        $('.toggle_checkbox_js').not('.select2').off('click').on('click', function (event) {
+	
+	            //console.log(event.target.tagName);
+	            if(event.target.tagName === 'INPUT' || event.target.tagName === 'LABEL'){
+	                /** do not need to react on this elements */
+	                return;
+	            }
+	
+	            /** delegate working */
+	
+	            if(event.target.className.match('select2') || event.target.className.match('link_no_toggle')) {
+	                return;
+	            }
+	
+	            var checkbox = $(this).find('input[type="checkbox"]:not(.not_toggle)')[0];
+	            var    radio = $(this).find('input[type="radio"]:not(.not_toggle)')[0];
+	
+	            if (checkbox && !checkbox.disabled) {
+	                checkbox.click(); /** need click - so other events can trigger; */
+	                //checkbox.checked = !checkbox.checked;
+	            } else if(radio && !radio.checked) {
+	                //radio.checked = !radio.checked;
+	                radio.click();
+	            }
+	
+	        });
+	    };
+	
+	    /**
+	     * Update block button toggle for any page
+	     * toggle_button_js argument - DOMElement || NodeList || Selector
+	     * MUST HAVE data-type = type
+	     * Toggle Block selector className[type + '_toggle_js']
+	     */
+	    window.Global.helpers.toggle_button_js = function(toggle_button_js) {
+	        var toggle_buttons = document.querySelectorAll(toggle_button_js);
+	        var callback = function() {
+	            var type = this.getAttribute('data-type');
+	
+	            $('[data-type="' + type + '"]').show();
+	            $(this).hide();
+	            $('.' + type + '_toggle_js').toggle();
+	        };
+	
+	        Array.prototype.forEach.call(toggle_buttons, function(elem) {
+	            elem.trigger = callback;
+	            elem.addEventListener('click', callback);
+	        });
+	    };
+	
+	    /**
+	     * Add className loading on click
+	     */
+	    window.Global.helpers.with_loading = function(elem) {
+	        $(elem).on('click', function() {
+	            if(!this.classList.contains('_loading')) {
+	                this.classList.add('_loading');
+	                this.classList.remove('with_loading');
+	            }
+	        });
+	    };
+	
+	    window.Global.helpers.portletScroll = {
+	        value: 189,
+	        run: function() {
+	            $(window).off('scroll').on('scroll', function() {
+	                var portletScroll = window.Global.helpers.portletScroll.value,
+	                    portlet = $('.portlet'),
+	                    condition,
+	                    e;
+	
+	                if(typeof portletScroll === 'function') {
+	                    e = portletScroll();
+	                } else {
+	                    e = portletScroll;
+	                }
+	
+	                condition = portlet.hasClass("heading-fixed") && $(window).scrollTop() > e;
+	
+	                portlet.toggleClass("_fixed", condition);
+	            });
+	        }
+	    };
+	
+	    /** taken from bottom.tpl */
+	    $(".btn").mouseup(function(){
+	        $(this).blur();
+	    });
+	
+	    window.Global.helpers['tipped'] = function() {
+	        $('div[id^="inline_tooltip_"].globalTip').each(function(index, element) {
+	            var max_width = $(this).hasClass('cvvBox') ? 500 : 320;
+	            window.Tipped.create(element.id.replace('inline_', '.'), element.id, { inline: true, closeButton: true, skin: 'custom', background: { color: '#FFFFFF' }, maxWidth: max_width, border: { size: 2, color: '#cacdcf' }, radius: { size: 0, position: 'border' }, shadow: false });
+	        });
+	    };
+	
+	    /** add commas every three chars */
+	    window.Global.helpers['priceFormat'] = function(value) {
+	        if (!value) {
+	            return value;
+	        }
+	
+	        value = parseFloat(value);
+	        // Remove dot if there are no decimal numbers.
+	        value = value.toFixed(2);
+	        // Adding commas every three chars.
+	        value = value.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+	
+	        return value;
+	    };
+	
+	    /** simply takes all data from form, serialize and send ajax,
+	     * send/false info push in toastr message; */
+	    window.Global.helpers['popupOnclickAjax'] = function (button, callbackBefore) {
+	
+	        var goOn = true;
+	
+	        if(typeof(callbackBefore) === 'function'){
+	            goOn = callbackBefore(button.form);
+	        }
+	        if(goOn){
+	            button.classList.add('_loading');
+	            var closeIcon = button.form.querySelector('.closeCrazyPopup');
+	            var ajaxWorking = false;
+	            var data = {
+	                type:         'POST',
+	                url:           button.form.action,
+	                data:          $(button.form).serialize(),
+	                success: function(response){
+	                    ajaxWorking = false;
+	                    button.classList.remove('_loading');
+	                    closeIcon.click();
+	                    if(response.status === true){
+	                        toastr.success(response.message);
+	                    }else{
+	                        toastr.error(response.message);
+	                    }
+	                },
+	                error: function(xhr,status,error){
+	                    ajaxWorking = false;
+	                    button.classList.remove('_loading');
+	                    closeIcon.click();
+	                    console.error('windows.Global.helpers.onclickAjax(), ajax error : '+error);
+	                }
+	            };
+	
+	            if(ajaxWorking === false){
+	                ajaxWorking = true;
+	                $.ajax(data);
+	            }
+	        }
+	    };
+	
+	})(window.jQuery, window.DebugLog);
+	
+	
+	
+	
+	(function(Global, $) {
+	    'use strict';
+	
+	    /* ----------------------- set_action, generateSearchResultDiv ----------------------- */
+	    /**
+	     *	show to user ajax result from search field
+	     *	@param {object} json_data - response from server JSON converted to object
+	     * */
+	
+	    function generateSearchResultDiv(json_data){
+	        /**
+	         * count elements in object
+	         * @param {object} obj - object in which need to count
+	         * @param {array} don't - array with name of parameters which should not be counted
+	         * @return {integer} i - value of how many elements was counted
+	         *
+	         * todo:maybe better to extend base object, or put it to some global var?
+	         * */
+	        var c,
+	            $body = $("body"),
+	            $main_div,
+	            $search_box = $body.find("#search_box"),
+	            showAllResult,
+	            saved_json_data = json_data.data; // needed for view all;
+	
+	        var count = function(obj, dont){
+	            /* dont - array with strings which should not be counted */
+	            var i = 0, l = 0, key,
+	                dont_match = function(dont,key){
+	                    var j, f = true;
+	                    for(j = 0; j<dont.length; j++){
+	                        f = key !== dont[j];
+	                    }
+	                    return f;
+	                };
+	
+	            for (key in obj) {
+	                if(dont){
+	                    if(dont_match(dont,key) === true && obj.hasOwnProperty(key)){
+	                        i++;
+	                    }
+	                    l++;
+	                }else{
+	                    if (obj.hasOwnProperty(key)) {
+	                        i++;
+	                    }
+	                }
+	            }
+	            return i-1; /* minus 1 because count start's from zero */
+	        };
+	
+	        var i, j, ul, li, hideli, info,
+	            fields = ['domain','product','customer'],
+	            conformity = {'domain':'domains','product':'hosting','customer':'username'},
+	            main_div = '<div class="search-box-dropdown show">',
+	            main_div_empty_results = '<div class="search-box-dropdown show">';
+	
+	        if(count(json_data.data) > 0){
+	            for(i=0; i<fields.length; i++){
+	                c = json_data.data[fields[i]].total_results;
+	                ul = '';
+	                if( c ){
+	                    if(c > 10){c = 10; /* max result is 10 */}
+	                    ul = '<ul class="search-results '+conformity[fields[i]]+'">';
+	                    li = '';
+	                    for (j = 0; j < c; j++) {
+	                        info = '';
+	                        if(j > 2){hideli = '_hide';}else{hideli = "";}
+	                        if(fields[i] === 'product') {
+	                            info = json_data.data[fields[i]][j].result + '<div class="sub-info _text-truncate"> ' + json_data.data[fields[i]][j].add_info + '</div>';
+	                        } else if(fields[i] === 'customer'){
+	                            info = json_data.data[fields[i]][j].add_info +'<div class="sub-info _text-truncate"> '+json_data.data[fields[i]][j].result+'</div>';
+	                        }else{
+	                            info = json_data.data[fields[i]][j].result;
+	                        }
+	                        li = li + '<li class="search-results-item '+hideli+'"><a class="search-results-link" href="'+location.origin+json_data.data[fields[i]][j].link+'">'+info+'</a></li>';
+	                    }
+	                    if(json_data.data[fields[i]].showmore === "true"){
+	                        li = li + '<li class="show-more _align-center">'+
+	                            '<a href="'+location.origin+json_data.data[fields[i]].link+'" class="show-more-link icon-angle-down-search" data-show-more="'+fields[i]+'" data-show="'+conformity[fields[i]]+'">Show More</a>'+
+	                            '</li>';
+	                    }
+	                    ul = ul + li + '</ul>';
+	                }
+	                main_div = main_div + ul;
+	            }
+	            if(main_div_empty_results === main_div){
+	                main_div = '<div class="search-box-dropdown no-results" >No results.</div>';
+	            }else{
+	                main_div = main_div + '</div>';
+	            }
+	
+	        }
+	
+	        $('#search_box .search-box-dropdown').remove();
+	
+	        c = 0;
+	        $main_div = $(main_div);
+	        showAllResult = function(e){
+	            var toShow = e.target.getAttribute('data-show');
+	            var toShowMore = e.target.getAttribute('data-show-more');
+	            var $show,
+	                $showMoreLink,
+	                $toHide;
+	
+	            if(toShow && toShow.length !== 0) {
+	                e.preventDefault();
+	                $show = $main_div.find('.' + toShow);
+	                $showMoreLink = $show.find('.show-more .show-more-link');
+	                $toHide = $main_div.find('.search-results').not('.' + toShow);
+	                $show.find('li').removeClass('_hide');
+	                $showMoreLink.removeClass('icon-angle-down-search');
+	                $showMoreLink.text('View All ('+ saved_json_data[toShowMore].total_results +')');
+	                $toHide.addClass('_hide');
+	
+	                if (c > 0) {
+	                    window.location.href = $showMoreLink.attr('href');
+	                }
+	                c++;
+	            }else if(e.target.name === 'menu_search_keyword'){
+	                $search_box.addClass('open');
+	                $main_div.addClass('show');
+	            }else{
+	                $search_box.removeClass('open');
+	                $main_div.removeClass('show');
+	            }
+	        };
+	
+	        $body.off("click",showAllResult);
+	        $body.on("click",showAllResult);
+	        $search_box.addClass('open');
+	        $('#search_box').append($main_div);
+	    }
+	
+	    /**
+	     *  set_action  - search all possible info for domains, and show short result to user;
+	     *  for now it's typically present in window because it runs from .tpl like
+	     *  onsubmit="javascript: return set_action();"
+	     * */
+	    window.Global.helpers.set_action = function (e) {
+	        var	$searchBox = $('#search_box'),
+	            $searchForm = $searchBox.find("#menu_form"),
+	            $inp = $searchForm.find('#menu_search_keyword'),
+	            keyword = $inp.val(),
+	            $search = $searchBox.find(".icon-magnifier"),
+	            $preloader = $searchBox.find(".preloader");
+	
+	        e.preventDefault();
+	        if (keyword !== '') {
+	            $search.addClass('_hide');
+	            $preloader.removeClass('_hide');
+	            $.ajax({
+	                type: 'POST',
+	                url: '/reseller/ajax/general/full_search/',
+	                data: 'search_slug=' + keyword,
+	                dataType: 'json',
+	                complete: function (response) {
+	                    if(response.responseText) {
+	                        response = $.parseJSON(response.responseText);
+	                    }
+	
+	                    $preloader.addClass('_hide');
+	                    $search.removeClass('_hide');
+	
+	                    if(response.status === true) {
+	                        generateSearchResultDiv(response);
+	                    } else {
+	                        window.toastr.error(response.message);
+	                    }
+	                }
+	            });
+	
+	        } else {
+	            $inp.focus();
+	            //console.log('Keyword may not be blank');
+	        }
+	
+	        return false;
+	    };
+	
+	    /** remove onclick from main.tpl */
+	    $(document).ready(function(){
+	        var quick_search_form = $('#menu_form'),
+	            magnifying_glass = $('#search_box .submit_search');
+	
+	        quick_search_form.keyup(function(e){
+	            if(e.keyCode === 13){
+	                window.Global.helpers.set_action(e);
+	            }
+	        });
+	        magnifying_glass.on('click',function(e){
+	            window.Global.helpers.set_action(e);
+	        });
+	    });
+	
+	    /* ----------------------- END set_action, generateSearchResultDiv ----------------------- */
+	})(window.Global, window.jQuery);
+	
+	/**
+	 * Show error message.
+	 * Message can Array.
+	 * @param errors
+	 */
+	function showError(errors) {
+	    'use strict';
+	
+	    var is_object = errors instanceof Object,
+	        msg = '',
+	        key;
+	    errors = errors || 'No errors from Server!';
+	
+	    if(is_object && errors) {
+	        for(key in errors){
+	            msg = msg + errors[key] + '<br/>';
+	        }
+	    } else {
+	        msg += errors;
+	    }
+	
+	    window.toastr.error(msg, '',{timeOut:'300000'});
+	}
+	
+	/**
+	 * Toggle target block on click event
+	 * @param selector
+	 * @constructor
+	 */
+	var ToggleExpandableRow = function(selector){
+	    'use strict';
+	
+	    var self = this;
+	
+	    /**
+	     * Toggle elements list
+	     * @type {NodeList}
+	     */
+	    this.elements = document.querySelectorAll(selector);
+	
+	    /**
+	     * Toggle elements list block.
+	     * Hide all blocks, then show current
+	     */
+	    this.eventCallback = function() {
+	        var elem = this;
+	        var target = document.getElementById(elem.getAttribute('data-target'));
+	
+	        if(target){
+	            if(!target.classList.contains('open') && self.allow_close_all) {
+	                self.closeAll();
+	            }
+	
+	            elem.classList.toggle('open');
+	            target.classList.toggle('open');
+	            target.style.display = target.style.display === 'none' ? '' : 'none';
+	        }
+	    };
+	
+	    this.allow_close_all = true;
+	
+	    /**
+	     * Hide elements list blocks.
+	     */
+	    this.closeAll = function() {
+	        Array.prototype.forEach.call(self.elements, function(row) {
+	            var target_block = document.getElementById(row.getAttribute('data-target'));
+	            row.classList.remove('open');
+	            if (target_block) {
+	                target_block.classList.remove('open');
+	                target_block.style.display = 'none';
+	            }
+	        });
+	    };
+	
+	    if(self.elements.length) {
+	        for (var i = 0; i < self.elements.length; i++) {
+	            self.elements[i].addEventListener("click", self.eventCallback);
+	        }
+	    }
+	};
+	
+	/**
+	 * Alternative navigation with select.
+	 */
+	
+	var clickOnSelect = function (element, $selected_item) {
+	    if (element.classList.contains('nav_type_location')) {
+	        window.location = $selected_item.prop('href');
+	    }
+	
+	    if (element.classList.contains('nav_type_func')) {
+	        $selected_item.trigger('click');
+	    }
+	};
+	
+	$(function() {
+	    var nav_tabs = document.querySelector('.nav-tabs');
+	    var $nav_by_links = $(nav_tabs).find('a');
+	    var count_links = $nav_by_links.length;
+	    var $nav_location_by_select = $('.nav_by_select');
+	    var tabbable_line = document.querySelector('.tabbable-line');
+	    var nav_value = $nav_location_by_select.find('.active').val();
+	
+	    nav_value = nav_value || encodeURI(window.location.hash.substr(1));
+	
+	    if (!$nav_location_by_select[0]) {
+	        return;
+	    }
+	
+	    if(count_links > 5){
+	        //nav_tabs.style.display = 'none';
+	        tabbable_line.classList.add('over_5');
+	    }
+	
+	    $nav_location_by_select.find('option[data-count="0"]').remove();
+	
+	    if ($nav_location_by_select[0].classList.contains('select2-hidden-accessible')) {
+	        $nav_location_by_select.select2('val', nav_value);
+	    }
+	
+	    $nav_location_by_select
+	        .on('change', setLocationByLink)
+	        .val(nav_value);
+	
+	    function setLocationByLink() {
+	        var $selected_item = $nav_by_links.eq(this.selectedIndex);
+	
+	        if (count_links > 5) {
+	            tabbable_line.classList.add('over_5');
+	            clickOnSelect(this, $selected_item);
+	        } else if(window.innerWidth < 769){ /** FIX - HACK -
+	         need to change value of select but when change this function triggering so have a loop,
+	         so add this check and it will work only for mobile*/
+	        clickOnSelect(this, $selected_item);
+	        }
+	    }
+	});
+	
+	
+
 
 /***/ }
 /******/ ]);

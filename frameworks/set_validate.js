@@ -1,5 +1,90 @@
 (function() {
 
+
+    var showVisualErrors = function (validation_input_dom, validation_title_dom, validation_error_dom, error_text) {
+        // 1) red border for input
+        validation_input_dom.classList.add(Global.predefine_values.class.ERROR_HIGHLIGHT_CLASS);
+
+        // 2) red color for title
+        validation_title_dom.classList.add(Global.predefine_values.class.ERROR_LABEL_CLASS);
+
+        // 3) put text and remove hidden class
+        validation_error_dom.innerHTML = error_text;
+        validation_error_dom.classList.remove(Global.predefine_values.class.HIDDEN);
+    };
+
+    var hideVisualErrors = function (validation_input_dom, validation_title_dom, validation_error_dom) {
+        // 1) remove red border for input
+        validation_input_dom.classList.remove(Global.predefine_values.class.ERROR_HIGHLIGHT_CLASS);
+
+        // 2) remove red color for title
+        validation_title_dom.classList.remove(Global.predefine_values.class.ERROR_LABEL_CLASS);
+
+        // 3) add hidden class
+        //validation_error_dom.innerHTML = ''; // do not need to clear it - because no one can see it
+        validation_error_dom.classList.add(Global.predefine_values.class.HIDDEN);
+    };
+
+    var visualErrors = function (error, target_dom, show) {
+
+        var validation_element_dom,
+            validation_input_dom,
+            validation_title_dom,
+            validation_error_dom;
+
+        var field_has_error_class;
+
+            if(target_dom.name && target_dom.name === error.key){
+                // target_dom - we have dom of input field
+                validation_input_dom = target_dom;
+            }else{
+                // target_dom - we have dom of form
+                validation_input_dom = target_dom.querySelector('[name=' + error.key + ']');
+            }
+
+            field_has_error_class = validation_input_dom.classList.contains(Global.predefine_values.class.ERROR_HIGHLIGHT_CLASS);
+
+            if(validation_input_dom){
+                // there is such element, find all other elements
+
+                validation_element_dom = Global.helpers.findParent(validation_input_dom, 'validation_element');
+
+                if(validation_element_dom){
+                    // there is container for all other fields
+
+                    validation_title_dom = validation_element_dom.querySelector('.validation_title');
+                    validation_error_dom = validation_element_dom.querySelector('.validation_error');
+
+                    if (validation_title_dom && validation_error_dom) {
+                        // there is all needed elements, to show/hide error
+
+                        if(show){
+                            showVisualErrors(validation_input_dom, validation_title_dom, validation_error_dom, error.value);
+                        } else {
+                            // show === false => need to hide visual error
+                            // field_has_error_class === true => the field is not clear
+                            // ==> there need to remove error classes
+                            if (field_has_error_class === true) {
+                                hideVisualErrors(validation_input_dom, validation_title_dom, validation_error_dom);
+                            }
+                        }
+                    } else {
+
+                        console.error('validation error - can\'t find dom some of element: validation_title_dom or validation_error_dom');
+                    }
+
+                } else {
+
+                    console.error('validation error - can\'t find dom parent of element: '+ error.key);
+                }
+            } else {
+
+                console.error('validation error - no such element in dom: '+ error.key);
+            }
+
+    };
+
+
     /**
      * @param {array} to_validate - array of objects to validate;
      * [{key:'first_name',
@@ -11,20 +96,28 @@
 
         //var this = this;
 
-        this.check_valid = function (to_validate) {
-
+        this.check_valid = function (all_fields, options) {
 
             console.log('RUN validation');
 
-
             var validate_sum = {};
             var key, validate_result, dependencies_key;
+            var target_dom = options.target_dom;
 
+            // if we pass options.field = {first_name:'some name'} => so need to check only one field,
+            // else check all that bunch of fields
+            var to_validate = (options.field) ? options.field : all_fields;
 
             for(key in to_validate){
 
                 validate_result = null;
                 dependencies_key = null;
+
+                var error = {
+                    key: key,
+                    value: ''
+                };
+                visualErrors(error,target_dom,false);
 
                 if(this.defaults.elements.hasOwnProperty(key)){
                     // there is such predefined rule
@@ -34,16 +127,22 @@
 
                         dependencies_key = this.defaults.elements[key].dependencies;
 
-                        if(to_validate.hasOwnProperty(dependencies_key.name)) {
+                        if(all_fields.hasOwnProperty(dependencies_key.name)) {
                             // there is such dependence field
 
-                            if (to_validate[dependencies_key.name] === dependencies_key.value) {
+                            if (all_fields[dependencies_key.name] === dependencies_key.value) {
                                 // check dependence field value
 
+                                // validate_result - string with error description
                                 validate_result = this.makeValidation(key,to_validate[key]);
 
                                 if (validate_result) {
+                                    // store error to the validate_sum object
                                     validate_sum[key] = validate_result;
+
+                                    // show error to user
+                                    error[key] = validate_result;
+                                    visualErrors(error,target_dom,true);
                                 }
                             }
                         }else{
@@ -51,14 +150,24 @@
                             console.error('validation error - no dependencies field');
                         }
                     }else{
+
+                        // validate_result - string with error description
                         validate_result = this.makeValidation(key,to_validate[key]);
 
                         if (validate_result) {
+                            // store error to the validate_sum object
                             validate_sum[key] = validate_result;
+
+                            // show error to user
+                            error['value'] = validate_result;
+                            visualErrors(error,target_dom,true);
                         }
                     }
                 }
             }
+
+
+
 
             if(Object.keys(validate_sum).length > 0){
                 console.log('VALIDATION RESULT !!! ');
