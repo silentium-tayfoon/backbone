@@ -4,7 +4,7 @@ var Backbone = require('imports?$=jquery&_=underscore!./../../frameworks/backbon
 var vendor_update = require('imports?$=jquery&_=underscore!./../../frameworks/vendor_update.js');
 var Validate = require('./../../frameworks/set_validate.js');
 
-var gl = require('imports?$=jquery!./../../frameworks/global.js');
+require('imports?$=jquery!./../../frameworks/global.js');
 
 
 var register_form_template = require('html!./../../tpl/register_form_template.tpl');
@@ -157,13 +157,11 @@ module.exports = function(){
 				this.$el.change(function(e){
 					var data = {};
 					data[e.target.name] = e.target.value;
-					console.log(data);
 					if(e.target.type === 'button' || e.target.type === 'checkbox' || e.target.type === 'radio'){
 						self.new_user.set(data);
 					}else{
 						self.new_user.set(data, {validate:true, target_dom:e.target, field: data});
 					}
-
 				});
 
 				var $acc_type_toggle = this.$el.find('.acc_type_toggle');
@@ -182,25 +180,8 @@ module.exports = function(){
 		        				});
 
 				this.listenTo(this.new_user, 'invalid', function(){
-					var error_list = arguments[1];
-					var i;
-					/**
-					 * {
-						first_name: "Must be at least 8 characters.",
-						business_name: "Must be at least 2 characters."
-					 * }
-					 * */
-
-					//showErrors(arguments[1], this.el);
-
-                    //
-                    //
-					// if (error_list.length > 0) {
-					// 	for (i=0; i<error_list.length; i++) {
-                    //
-					// 	}
-					// }
 		        	console.log('INVALID VALIDATION');
+		        	console.log(arguments);
 		        } );
 		    },
 		    model: User,
@@ -252,21 +233,10 @@ module.exports = function(){
 			},
 			collection: users_list,
 			saveData: function(){
-				//this.$el.find('[name="Submit"]').removeClass('btn-default').addClass('btn-danger');
 
 				var list_view = this;
 
-				//window.user = this.new_user = new this.model({});
-
-				//console.log('save new user - ' + this.new_user.cid + '  ' + this.new_user);
-
 				var data_from_dom = this.getValFromDom(this.new_user.attributes);
-
-				// recive formated data from dom - now validate
-
-				//var validation_result = this.new_user.validate(data_from_dom);
-
-				//this.new_user.set(data_from_dom, {validate:true});
 
 				this.new_user.save(data_from_dom,{
 						success: function(){
@@ -289,7 +259,9 @@ module.exports = function(){
 							debugger;
 							console.log('Save new user on server FAILL');
 						},
-						wait: true
+						wait: true,
+						validate:true,
+						target_dom: this.el
 					});
 			},
 			render: function(){

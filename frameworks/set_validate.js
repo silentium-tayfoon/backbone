@@ -86,11 +86,11 @@
 
 
     /**
-     * @param {array} to_validate - array of objects to validate;
-     * [{key:'first_name',
-     *   val:'value from dom',
-     *   rules:{['not_empty', {name: 'min', value: 8}, {name: 'max', value: 100}]},
-     *   dependencies: {key:'is_business', val: true/false}}]
+     * @param {object} all_fields - backbone return all model
+     * @param {object} options - different parameters to validate one field ar all
+     * @param {object} options.target_dom - dom link - can be link to 'field' or to 'form'
+     * @param {object} options.field - field name
+     * @param {object} options - different parameters to validate one field ar all
      * */
     var Rules = function () {
 
@@ -106,6 +106,7 @@
 
             // if we pass options.field = {first_name:'some name'} => so need to check only one field,
             // else check all that bunch of fields
+            // but still need all_fields for situation with dependencies!
             var to_validate = (options.field) ? options.field : all_fields;
 
             for(key in to_validate){
@@ -113,14 +114,14 @@
                 validate_result = null;
                 dependencies_key = null;
 
-                var error = {
-                    key: key,
-                    value: ''
-                };
-                visualErrors(error,target_dom,false);
-
                 if(this.defaults.elements.hasOwnProperty(key)){
                     // there is such predefined rule
+
+                    var error = {
+                        key: key,
+                        value: ''
+                    };
+                    visualErrors(error,target_dom,false);
 
                     if (this.defaults.elements[key].dependencies !== false) {
                         // check dependence field
@@ -141,7 +142,7 @@
                                     validate_sum[key] = validate_result;
 
                                     // show error to user
-                                    error[key] = validate_result;
+                                    error.value = validate_result;
                                     visualErrors(error,target_dom,true);
                                 }
                             }

@@ -35,7 +35,7 @@
 	</li>
 	<li class="validation_element list-group-item acc_type_toggle <% if(data.acc_type === 'personal'){%> hidden <% } %> validation_element" >
 		<span class='highLabel validation_title' data-label='business_name'>business</span><br>
-		<label class='highLabel validation_title'>
+		<label class='highLabel'>
 		<input type="text" name="business_name" value="<% if(data.business_name){%> data.business_name <% } %>" class="validation_input form-control"> business name
 			<span class="validation_error hidden"></span>
 		</label>
