@@ -182,11 +182,13 @@ app.delete( '/api/users/:id', function( request, response ) {
 			'last_name2': [{value:'some domain', error:'some error'}, {value:'some domain2', error:'some error2'}]
 		};
 
+		var f_name = (request.body.first_name === 'changedfirstname') ? 'BLA firstname BLA': request.body.first_name;
+
 		var user = new UserModel({
 			id: UserModel.length,
 			//first_name: request.body.first_name,
-			first_name: 'SERVER FIRST NAME',
-	        last_name: request.body.last_name,
+			first_name: f_name,
+			last_name: request.body.last_name,
 			country: request.body.country,
 			vehicle1: request.body.vehicle1,
 			vehicle2: request.body.vehicle2,
@@ -201,13 +203,39 @@ app.delete( '/api/users/:id', function( request, response ) {
 			}
 		});
 
-		user['error'] = JSON.stringify({
-			first_name: 'not walid'
-		});
+		if(user.first_name != 'someerrorhere'){
+			return response.send( user );
+		}else{
 
-		return response.send( user );
+			var data_with_error = {
+				model: user,
+				error: [
+					{
+						key: 'first_name',
+						value: 'not valid from server'
+					},
+					{
+						key: 'some_error',
+						value: 'API say\'s we are in trouble'
+					},
+					{
+						key: 'bulk_error',
+						value: [
+							{
+								key: 'somedomenname',
+								value: 'this domen is already registered'
+							},
+							{
+								key: 'somedomenname2',
+								value: 'cna\'t register this one'
+							}
+						]
+					}
+				]
+			};
 
-		//return response.status(500).send( error_model );
+			return response.status(500).send( data_with_error );
+		}
 	};
 
 	var read = function(request, response) {

@@ -69,6 +69,85 @@ module.exports = function(){
 		}
 	};
 
+	var handleErrors = function (attr) {
+
+		/**
+		 * error: [
+				 {
+					 key: 'first_name',
+					 value: 'not valid from server'
+				 },
+				 {
+					 key: 'some_error',
+					 value: 'API say\'s we are in trouble'
+				 },
+				 {
+					 key: 'bulk_error',
+					 value: [
+						 {
+							 key: 'somedomenname',
+							 value: 'this domen is already registered'
+						 },
+						 {
+							 key: 'somedomenname2',
+							 value: 'cna\'t register this one'
+						 }
+					 ]
+				 }
+		 	]
+		 * */
+
+		var error = attr[1].error;
+		var model = attr[1].model;
+
+	};
+
+	/**
+	 * compare attributes in objects to_server & from_server
+	 * function handle only situation for the attributes which was passed to server
+	 * and was changed on server and returned to user
+	 *
+	 * function do not handle situation when amount of attributes are changed on server;
+	 *
+	 */
+
+	var checkServerChanges = function (to_server, from_server) {
+
+		var do_not_match = [];
+		var string_to_server, string_from_server;
+
+		var is_match = _.isMatch(to_server, from_server);
+
+		if(is_match === false){
+
+			for(var key_to_server in to_server){
+				if(to_server.hasOwnProperty(key_to_server) && from_server.hasOwnProperty(key_to_server)){
+
+					// compare stings, because false == 'false' ==> != true
+					string_to_server = to_server[key_to_server] + '';
+					string_from_server = from_server[key_to_server] + '';
+
+					if(string_to_server != string_from_server){
+						do_not_match.push({
+							key: key_to_server,
+							to_server: to_server[key_to_server],
+							from_server: from_server[key_to_server]
+						});
+					}
+				}
+			}
+
+			if(do_not_match.length > 0){
+				return do_not_match;
+			}else{
+				return false;
+			}
+		} else {
+			// is_match === true
+			return true;
+		}
+	};
+
 
 	$(function(){
 
@@ -240,23 +319,36 @@ module.exports = function(){
 
 				this.new_user.save(data_from_dom,{
 						success: function(){
-							debugger;
-							console.log('!!!!! all good');
 
-							list_view.collection.add(list_view.new_user);
-							// set .isNew to false by set id
-							if(!list_view.new_user.attributes.id){
-								console.log('set id:' + list_view.collection.length);
-								list_view.new_user.set('id', list_view.collection.length);
+							var send_received_different = checkServerChanges(data_from_dom, arguments[0].attributes);
+
+							if(send_received_different){
+								// re render template with new data!
 							}
 
-							// add new empty user
-							list_view.new_user = new list_view.model({});
-							list_view.button.reinit(list_view.new_user);
-							//list_view.$el.find('[name="Submit"]').removeClass('btn-danger').addClass('btn-default');
+
+							console.log('-----different-----');
+							console.log(send_received_different);
+
+							// simply create new user for form field
+								list_view.collection.add(list_view.new_user);
+								// set .isNew to false by set id
+								if(!list_view.new_user.attributes.id){
+									console.log('set id:' + list_view.collection.length);
+									list_view.new_user.set('id', list_view.collection.length);
+								}
+								// add new empty user
+								list_view.new_user = new list_view.model({});
+								list_view.button.reinit(list_view.new_user);
+								//list_view.$el.find('[name="Submit"]').removeClass('btn-danger').addClass('btn-default');
 						},
 						error: function(){
 							debugger;
+
+							if(arguments[1].responseJSON.hasOwnProperty('error')){
+								handleErrors(arguments);
+							}
+
 							console.log('Save new user on server FAILL');
 						},
 						wait: true,

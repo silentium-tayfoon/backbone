@@ -160,6 +160,7 @@ module.exports = function(){
 
 
 				this.listenTo(window.users_list, 'change', function(){
+
 					var last_model_in_collection = arguments[0].collection.last();
 					if (last_model_in_collection) {
 						this.render(last_model_in_collection);
