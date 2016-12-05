@@ -317,6 +317,16 @@ module.exports = function(){
 
 				var data_from_dom = this.getValFromDom(this.new_user.attributes);
 
+				//window.new_user = this.new_user;
+				// window.new_user.on('error', function () {
+				// 	debugger;
+				// });
+                //
+				// window.new_user.on('change', function () {
+				// 	debugger;
+				// });
+
+
 				this.new_user.save(data_from_dom,{
 						success: function(){
 

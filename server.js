@@ -182,7 +182,9 @@ app.delete( '/api/users/:id', function( request, response ) {
 			'last_name2': [{value:'some domain', error:'some error'}, {value:'some domain2', error:'some error2'}]
 		};
 
-		var f_name = (request.body.first_name === 'changedfirstname') ? 'BLA firstname BLA': request.body.first_name;
+		//var f_name = (request.body.first_name === 'changedfirstname') ? 'BLA firstname BLA': request.body.first_name;
+
+		var f_name = (request.body.first_name === 'someerrorhere') ? 'BLA firstname someerrorhere BLA': request.body.first_name;
 
 		var user = new UserModel({
 			id: UserModel.length,
@@ -203,7 +205,7 @@ app.delete( '/api/users/:id', function( request, response ) {
 			}
 		});
 
-		if(user.first_name != 'someerrorhere'){
+		if(user.first_name != 'BLA firstname someerrorhere BLA'){
 			return response.send( user );
 		}else{
 
@@ -217,19 +219,25 @@ app.delete( '/api/users/:id', function( request, response ) {
 					{
 						key: 'some_error',
 						value: 'API say\'s we are in trouble'
-					},
+					}
+				],
+				alert: [
 					{
 						key: 'bulk_error',
 						value: [
 							{
 								key: 'somedomenname',
-								value: 'this domen is already registered'
+								value: 'this domain is already registered'
 							},
 							{
 								key: 'somedomenname2',
-								value: 'cna\'t register this one'
+								value: 'can\'t register this one'
 							}
 						]
+					},
+					{
+						key: 'bulk_error',
+						value: 'some error here'
 					}
 				]
 			};
