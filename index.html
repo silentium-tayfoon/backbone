@@ -5,60 +5,16 @@
 		<title>Page Title</title>
 
 		<meta charset="UTF-8">
-		<meta name="description" content="Free Web tutorials">
-		<meta name="keywords" content="HTML,CSS,XML,JavaScript">
-		<meta name="author" content="Hege Refsnes">
+		<meta name="description" content="mnemo">
+		<meta name="keywords" content="mnemo">
+		<meta name="author" content="silentium">
 
 		<link rel="stylesheet" type="text/css" href="/frameworks/bootstrap.css">
 		<link rel="stylesheet" type="text/css" href="/public/style.css">
-
-		<script type="text/javascript" src="/frameworks/jquery.js"></script>
-		<script type="text/javascript" src="/frameworks/underscore.js"></script>
-		<script type="text/javascript" src="/frameworks/backbone.js"></script>
-		<script type="text/javascript" src="/frameworks/handlebars.js"></script>
-		<script type="text/javascript" src="/public/test.js"></script>
-
     </head>
 	<body>
-		<div class="container">
-			<nav class="navbar navbar-default">
-				<div class="container-fluid">
-					<div class="navbar-header">
-						<a class="navbar-brand" href="#">WebSiteName</a>
-					</div>
-					<ul class="nav navbar-nav">
-						<li class="active"><a href="/">Home</a></li>
-						<li><a href="/register">Register user</a></li>
-						<li><a href="/tabs">Tabs</a></li>
-						<li><a href="/module3">Module3</a></li>
-					</ul>
-				</div>
-			</nav>
-			<div class="row">
-				<div class="col-sm-4" id="post_data">
-					<h6>try cliks and handlebars</h6>	
-				</div>
-				<div id='click_buttons'>
-					<button class="btn btn-default" id='show_list' type="button">Show list</button>
-					<button class="btn btn-default show_list" type="button">Show list console</button>
-					<button class="btn btn-default show_alert" type="button">Show alert</button>
-				</div>
-				<div class="task_list_target"></div>
-			</div>
-		</div>
-		<script id="task_list_template" type="text/x-handlebars-template">
-			<div class="entry">
-				<h6><:task:></h6>
-				<ul class="list-group">
-					<:#each todo_list:>
-						<li class="list-group-item">
-							<p><:name:></p>
-							<p><:description:></p>
-						</li>
-					<:/each:>
-				</ul>
-				</div>
-			</div>
-		</script>
+		<p>loading...</p>
+		<div id="main"></div>
+		<script type="text/javascript" src="/public/public.bundle.js"></script>
 	</body>
 </html>
