@@ -310,9 +310,10 @@ app.delete( '/api/users/:id', function( request, response ) {
 	//добавление новой книги
 app.post( '/api/users/', function( request, response ) {
 
-	//console.log('QUERY: '+request.query.method);
+	//console.log('QUERY: '+ JSON.stringify(request.body));
+	console.log('QUERY: '+ JSON.stringify(request.body.ajax_method));
 
-	switch (request.query.method) {
+	switch (request.body.ajax_method) {
 
 	    case 'create':
 	        create(request, response);

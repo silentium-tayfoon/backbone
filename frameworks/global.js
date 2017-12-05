@@ -360,6 +360,8 @@
         }
     };
 
+    Global['ajax_token'] = '1234567890';
+
 })(window.jQuery, window.DebugLog);
 
 

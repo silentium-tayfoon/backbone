@@ -1,0 +1,17 @@
+mongodb start demon
+
+# MONGO DB - to start mong database just run in console: mongod
+
+https://docs.mongodb.com/manual/tutorial/manage-mongodb-processes/
+# mongod
+
+start server:# node server.js
+path: http://localhost:8080/
+
+GIT 
+	ignore local folder - go to .git/info/ open exclude end add a folder 'node_modules/'
+	so in that way yout modules will not be in the git;
+
+сделать на скорую руку генератор 2х значных чисел для мнемотехники,
+в идеале с фотками
+

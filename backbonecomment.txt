@@ -337,25 +337,64 @@
 	 var myView = new MyView();
 	 myView.sayFoo(); //=> 'bar'
 
+// ----------------------------------------------------------------------------------------------------
+
+Работа с Backbone.localStorage для коллекций - проблема, у коллекции нету функции Collection.save()
+чтобы можно было сохранить все модели в коллекции в localStorage. Поетому нужно добавить функцию которая
+по событию collection.on('add', save_to_localStorage)
+
+	на примере это выглядит вот так
+
+	var NameServersCollection = Backbone.Collection.extend({
+			//OFFLINE: step 2
+			localStorage: new Backbone.LocalStorage(LOCAL_STORAGE_NameServers),
+			url: '/reseller/ajax/reseller/update_nameservers/',
+			model: NameServersModel,
+			save_to_localStorage: function(model){
+				model.save();
+				// put model.id - key in localStorage
+				// to the records for the collection.fetch() works in right way
+				this.localStorage.records.push(model.id);
+			},
+			initialize: function () {
+				this.on('add', function () {
+					this.models.map(this.save_to_localStorage, this);
+				});
+			}
+		});
+
+	и в результате у нас нормально будет отрабатывать collection.fetch()
+// ----------------------------------------------------------------------------------------------------
+
+
+
+
+career.luxoft.com/r/?vr=VR-22918&location=Kiev
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+<div>
+    <%
+        for (let i=0; i<name_server_view.collection.models.length; i++) {
+        let model_data = name_server_view.collection.models[i].attributes;
+    %>
+        <div class="row table-group _middle name-servers">
+            <div class="table-cell col-xl-6 col-m-auto _m-order-1"><%= model_data.title %>:</div>
+            <div class="table-cell col-xl-8 col-m-24 _m-order-3">
+                <input name="name_<%= i %>" type="text" value="<%= model_data.name %>" class="_full-width hostName">
+            </div>
+            <div class="table-cell col-xl-auto col-m-24 _m-clear _m-order-4">
+                <input name="ip_<%= i %>" type="text" value="<%= model_data.ip %>" class="_full-width ipAddress _m-mt10">
+            </div>
+            <div class="table-cell col-xl-fixed _width-60 col-m-12 _m-order-2 _align-right delete_number_<%= i %> delete_ns_record_js"><span class="inline-link _font11 _uppercase">Delete</span></div>
+        </div>
+    <%
+        }
+    %>
+</div>
 
 
 
