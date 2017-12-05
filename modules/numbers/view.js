@@ -1,6 +1,8 @@
 
 import Model from './model';
 
+require("!style!css!./style.css");
+
 const numbers_tpl = require('html!base/modules/numbers/view.tpl');
 console.log('here');
 export default Backbone.View.extend({
