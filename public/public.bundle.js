@@ -10320,7 +10320,7 @@
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(Backbone, _) {'use strict';
+	/* WEBPACK VAR INJECTION */(function(Backbone, _, $) {'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 		value: true
@@ -10334,28 +10334,38 @@
 	
 	__webpack_require__(6);
 	
-	var numbers_tpl = __webpack_require__(11);
-	console.log('here');
+	var control_view = __webpack_require__(11);
+	var digits_view = __webpack_require__(12);
+	
 	exports.default = Backbone.View.extend({
 		events: {
-			//'click .update_js': 'update'
+			'click .generate_js': 'generateDigits',
+			'keyup #num_of_cols': 'setWidth'
 		},
 		initialize: function initialize() {
-	
-			// this.model.on('sync', function() {
-			// 	self.render(false);
-			// });
-	
 			this.render();
 		},
 		el: '#main',
-		template: _.template(numbers_tpl),
+		template: _.template(control_view),
+		template_digits: _.template(digits_view),
 		model: new _model2.default(),
 		render: function render() {
-			this.$el.append(this.template({}));
+			this.$el.append(this.template(this.model.toJSON()));
+			this.$loading = $(document).find('#loading');
+			this.$digits_dom = this.$el.find('#digits');
+	
+			this.$loading.hide();
+		},
+		generateDigits: function generateDigits() {
+			this.model.getDigits();
+			var tpl = this.template_digits(this.model.toJSON());
+			this.$digits_dom.empty().append(tpl);
+		},
+		setWidth: function setWidth(e) {
+			this.model.set('width', e.target.value);
 		}
 	});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(4)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(4), __webpack_require__(1)))
 
 /***/ },
 /* 3 */
@@ -13842,17 +13852,80 @@
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(Backbone) {"use strict";
+	/* WEBPACK VAR INJECTION */(function(Backbone, _) {'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
 	exports.default = Backbone.Model.extend({
 		defaults: {
-			number: 100
+			digits: [],
+			width: 3
+		},
+		getDigits: function getDigits() {
+			var for_render = [];
+			var row_array = [];
+			var row_count = 0;
+	
+			var generated_random = this.generateRandom(0, 100);
+	
+			for (var i = 0; i < generated_random.length; i++) {
+	
+				generated_random[i] = this.fix100(generated_random[i]);
+	
+				generated_random[i] = this.fixZero(generated_random[i]);
+	
+				if (row_count < this.get('width')) {
+	
+					row_array.push(generated_random[i]);
+					row_count++;
+				} else {
+	
+					for_render.push(row_array);
+	
+					row_count = 1;
+					row_array = [];
+					row_array.push(generated_random[i]);
+				}
+			}
+			this.set('digits', for_render);
+		},
+	
+		fixZero: function fixZero(digit) {
+	
+			var add_digits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+	
+			var changed = _.find(add_digits, function (d) {
+				return d == digit;
+			});
+	
+			return changed ? '0' + changed : digit;
+		},
+		fix100: function fix100(digit) {
+			return digit != 100 ? digit : '00';
+		},
+		generateRandom: function generateRandom(min, max, numOfSwaps) {
+			var size = max - min + 1;
+			numOfSwaps = numOfSwaps || size;
+			var arr = Array.apply(null, Array(size));
+	
+			for (var i = 0, j = min; i < size & j <= max; i++, j++) {
+				arr[i] = j;
+			}
+	
+			for (var _i = 0; _i < numOfSwaps; _i++) {
+				var idx1 = Math.round(Math.random() * (size - 1));
+				var idx2 = Math.round(Math.random() * (size - 1));
+	
+				var temp = arr[idx1];
+				arr[idx1] = arr[idx2];
+				arr[idx2] = temp;
+			}
+	
+			return arr;
 		}
 	});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(4)))
 
 /***/ },
 /* 6 */
@@ -13894,7 +13967,7 @@
 	
 	
 	// module
-	exports.push([module.id, "body {\n    background-color: lightblue;\n}\n\nh1 {\n    color: white;\n    text-align: center;\n}\n\np {\n    font-family: verdana;\n    font-size: 20px;\n}", ""]);
+	exports.push([module.id, "td {\n    text-align: center;\n}", ""]);
 	
 	// exports
 
@@ -14452,7 +14525,13 @@
 /* 11 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n<h1>hello backbone render()</h1>";
+	module.exports = "<div class=\"row\">\n    <div class=\"col\">\n        <!--<label for=\"num_of_cols\">Width</label>-->\n        <input type=\"text\" class=\"form-control\" id=\"num_of_cols\" placeholder=\"number of colons = <%=width%>\">\n    </div>\n    <div class=\"col\">\n        <button type=\"button\" class=\"btn btn-primary generate_js\">Generate</button>\n    </div>\n</div>\n<hr/>\n<div class=\"container\" id=\"digits\"></div>";
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	module.exports = "<table class=\"table table-bordered\">\n    <tbody>\n    <% for (let i=0; i< digits.length; i++) { %>\n        <tr>\n            <% for (let j=0; j< width; j++) { %>\n                <td><%=digits[i][j]%></td>\n            <% } %>\n        </tr>\n    <% } %>\n    </tbody>\n</table>\n";
 
 /***/ }
 /******/ ]);
