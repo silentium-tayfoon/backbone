@@ -1,28 +1,17 @@
+
+import {number_hints} from './description_100';
+
 export default Backbone.Model.extend({
 	defaults: {
 		digits: [],
 		width: 3
 	},
-
-	description: {
-		'0': 'номерок',
-		'01': 'эжик',
-		'02': 'яд',
-		'03': 'уши',
-		'04': 'чай',
-		'05': 'обои',
-		'06': 'юла',
-		'07': 'оса',
-		'08': 'ива',
-		'09': 'яйцо',
-		'10': 'огонь'
-	},
-
+	description: number_hints,
 	getPrompt: function (number) {
 		if (this.description.hasOwnProperty(number)) {
 			return this.description[number];
 		} else {
-			return 'незнаю';
+			return '----';
 		}
 	},
 

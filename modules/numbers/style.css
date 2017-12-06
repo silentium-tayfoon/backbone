@@ -5,12 +5,14 @@ td {
 
 #prompt {
     background-color: white;
-    height: 30px;
+    height: 50px;
     width: 100%;
     text-align: center;
     position: fixed;
     top: 10px;
     left: 50px;
+    font-size: 2rem;
+    padding-left: 20px;
 }
 
 ._hide {

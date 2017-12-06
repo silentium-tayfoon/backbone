@@ -13910,31 +13910,20 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
+	
+	var _description_ = __webpack_require__(13);
+	
 	exports.default = Backbone.Model.extend({
 		defaults: {
 			digits: [],
 			width: 3
 		},
-	
-		description: {
-			'0': 'номерок',
-			'01': 'эжик',
-			'02': 'яд',
-			'03': 'уши',
-			'04': 'чай',
-			'05': 'обои',
-			'06': 'юла',
-			'07': 'оса',
-			'08': 'ива',
-			'09': 'яйцо',
-			'10': 'огонь'
-		},
-	
+		description: _description_.number_hints,
 		getPrompt: function getPrompt(number) {
 			if (this.description.hasOwnProperty(number)) {
 				return this.description[number];
 			} else {
-				return 'незнаю';
+				return '----';
 			}
 		},
 	
@@ -14043,7 +14032,7 @@
 	
 	
 	// module
-	exports.push([module.id, "td {\n    text-align: center;\n    font-size: 2rem;\n}\n\n#prompt {\n    background-color: white;\n    height: 30px;\n    width: 100%;\n    text-align: center;\n    position: fixed;\n    top: 10px;\n    left: 50px;\n}\n\n._hide {\n    display: none;\n}", ""]);
+	exports.push([module.id, "td {\n    text-align: center;\n    font-size: 2rem;\n}\n\n#prompt {\n    background-color: white;\n    height: 50px;\n    width: 100%;\n    text-align: center;\n    position: fixed;\n    top: 10px;\n    left: 50px;\n    font-size: 2rem;\n    padding-left: 20px;\n}\n\n._hide {\n    display: none;\n}", ""]);
 	
 	// exports
 
@@ -14608,6 +14597,131 @@
 /***/ function(module, exports) {
 
 	module.exports = "<div id=\"prompt\" class=\"row _hide\">hint</div>\n<table class=\"table table-bordered table-striped\">\n    <tbody>\n    <% for (let i=0; i< digits.length; i++) { %>\n        <tr>\n            <% for (let j=0; j< width; j++) { %>\n                <td><%=digits[i][j]%></td>\n            <% } %>\n        </tr>\n    <% } %>\n    </tbody>\n</table>\n";
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var number_hints = {
+		'0': 'номерок',
+		'00': 'бочки',
+	
+		'01': 'эЖ',
+		'02': 'яД',
+		'03': 'уХо',
+		'04': 'Чай',
+		'05': 'оБои',
+		'06': 'юЛа',
+		'07': 'оСа',
+		'08': 'иВа',
+		'09': 'яйЦо',
+		'10': 'оГоНь',
+	
+		'11': 'ГаГарин',
+		'12': 'ГиТара',
+		'13': 'ГайКа',
+		'14': 'ЖуЧок',
+		'15': 'ГуБы',
+		'16': 'ГуаШь',
+		'17': 'ГуСь',
+		'18': 'ГВоздь',
+		'19': 'ГиРя',
+		'20': 'ДоМ',
+	
+		'21': 'уТюГ',
+		'22': 'ДиоД',
+		'23': 'ДуХи',
+		'24': 'ДиЧь',
+		'25': 'ТоПор',
+		'26': 'ДуШ',
+		'27': 'ТуЗ',
+		'28': 'уДаВ',
+		'29': 'ТеРка',
+		'30': 'иКоНа',
+	
+		'31': 'КоЖа',
+		'32': 'КиТ',
+		'33': 'КеКс',
+		'34': 'КоЧан',
+		'35': 'КуБик',
+		'36': 'КЛей',
+		'37': 'КоСа',
+		'38': 'ХВоя',
+		'39': 'яКоРь',
+		'40': 'ЧайНик',
+	
+		'41': 'ЧуГунок',
+		'42': 'ЩиТ',
+		'43': 'оЧКи',
+		'44': 'ЧуЧело',
+		'45': 'ЧиП',
+		'46': 'ЧаШка',
+		'47': 'ЧаСы',
+		'48': 'ЩаВель',
+		'49': 'ЧеРеп',
+		'50': 'БаяН',
+	
+		'51': 'ПоГоны',
+		'52': 'БиТа',
+		'53': 'ПауК',
+		'54': 'ПеЧь',
+		'55': 'ПюПитр',
+		'56': 'ПиаЛа',
+		'57': 'БуСы',
+		'58': 'ПиВо',
+		'59': 'ПеРо',
+		'60': 'ШиНа',
+	
+		'61': 'ЛыЖи',
+		'62': 'ЛаДья',
+		'63': 'ЛейКа',
+		'64': 'ЛуЧ',
+		'65': 'ЛуПа',
+		'66': 'ШиЛо',
+		'67': 'ЛиСа',
+		'68': 'оЛоВо',
+		'69': 'ШаР',
+		'70': 'СаНи',
+	
+		'71': 'СиГара',
+		'72': 'СиТо',
+		'73': 'яЗыК',
+		'74': 'СаЧок',
+		'75': 'ЗуБ',
+		'76': 'СоЛь',
+		'77': 'СоуС',
+		'78': 'СейФ',
+		'79': 'СыР',
+		'80': 'ФеН',
+	
+		'81': 'ВаГон',
+		'82': 'ВаТа',
+		'83': 'ВаКса',
+		'84': 'оВоЩ',
+		'85': 'ВоБла',
+		'86': 'ВиЛы',
+		'87': 'ВеСы',
+		'88': 'ВаФли',
+		'89': 'ФаРа',
+		'90': 'РюМка',
+	
+		'91': 'РоГа',
+		'92': 'РаДио',
+		'93': 'РаК',
+		'94': 'РуЧка',
+		'95': 'РаПан',
+		'96': 'РуЛь',
+		'97': 'РоЗа',
+		'98': 'аРФа',
+		'99': 'РаЦия'
+	};
+	
+	exports.number_hints = number_hints;
 
 /***/ }
 /******/ ]);
