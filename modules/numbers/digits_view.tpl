@@ -1,4 +1,4 @@
-<table class="table table-bordered">
+<table class="table table-bordered table-striped">
     <tbody>
     <% for (let i=0; i< digits.length; i++) { %>
         <tr>

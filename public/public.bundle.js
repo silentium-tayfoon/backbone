@@ -13967,7 +13967,7 @@
 	
 	
 	// module
-	exports.push([module.id, "td {\n    text-align: center;\n}", ""]);
+	exports.push([module.id, "td {\n    text-align: center;\n    font-size: 2rem;\n}", ""]);
 	
 	// exports
 
@@ -14525,13 +14525,13 @@
 /* 11 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"row\">\n    <div class=\"col\">\n        <!--<label for=\"num_of_cols\">Width</label>-->\n        <input type=\"text\" class=\"form-control\" id=\"num_of_cols\" placeholder=\"number of colons = <%=width%>\">\n    </div>\n    <div class=\"col\">\n        <button type=\"button\" class=\"btn btn-primary generate_js\">Generate</button>\n    </div>\n</div>\n<hr/>\n<div class=\"container\" id=\"digits\"></div>";
+	module.exports = "<hr/>\n<div class=\"row\">\n    <div class=\"col\">\n        <input type=\"text\" class=\"form-control\" id=\"num_of_cols\" placeholder=\"col = <%=width%>\">\n    </div>\n    <div class=\"col\">\n        <button type=\"button\" class=\"btn btn-primary generate_js\">Generate</button>\n    </div>\n</div>\n<hr/>\n<div id=\"digits\"></div>";
 
 /***/ },
 /* 12 */
 /***/ function(module, exports) {
 
-	module.exports = "<table class=\"table table-bordered\">\n    <tbody>\n    <% for (let i=0; i< digits.length; i++) { %>\n        <tr>\n            <% for (let j=0; j< width; j++) { %>\n                <td><%=digits[i][j]%></td>\n            <% } %>\n        </tr>\n    <% } %>\n    </tbody>\n</table>\n";
+	module.exports = "<table class=\"table table-bordered table-striped\">\n    <tbody>\n    <% for (let i=0; i< digits.length; i++) { %>\n        <tr>\n            <% for (let j=0; j< width; j++) { %>\n                <td><%=digits[i][j]%></td>\n            <% } %>\n        </tr>\n    <% } %>\n    </tbody>\n</table>\n";
 
 /***/ }
 /******/ ]);
