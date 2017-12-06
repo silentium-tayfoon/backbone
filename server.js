@@ -1,4 +1,4 @@
-var PORT = 8080;
+var PORT = '8080';
 var application_root = __dirname;
 var express = require('express');
 var bodyParser = require('body-parser');
