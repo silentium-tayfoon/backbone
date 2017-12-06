@@ -44,7 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function($) {'use strict';
+	/* WEBPACK VAR INJECTION */(function($) {"use strict";
 	
 	var _view = __webpack_require__(2);
 	
@@ -53,6 +53,13 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	$(function () {
+		// no back button in the browser!
+		window.location.hash = "no-back-button";
+		window.location.hash = "Again-No-back-button"; //again because google chrome don't insert first hash into history
+		window.onhashchange = function () {
+			window.location.hash = "no-back-button";
+		};
+	
 		new _view2.default();
 	});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
@@ -10332,10 +10339,10 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	__webpack_require__(6);
+	__webpack_require__(7);
 	
-	var control_view = __webpack_require__(11);
-	var digits_view = __webpack_require__(12);
+	var control_view = __webpack_require__(12);
+	var digits_view = __webpack_require__(13);
 	
 	exports.default = Backbone.View.extend({
 		events: {
@@ -13911,7 +13918,7 @@
 		value: true
 	});
 	
-	var _description_ = __webpack_require__(13);
+	var _description_ = __webpack_require__(6);
 	
 	exports.default = Backbone.Model.extend({
 		defaults: {
@@ -13994,12 +14001,137 @@
 
 /***/ },
 /* 6 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var number_hints = {
+		'0': 'номерок',
+		'00': 'бочки',
+	
+		'01': 'эЖ',
+		'02': 'яД',
+		'03': 'уХо',
+		'04': 'Чай',
+		'05': 'оБои',
+		'06': 'юЛа',
+		'07': 'оСа',
+		'08': 'иВа',
+		'09': 'яйЦо',
+		'10': 'оГоНь',
+	
+		'11': 'ГаГарин',
+		'12': 'ГиТара',
+		'13': 'ГайКа',
+		'14': 'ЖуЧок',
+		'15': 'ГуБы',
+		'16': 'ГуаШь',
+		'17': 'ГуСь',
+		'18': 'ГВоздь',
+		'19': 'ГиРя',
+		'20': 'ДоМ',
+	
+		'21': 'уТюГ',
+		'22': 'ДиоД',
+		'23': 'ДуХи',
+		'24': 'ДиЧь',
+		'25': 'ТоПор',
+		'26': 'ДуШ',
+		'27': 'ТуЗ',
+		'28': 'уДаВ',
+		'29': 'ТеРка',
+		'30': 'иКоНа',
+	
+		'31': 'КоЖа',
+		'32': 'КиТ',
+		'33': 'КеКс',
+		'34': 'КоЧан',
+		'35': 'КуБик',
+		'36': 'КЛей',
+		'37': 'КоСа',
+		'38': 'ХВоя',
+		'39': 'яКоРь',
+		'40': 'ЧайНик',
+	
+		'41': 'ЧуГунок',
+		'42': 'ЩиТ',
+		'43': 'оЧКи',
+		'44': 'ЧуЧело',
+		'45': 'ЧиП',
+		'46': 'ЧаШка',
+		'47': 'ЧаСы',
+		'48': 'ЩаВель',
+		'49': 'ЧеРеп',
+		'50': 'БаяН',
+	
+		'51': 'ПоГоны',
+		'52': 'БиТа',
+		'53': 'ПауК',
+		'54': 'ПеЧь',
+		'55': 'ПюПитр',
+		'56': 'ПиаЛа',
+		'57': 'БуСы',
+		'58': 'ПиВо',
+		'59': 'ПеРо',
+		'60': 'ШиНа',
+	
+		'61': 'ЛыЖи',
+		'62': 'ЛаДья',
+		'63': 'ЛейКа',
+		'64': 'ЛуЧ',
+		'65': 'ЛуПа',
+		'66': 'ШиЛо',
+		'67': 'ЛиСа',
+		'68': 'оЛоВо',
+		'69': 'ШаР',
+		'70': 'СаНи',
+	
+		'71': 'СиГара',
+		'72': 'СиТо',
+		'73': 'яЗыК',
+		'74': 'СаЧок',
+		'75': 'ЗуБ',
+		'76': 'СоЛь',
+		'77': 'СоуС',
+		'78': 'СейФ',
+		'79': 'СыР',
+		'80': 'ФеН',
+	
+		'81': 'ВаГон',
+		'82': 'ВаТа',
+		'83': 'ВаКса',
+		'84': 'оВоЩ',
+		'85': 'ВоБла',
+		'86': 'ВиЛы',
+		'87': 'ВеСы',
+		'88': 'ВаФли',
+		'89': 'ФаРа',
+		'90': 'РюМка',
+	
+		'91': 'РоГа',
+		'92': 'РаДио',
+		'93': 'РаК',
+		'94': 'РуЧка',
+		'95': 'РаПан',
+		'96': 'РуЛь',
+		'97': 'РоЗа',
+		'98': 'аРФа',
+		'99': 'РаЦия'
+	};
+	
+	exports.number_hints = number_hints;
+
+/***/ },
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(7);
+	var content = __webpack_require__(8);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// Prepare cssTransformation
 	var transform;
@@ -14007,7 +14139,7 @@
 	var options = {"hmr":true}
 	options.transform = transform
 	// add the styles to the DOM
-	var update = __webpack_require__(9)(content, options);
+	var update = __webpack_require__(10)(content, options);
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -14024,21 +14156,21 @@
 	}
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(8)(undefined);
+	exports = module.exports = __webpack_require__(9)(undefined);
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "td {\n    text-align: center;\n    font-size: 2rem;\n}\n\n#prompt {\n    background-color: white;\n    height: 50px;\n    width: 100%;\n    text-align: center;\n    position: fixed;\n    top: 10px;\n    left: 50px;\n    font-size: 2rem;\n    padding-left: 20px;\n}\n\n._hide {\n    display: none;\n}", ""]);
+	exports.push([module.id, "td {\n    text-align: center;\n    font-size: 2rem;\n}\n\n#prompt {\n    background-color: #e9ecef;\n    height: 50px;\n    width: 100%;\n    text-align: center;\n    position: fixed;\n    top: 10px;\n    left: 50px;\n    font-size: 2rem;\n    padding-left: 20px;\n}\n\n._hide {\n    display: none;\n}", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	/*
@@ -14120,7 +14252,7 @@
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -14176,7 +14308,7 @@
 	var	singletonCounter = 0;
 	var	stylesInsertedAtTop = [];
 	
-	var	fixUrls = __webpack_require__(10);
+	var	fixUrls = __webpack_require__(11);
 	
 	module.exports = function(list, options) {
 		if (false) {
@@ -14492,7 +14624,7 @@
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	
@@ -14587,141 +14719,16 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports) {
 
 	module.exports = "<hr/>\n<div class=\"row\">\n    <div class=\"col\">\n        <input type=\"text\" class=\"form-control\" id=\"num_of_cols\" placeholder=\"col = <%=width%>\">\n    </div>\n    <div class=\"col\">\n        <button type=\"button\" class=\"btn btn-primary generate_js\">Generate</button>\n    </div>\n</div>\n<hr/>\n<div id=\"digits\"></div>";
 
 /***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	module.exports = "<div id=\"prompt\" class=\"row _hide\">hint</div>\n<table class=\"table table-bordered table-striped\">\n    <tbody>\n    <% for (let i=0; i< digits.length; i++) { %>\n        <tr>\n            <% for (let j=0; j< width; j++) { %>\n                <td><%=digits[i][j]%></td>\n            <% } %>\n        </tr>\n    <% } %>\n    </tbody>\n</table>\n";
-
-/***/ },
 /* 13 */
 /***/ function(module, exports) {
 
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var number_hints = {
-		'0': 'номерок',
-		'00': 'бочки',
-	
-		'01': 'эЖ',
-		'02': 'яД',
-		'03': 'уХо',
-		'04': 'Чай',
-		'05': 'оБои',
-		'06': 'юЛа',
-		'07': 'оСа',
-		'08': 'иВа',
-		'09': 'яйЦо',
-		'10': 'оГоНь',
-	
-		'11': 'ГаГарин',
-		'12': 'ГиТара',
-		'13': 'ГайКа',
-		'14': 'ЖуЧок',
-		'15': 'ГуБы',
-		'16': 'ГуаШь',
-		'17': 'ГуСь',
-		'18': 'ГВоздь',
-		'19': 'ГиРя',
-		'20': 'ДоМ',
-	
-		'21': 'уТюГ',
-		'22': 'ДиоД',
-		'23': 'ДуХи',
-		'24': 'ДиЧь',
-		'25': 'ТоПор',
-		'26': 'ДуШ',
-		'27': 'ТуЗ',
-		'28': 'уДаВ',
-		'29': 'ТеРка',
-		'30': 'иКоНа',
-	
-		'31': 'КоЖа',
-		'32': 'КиТ',
-		'33': 'КеКс',
-		'34': 'КоЧан',
-		'35': 'КуБик',
-		'36': 'КЛей',
-		'37': 'КоСа',
-		'38': 'ХВоя',
-		'39': 'яКоРь',
-		'40': 'ЧайНик',
-	
-		'41': 'ЧуГунок',
-		'42': 'ЩиТ',
-		'43': 'оЧКи',
-		'44': 'ЧуЧело',
-		'45': 'ЧиП',
-		'46': 'ЧаШка',
-		'47': 'ЧаСы',
-		'48': 'ЩаВель',
-		'49': 'ЧеРеп',
-		'50': 'БаяН',
-	
-		'51': 'ПоГоны',
-		'52': 'БиТа',
-		'53': 'ПауК',
-		'54': 'ПеЧь',
-		'55': 'ПюПитр',
-		'56': 'ПиаЛа',
-		'57': 'БуСы',
-		'58': 'ПиВо',
-		'59': 'ПеРо',
-		'60': 'ШиНа',
-	
-		'61': 'ЛыЖи',
-		'62': 'ЛаДья',
-		'63': 'ЛейКа',
-		'64': 'ЛуЧ',
-		'65': 'ЛуПа',
-		'66': 'ШиЛо',
-		'67': 'ЛиСа',
-		'68': 'оЛоВо',
-		'69': 'ШаР',
-		'70': 'СаНи',
-	
-		'71': 'СиГара',
-		'72': 'СиТо',
-		'73': 'яЗыК',
-		'74': 'СаЧок',
-		'75': 'ЗуБ',
-		'76': 'СоЛь',
-		'77': 'СоуС',
-		'78': 'СейФ',
-		'79': 'СыР',
-		'80': 'ФеН',
-	
-		'81': 'ВаГон',
-		'82': 'ВаТа',
-		'83': 'ВаКса',
-		'84': 'оВоЩ',
-		'85': 'ВоБла',
-		'86': 'ВиЛы',
-		'87': 'ВеСы',
-		'88': 'ВаФли',
-		'89': 'ФаРа',
-		'90': 'РюМка',
-	
-		'91': 'РоГа',
-		'92': 'РаДио',
-		'93': 'РаК',
-		'94': 'РуЧка',
-		'95': 'РаПан',
-		'96': 'РуЛь',
-		'97': 'РоЗа',
-		'98': 'аРФа',
-		'99': 'РаЦия'
-	};
-	
-	exports.number_hints = number_hints;
+	module.exports = "<div id=\"prompt\" class=\"row _hide\">hint</div>\n<table class=\"table table-bordered table-striped\">\n    <tbody>\n    <% for (let i=0; i< digits.length; i++) { %>\n        <tr>\n            <% for (let j=0; j< width; j++) { %>\n                <td><%=digits[i][j]%></td>\n            <% } %>\n        </tr>\n    <% } %>\n    </tbody>\n</table>\n";
 
 /***/ }
 /******/ ]);
