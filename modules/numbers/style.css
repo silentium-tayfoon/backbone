@@ -2,3 +2,17 @@ td {
     text-align: center;
     font-size: 2rem;
 }
+
+#prompt {
+    background-color: white;
+    height: 30px;
+    width: 100%;
+    text-align: center;
+    position: fixed;
+    top: 10px;
+    left: 50px;
+}
+
+._hide {
+    display: none;
+}

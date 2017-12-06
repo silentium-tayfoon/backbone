@@ -3,6 +3,29 @@ export default Backbone.Model.extend({
 		digits: [],
 		width: 3
 	},
+
+	description: {
+		'0': 'номерок',
+		'01': 'эжик',
+		'02': 'яд',
+		'03': 'уши',
+		'04': 'чай',
+		'05': 'обои',
+		'06': 'юла',
+		'07': 'оса',
+		'08': 'ива',
+		'09': 'яйцо',
+		'10': 'огонь'
+	},
+
+	getPrompt: function (number) {
+		if (this.description.hasOwnProperty(number)) {
+			return this.description[number];
+		} else {
+			return 'незнаю';
+		}
+	},
+
 	getDigits: function () {
 		let for_render = [];
 		let row_array = [];

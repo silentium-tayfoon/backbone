@@ -10355,14 +10355,67 @@
 			this.$digits_dom = this.$el.find('#digits');
 	
 			this.$loading.hide();
+	
+			this.handleClickOnBody();
 		},
 		generateDigits: function generateDigits() {
 			this.model.getDigits();
 			var tpl = this.template_digits(this.model.toJSON());
 			this.$digits_dom.empty().append(tpl);
+	
+			this.$prompt_dom = this.$digits_dom.find('#prompt');
 		},
 		setWidth: function setWidth(e) {
 			this.model.set('width', e.target.value);
+		},
+		isDigitArea: function isDigitArea(clicked_target) {
+	
+			var to_find = '#digits';
+			var $clicked_on = $(clicked_target);
+			var $founded_in_parent = $clicked_on.closest(to_find);
+	
+			return $founded_in_parent.length > 0 ? $clicked_on : false;
+		},
+		handleClickOnBody: function () {
+			/**
+	   * Catch click on body
+	   *  and if it was clicked on farbtastic input or colorpicker => do nothing,
+	   *  else close all farptastic colorpickers
+	   * */
+			var runOnce = true;
+	
+			return function (drop) {
+				//console.log($._data($body[0], "events"));
+	
+				var view_link = this;
+				var run = drop || runOnce;
+	
+				if (run) {
+	
+					$(document).click(function (event) {
+	
+						var is_clicked_on_digit = view_link.isDigitArea(event.target);
+	
+						if (is_clicked_on_digit) {
+							view_link.showPrompt(is_clicked_on_digit.text());
+						}
+					});
+	
+					runOnce = false;
+				}
+			};
+		}(),
+		showPrompt: function showPrompt(digit_from_dom) {
+			var _this = this;
+	
+			var prompt = this.model.getPrompt(digit_from_dom);
+	
+			this.$prompt_dom.removeClass('_hide');
+			this.$prompt_dom.text(prompt);
+	
+			setTimeout(function () {
+				_this.$prompt_dom.addClass('_hide');
+			}, 1000);
 		}
 	});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(4), __webpack_require__(1)))
@@ -13862,6 +13915,29 @@
 			digits: [],
 			width: 3
 		},
+	
+		description: {
+			'0': 'номерок',
+			'01': 'эжик',
+			'02': 'яд',
+			'03': 'уши',
+			'04': 'чай',
+			'05': 'обои',
+			'06': 'юла',
+			'07': 'оса',
+			'08': 'ива',
+			'09': 'яйцо',
+			'10': 'огонь'
+		},
+	
+		getPrompt: function getPrompt(number) {
+			if (this.description.hasOwnProperty(number)) {
+				return this.description[number];
+			} else {
+				return 'незнаю';
+			}
+		},
+	
 		getDigits: function getDigits() {
 			var for_render = [];
 			var row_array = [];
@@ -13967,7 +14043,7 @@
 	
 	
 	// module
-	exports.push([module.id, "td {\n    text-align: center;\n    font-size: 2rem;\n}", ""]);
+	exports.push([module.id, "td {\n    text-align: center;\n    font-size: 2rem;\n}\n\n#prompt {\n    background-color: white;\n    height: 30px;\n    width: 100%;\n    text-align: center;\n    position: fixed;\n    top: 10px;\n    left: 50px;\n}\n\n._hide {\n    display: none;\n}", ""]);
 	
 	// exports
 
@@ -14531,7 +14607,7 @@
 /* 12 */
 /***/ function(module, exports) {
 
-	module.exports = "<table class=\"table table-bordered table-striped\">\n    <tbody>\n    <% for (let i=0; i< digits.length; i++) { %>\n        <tr>\n            <% for (let j=0; j< width; j++) { %>\n                <td><%=digits[i][j]%></td>\n            <% } %>\n        </tr>\n    <% } %>\n    </tbody>\n</table>\n";
+	module.exports = "<div id=\"prompt\" class=\"row _hide\">hint</div>\n<table class=\"table table-bordered table-striped\">\n    <tbody>\n    <% for (let i=0; i< digits.length; i++) { %>\n        <tr>\n            <% for (let j=0; j< width; j++) { %>\n                <td><%=digits[i][j]%></td>\n            <% } %>\n        </tr>\n    <% } %>\n    </tbody>\n</table>\n";
 
 /***/ }
 /******/ ]);
