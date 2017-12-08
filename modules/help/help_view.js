@@ -1,47 +1,25 @@
 
-import Model from './model';
+import {HelpModel} from './help_model';
 
-require("!style!css!./style.css");
-
-const control_view = require('html!base/modules/numbers/controls_view.tpl');
-const digits_view = require('html!base/modules/numbers/digits_view.tpl');
+const help_digits_view = require('html!./help.tpl');
 
 export default Backbone.View.extend({
-	events: {
-		'click .generate_js': 'generateDigits',
-		'keyup #num_of_cols': 'setWidth'
-	},
 	initialize: function() {
 		this.render();
 	},
-	el: '#main',
-	template: _.template(control_view),
-	template_digits: _.template(digits_view),
-	model: new Model(),
+	el: '#help',
+	template: _.template(help_digits_view),
+	model: new HelpModel(),
 	render: function () {
+		this.model.getDigits();
 		this.$el.append(this.template(this.model.toJSON()));
-		this.$loading = $(document).find('#loading');
-		this.$digits_dom = this.$el.find('#digits');
-
-		this.$loading.hide();
-
+		this.$prompt_dom = this.$el.find('.prompt');
 		this.handleClickOnBody();
 	},
-	generateDigits: function () {
-		this.model.getDigits();
-		let tpl = this.template_digits(this.model.toJSON());
-		this.$digits_dom.empty().append(tpl);
+	isArea: function (clicked_target, searchParent) {
 
-		this.$prompt_dom = this.$digits_dom.find('#prompt');
-	},
-	setWidth: function (e) {
-		this.model.set('width', e.target.value);
-	},
-	isDigitArea: function (clicked_target) {
-
-		let to_find = '#digits';
 		let $clicked_on = $(clicked_target);
-		let $founded_in_parent = $clicked_on.closest(to_find);
+		let $founded_in_parent = $clicked_on.closest(searchParent);
 
 		return ($founded_in_parent.length > 0) ? $clicked_on : false;
 	},
@@ -63,7 +41,7 @@ export default Backbone.View.extend({
 
 				$(document).click(function(event) {
 
-					let is_clicked_on_digit = view_link.isDigitArea(event.target);
+					let is_clicked_on_digit = view_link.isArea(event.target, '#help');
 
 					if (is_clicked_on_digit) {
 						view_link.showPrompt(is_clicked_on_digit.text());

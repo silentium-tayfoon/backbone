@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html manifest="offline.manifest">
+<html>
+<!--manifest="offline.manifest"-->
 	<head>
 		<title>Мнемотехника</title>
 		<meta charset="UTF-8">
@@ -8,13 +9,21 @@
 		<meta name="author" content="silentium">
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="mobile-web-app-capable" content="yes">
-
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<link rel="stylesheet" href="/public/bootstrap.css">
     </head>
 	<body>
-		<div id="loading">loading...</div>
+		<div class="container" id="main">
+			<hr/>
+			<nav class="nav nav-pills flex-column flex-sm-row">
+				<a class="flex-sm-fill text-sm-center nav-link active" href="#main">main</a>
+				<a class="flex-sm-fill text-sm-center nav-link" href="#help">help</a>
+			</nav>
+			<hr/>
+		</div>
+		<div class="container" id="loading">loading...</div>
 		<div class="container" id="main"></div>
+		<div class="container _hide" id="help"></div>
 		<script type="text/javascript" src="/public/public.bundle.js"></script>
 	</body>
 </html>

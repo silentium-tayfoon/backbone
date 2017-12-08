@@ -3,7 +3,7 @@ td {
     font-size: 2rem;
 }
 
-#prompt {
+.prompt {
     background-color: #e9ecef;
     height: 50px;
     width: 100%;

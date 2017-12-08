@@ -1,7 +1,7 @@
 
 import {number_hints} from './description_100';
 
-export default Backbone.Model.extend({
+const NumberParameters = {
 	defaults: {
 		digits: [],
 		width: 3
@@ -15,7 +15,7 @@ export default Backbone.Model.extend({
 		}
 	},
 
-	getDigits: function () {
+	getRandomDigits: function () {
 		let for_render = [];
 		let row_array = [];
 		let row_count = 0;
@@ -50,7 +50,7 @@ export default Backbone.Model.extend({
 		let add_digits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 		let changed = _.find(add_digits, (d) => {
-				return d == digit;
+			return d == digit;
 		});
 
 		return (changed) ? '0' + changed : digit;
@@ -78,4 +78,8 @@ export default Backbone.Model.extend({
 
 		return arr;
 	}
-});
+};
+
+const NumberModel = Backbone.Model.extend(NumberParameters);
+
+export {NumberModel, NumberParameters};
