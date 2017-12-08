@@ -1,0 +1,17 @@
+CACHE MANIFEST
+# mandatory string
+# need to modify manifest file (simply change date or something)
+# to see update of code!
+# v2 06-12-2017
+
+CACHE:
+# something that must be cashed
+public/bootstrap.css
+public/public.bundle.js
+
+#FALLBACK:
+# show this if file not found
+
+NETWORK:
+# load from the network
+*

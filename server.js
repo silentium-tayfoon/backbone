@@ -16,9 +16,26 @@ app.use(bodyParser.json()); // need to get json data!
 app.use('/public', express.static(application_root + '/public'));
 
 app.get('/', function (req, res) {
-  res.sendFile(application_root + '/index.html');
+	res.sendFile(application_root + '/index.html');
 });
 
+app.get("/offline.manifest", function(req, res){
+
+	let options = {
+		root: application_root + '/',
+		headers: {
+			'Content-Type': 'text/cache-manifest'
+		}
+	};
+
+	res.sendFile('offline.manifest', options, function (err) {
+		if (err) {
+			next(err);
+		} else {
+			//console.log('manifest is Sent!');
+		}
+	});
+});
 
 app.listen(PORT, function () {
 	console.log('Example app listening on port '+ PORT +'!');

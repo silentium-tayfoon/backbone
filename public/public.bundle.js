@@ -44,7 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function($) {"use strict";
+	/* WEBPACK VAR INJECTION */(function($) {'use strict';
 	
 	var _view = __webpack_require__(2);
 	
@@ -54,11 +54,9 @@
 	
 	$(function () {
 		// no back button in the browser!
-		window.location.hash = "no-back-button";
-		window.location.hash = "Again-No-back-button"; //again because google chrome don't insert first hash into history
-		window.onhashchange = function () {
-			window.location.hash = "no-back-button";
-		};
+		// window.location.hash="no-back-button";
+		// window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
+		// window.onhashchange=function(){window.location.hash="no-back-button";};
 	
 		new _view2.default();
 	});
@@ -14722,7 +14720,7 @@
 /* 12 */
 /***/ function(module, exports) {
 
-	module.exports = "<hr/>\n<div class=\"row\">\n    <div class=\"col\">\n        <input type=\"text\" class=\"form-control\" id=\"num_of_cols\" placeholder=\"col = <%=width%>\">\n    </div>\n    <div class=\"col\">\n        <button type=\"button\" class=\"btn btn-primary generate_js\">Generate</button>\n    </div>\n</div>\n<hr/>\n<div id=\"digits\"></div>";
+	module.exports = "<hr/>\n<div class=\"row\">\n    <div class=\"col\">\n        <input type=\"text\" class=\"form-control\" id=\"num_of_cols\" placeholder=\"col = <%=width%>\">\n    </div>\n    <div class=\"col\">\n        <button type=\"button\" class=\"btn btn-primary generate_js\">GenerateSSS</button>\n    </div>\n</div>\n<hr/>\n<div id=\"digits\"></div>";
 
 /***/ },
 /* 13 */
