@@ -17,10 +17,8 @@ export default Backbone.View.extend({
 		this.handleClickOnBody();
 	},
 	isArea: function (clicked_target, searchParent) {
-
 		let $clicked_on = $(clicked_target);
 		let $founded_in_parent = $clicked_on.closest(searchParent);
-
 		return ($founded_in_parent.length > 0) ? $clicked_on : false;
 	},
 	handleClickOnBody: (function(){
@@ -40,7 +38,6 @@ export default Backbone.View.extend({
 			if (run) {
 
 				$(document).click(function(event) {
-
 					let is_clicked_on_digit = view_link.isArea(event.target, '#help');
 
 					if (is_clicked_on_digit) {
@@ -55,9 +52,8 @@ export default Backbone.View.extend({
 	showPrompt: function (digit_from_dom) {
 		let prompt = this.model.getPrompt(digit_from_dom);
 
-		this.$prompt_dom.removeClass('_hide');
 		this.$prompt_dom.text(prompt);
-
+		this.$prompt_dom.removeClass('_hide');
 		setTimeout(()=>{
 			this.$prompt_dom.addClass('_hide');
 		}, 1000);

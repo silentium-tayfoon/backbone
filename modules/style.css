@@ -18,3 +18,5 @@ td {
 ._hide {
     display: none;
 }
+
+.container * { cursor: pointer }
