@@ -1,5 +1,5 @@
 
-import {NumberModel} from './main_model';
+import {NumberModel} from './numbers_model';
 
 const control_view = require('html!base/modules/numbers/controls_view.tpl');
 const digits_view = require('html!base/modules/numbers/digits_view.tpl');
@@ -12,7 +12,7 @@ export default Backbone.View.extend({
 	initialize: function() {
 		this.render();
 	},
-	el: '#main',
+	el: '#numbers',
 	template: _.template(control_view),
 	template_digits: _.template(digits_view),
 	model: new NumberModel(),

@@ -10325,130 +10325,39 @@
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function(Backbone) {'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
 	
 	exports.default = function () {
-		new _main_view2.default();
+		new _numbers_view2.default();
 		new _help_view2.default();
+	
+		new _router.Router();
+		Backbone.history.start();
 	};
 	
-	var _main_view = __webpack_require__(3);
+	var _router = __webpack_require__(5);
 	
-	var _main_view2 = _interopRequireDefault(_main_view);
+	var _numbers_view = __webpack_require__(20);
 	
-	var _help_view = __webpack_require__(10);
+	var _numbers_view2 = _interopRequireDefault(_numbers_view);
+	
+	var _help_view = __webpack_require__(11);
 	
 	var _help_view2 = _interopRequireDefault(_help_view);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	__webpack_require__(13);
+	__webpack_require__(14);
 	
 	;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(Backbone, _, $) {'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _main_model = __webpack_require__(6);
-	
-	var control_view = __webpack_require__(8);
-	var digits_view = __webpack_require__(9);
-	
-	exports.default = Backbone.View.extend({
-		events: {
-			'click .generate_js': 'generateDigits',
-			'keyup #num_of_cols': 'setWidth'
-		},
-		initialize: function initialize() {
-			this.render();
-		},
-		el: '#main',
-		template: _.template(control_view),
-		template_digits: _.template(digits_view),
-		model: new _main_model.NumberModel(),
-		render: function render() {
-			this.$el.append(this.template(this.model.toJSON()));
-			this.$loading = $(document).find('#loading');
-			this.$digits_dom = this.$el.find('#digits');
-	
-			this.$loading.hide();
-	
-			this.handleClickOnBody();
-		},
-		generateDigits: function generateDigits() {
-			this.model.getRandomDigits();
-			var tpl = this.template_digits(this.model.toJSON());
-			this.$digits_dom.empty().append(tpl);
-	
-			this.$prompt_dom = this.$digits_dom.find('.prompt');
-		},
-		setWidth: function setWidth(e) {
-			this.model.set('width', e.target.value);
-		},
-		isArea: function isArea(clicked_target, searchParent) {
-	
-			var $clicked_on = $(clicked_target);
-			var $founded_in_parent = $clicked_on.closest(searchParent);
-	
-			return $founded_in_parent.length > 0 ? $clicked_on : false;
-		},
-		handleClickOnBody: function () {
-			/**
-	   * Catch click on body
-	   *  and if it was clicked on farbtastic input or colorpicker => do nothing,
-	   *  else close all farptastic colorpickers
-	   * */
-			var runOnce = true;
-	
-			return function (drop) {
-				//console.log($._data($body[0], "events"));
-	
-				var view_link = this;
-				var run = drop || runOnce;
-	
-				if (run) {
-	
-					$(document).click(function (event) {
-	
-						var is_clicked_on_digit = view_link.isArea(event.target, '#digits');
-	
-						if (is_clicked_on_digit) {
-							view_link.showPrompt(is_clicked_on_digit.text());
-						}
-					});
-	
-					runOnce = false;
-				}
-			};
-		}(),
-		showPrompt: function showPrompt(digit_from_dom) {
-			var _this = this;
-	
-			var prompt = this.model.getPrompt(digit_from_dom);
-	
-			this.$prompt_dom.removeClass('_hide');
-			this.$prompt_dom.text(prompt);
-	
-			setTimeout(function () {
-				_this.$prompt_dom.addClass('_hide');
-			}, 1000);
-		}
-	});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(5), __webpack_require__(1)))
-
-/***/ },
-/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global) {//     Backbone.js 1.3.3
@@ -10467,7 +10376,7 @@
 	
 	  // Set up Backbone appropriately for the environment. Start with AMD.
 	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(5), __webpack_require__(1), exports], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, $, exports) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(4), __webpack_require__(1), exports], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, $, exports) {
 	      // Export global even in AMD case in case this script is loaded with
 	      // others that may still expect a global Backbone.
 	      root.Backbone = factory(root, exports, _, $);
@@ -12375,7 +12284,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 5 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscore.js 1.8.3
@@ -13929,104 +13838,58 @@
 
 
 /***/ },
-/* 6 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(_, Backbone) {'use strict';
+	/* WEBPACK VAR INJECTION */(function(Backbone) {'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.NumberParameters = exports.NumberModel = undefined;
+	exports.Router = undefined;
 	
-	var _description_ = __webpack_require__(7);
+	var _helpers = __webpack_require__(19);
 	
-	var NumberParameters = {
-		defaults: {
-			digits: [],
-			width: 3
-		},
-		description: _description_.number_hints,
-		getPrompt: function getPrompt(number) {
-			if (this.description.hasOwnProperty(number)) {
-				return this.description[number];
-			} else {
-				return '----';
-			}
-		},
-	
-		getRandomDigits: function getRandomDigits() {
-			var for_render = [];
-			var row_array = [];
-			var row_count = 0;
-	
-			var generated_random = this.generateRandom(0, 100);
-	
-			for (var i = 0; i < generated_random.length; i++) {
-	
-				generated_random[i] = this.fix100(generated_random[i]);
-	
-				generated_random[i] = this.fixZero(generated_random[i]);
-	
-				if (row_count < this.get('width')) {
-	
-					row_array.push(generated_random[i]);
-					row_count++;
-				} else {
-	
-					for_render.push(row_array);
-	
-					row_count = 1;
-					row_array = [];
-					row_array.push(generated_random[i]);
-				}
-			}
-			this.set('digits', for_render);
-		},
-	
-		fixZero: function fixZero(digit) {
-	
-			var add_digits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-	
-			var changed = _.find(add_digits, function (d) {
-				return d == digit;
-			});
-	
-			return changed ? '0' + changed : digit;
-		},
-		fix100: function fix100(digit) {
-			return digit != 100 ? digit : '00';
-		},
-		generateRandom: function generateRandom(min, max, numOfSwaps) {
-			var size = max - min + 1;
-			numOfSwaps = numOfSwaps || size;
-			var arr = Array.apply(null, Array(size));
-	
-			for (var i = 0, j = min; i < size & j <= max; i++, j++) {
-				arr[i] = j;
-			}
-	
-			for (var _i = 0; _i < numOfSwaps; _i++) {
-				var idx1 = Math.round(Math.random() * (size - 1));
-				var idx2 = Math.round(Math.random() * (size - 1));
-	
-				var temp = arr[idx1];
-				arr[idx1] = arr[idx2];
-				arr[idx2] = temp;
-			}
-	
-			return arr;
-		}
+	var showHideBlockParameters = {
+		id_list: ['loading', 'numbers', 'help']
 	};
 	
-	var NumberModel = Backbone.Model.extend(NumberParameters);
+	var showHideBlock = new _helpers.ShowHideBlock(showHideBlockParameters);
 	
-	exports.NumberModel = NumberModel;
-	exports.NumberParameters = NumberParameters;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5), __webpack_require__(4)))
+	var activeLinkParameters = {
+		links: [],
+		activeClass: 'active',
+		navigationParent: '#navigation'
+	};
+	var setActiveLink = new _helpers.SetActiveLink(activeLinkParameters);
+	
+	var Router = Backbone.Router.extend({
+	
+		routes: {
+			"": "main", // #main
+			"main": "main", // #main
+			"help": "help" // #help
+		},
+	
+		main: function main() {
+			setActiveLink.activate('main');
+			showHideBlock.show('numbers');
+		},
+	
+		help: function help() {
+			setActiveLink.activate('help');
+			showHideBlock.show('help');
+		}
+	
+	});
+	
+	exports.Router = Router;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 7 */
+/* 6 */,
+/* 7 */,
+/* 8 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -14151,19 +14014,19 @@
 	exports.number_hints = number_hints;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"row\">\n    <div class=\"col\">\n        <input type=\"text\" class=\"form-control\" id=\"num_of_cols\" placeholder=\"col = <%=width%>\">\n    </div>\n    <div class=\"col\">\n        <button type=\"button\" class=\"btn btn-primary generate_js\">Generate</button>\n    </div>\n</div>\n<hr/>\n<div id=\"digits\"></div>";
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"prompt row _hide\">hint</div>\n<table class=\"table table-bordered table-striped\">\n    <tbody>\n    <% for (let i=0; i< digits.length; i++) { %>\n        <tr>\n            <% for (let j=0; j< width; j++) { %>\n                <td><%=digits[i][j]%></td>\n            <% } %>\n        </tr>\n    <% } %>\n    </tbody>\n</table>\n";
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Backbone, _, $) {'use strict';
@@ -14172,9 +14035,9 @@
 		value: true
 	});
 	
-	var _help_model = __webpack_require__(11);
+	var _help_model = __webpack_require__(12);
 	
-	var help_digits_view = __webpack_require__(12);
+	var help_digits_view = __webpack_require__(13);
 	
 	exports.default = Backbone.View.extend({
 		initialize: function initialize() {
@@ -14238,10 +14101,10 @@
 			}, 1000);
 		}
 	});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(5), __webpack_require__(1)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(4), __webpack_require__(1)))
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_, Backbone) {'use strict';
@@ -14251,7 +14114,7 @@
 	});
 	exports.HelpModel = undefined;
 	
-	var _main_model = __webpack_require__(6);
+	var _numbers_model = __webpack_require__(21);
 	
 	var additional_func = {
 		defaults: {
@@ -14290,27 +14153,27 @@
 		}
 	};
 	
-	var NumberModelExtended = _.extend(_main_model.NumberParameters, additional_func);
+	var NumberModelExtended = _.extend(_numbers_model.NumberParameters, additional_func);
 	
 	var HelpModel = Backbone.Model.extend(NumberModelExtended);
 	
 	exports.HelpModel = HelpModel;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5), __webpack_require__(4)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(3)))
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"prompt row _hide\">hint</div>\n<table class=\"table table-bordered table-striped\">\n    <tbody>\n    <% for (let i=0; i< digits.length; i++) { %>\n    <tr>\n        <% for (let j=0; j< width; j++) { %>\n        <td><%=digits[i][j]%></td>\n        <% } %>\n    </tr>\n    <% } %>\n    </tbody>\n</table>";
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(14);
+	var content = __webpack_require__(15);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// Prepare cssTransformation
 	var transform;
@@ -14318,7 +14181,7 @@
 	var options = {"hmr":true}
 	options.transform = transform
 	// add the styles to the DOM
-	var update = __webpack_require__(16)(content, options);
+	var update = __webpack_require__(17)(content, options);
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -14335,10 +14198,10 @@
 	}
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(15)(undefined);
+	exports = module.exports = __webpack_require__(16)(undefined);
 	// imports
 	
 	
@@ -14349,7 +14212,7 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	/*
@@ -14431,7 +14294,7 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -14487,7 +14350,7 @@
 	var	singletonCounter = 0;
 	var	stylesInsertedAtTop = [];
 	
-	var	fixUrls = __webpack_require__(17);
+	var	fixUrls = __webpack_require__(18);
 	
 	module.exports = function(list, options) {
 		if (false) {
@@ -14803,7 +14666,7 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	
@@ -14896,6 +14759,294 @@
 		return fixedCss;
 	};
 
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function($) {'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var ShowHideBlock = function () {
+		function ShowHideBlock(parameters) {
+			_classCallCheck(this, ShowHideBlock);
+	
+			this.id_list = parameters.id_list || [];
+			this.hide_class = parameters.hide_class || '_hide';
+	
+			this.$dom_list = {};
+			this.init_once = false;
+		}
+	
+		_createClass(ShowHideBlock, [{
+			key: 'init',
+			value: function init() {
+				var _this = this;
+	
+				this.id_list.forEach(function (id_element) {
+					var founded_dom = $(document).find('#' + id_element);
+					if (founded_dom.length > 0) {
+						_this.$dom_list[id_element] = founded_dom;
+					}
+				});
+				this.init_once = true;
+			}
+		}, {
+			key: 'show',
+			value: function show(id_to_show) {
+				if (this.init_once === false) {
+					this.init();
+				}
+	
+				for (var element in this.$dom_list) {
+					if (element === id_to_show) {
+						this.$dom_list[element].removeClass(this.hide_class);
+					} else {
+						this.$dom_list[element].addClass(this.hide_class);
+					}
+				}
+			}
+		}]);
+	
+		return ShowHideBlock;
+	}();
+	
+	var SetActiveLink = function () {
+		function SetActiveLink(parameters) {
+			_classCallCheck(this, SetActiveLink);
+	
+			this.links = parameters.links;
+			this.activeClass = 'active' || parameters.activeClass;
+	
+			this.$navigationParentDom = $(document).find(parameters.navigationParent);
+			this.$linksDom = this.$navigationParentDom.find('a');
+		}
+	
+		_createClass(SetActiveLink, [{
+			key: 'activate',
+			value: function activate(link_name) {
+	
+				for (var i = 0; i < this.$linksDom.length; i++) {
+	
+					var $link = $(this.$linksDom[i]);
+					var link_href = $link.attr('href').split('#')[1];
+	
+					if (link_name == link_href) {
+						$link.addClass(this.activeClass);
+					} else {
+						$link.removeClass(this.activeClass);
+					}
+				}
+			}
+		}]);
+	
+		return SetActiveLink;
+	}();
+	
+	exports.ShowHideBlock = ShowHideBlock;
+	exports.SetActiveLink = SetActiveLink;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(Backbone, _, $) {'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _numbers_model = __webpack_require__(21);
+	
+	var control_view = __webpack_require__(9);
+	var digits_view = __webpack_require__(10);
+	
+	exports.default = Backbone.View.extend({
+		events: {
+			'click .generate_js': 'generateDigits',
+			'keyup #num_of_cols': 'setWidth'
+		},
+		initialize: function initialize() {
+			this.render();
+		},
+		el: '#numbers',
+		template: _.template(control_view),
+		template_digits: _.template(digits_view),
+		model: new _numbers_model.NumberModel(),
+		render: function render() {
+			this.$el.append(this.template(this.model.toJSON()));
+			this.$loading = $(document).find('#loading');
+			this.$digits_dom = this.$el.find('#digits');
+	
+			this.$loading.hide();
+	
+			this.handleClickOnBody();
+		},
+		generateDigits: function generateDigits() {
+			this.model.getRandomDigits();
+			var tpl = this.template_digits(this.model.toJSON());
+			this.$digits_dom.empty().append(tpl);
+	
+			this.$prompt_dom = this.$digits_dom.find('.prompt');
+		},
+		setWidth: function setWidth(e) {
+			this.model.set('width', e.target.value);
+		},
+		isArea: function isArea(clicked_target, searchParent) {
+	
+			var $clicked_on = $(clicked_target);
+			var $founded_in_parent = $clicked_on.closest(searchParent);
+	
+			return $founded_in_parent.length > 0 ? $clicked_on : false;
+		},
+		handleClickOnBody: function () {
+			/**
+	   * Catch click on body
+	   *  and if it was clicked on farbtastic input or colorpicker => do nothing,
+	   *  else close all farptastic colorpickers
+	   * */
+			var runOnce = true;
+	
+			return function (drop) {
+				//console.log($._data($body[0], "events"));
+	
+				var view_link = this;
+				var run = drop || runOnce;
+	
+				if (run) {
+	
+					$(document).click(function (event) {
+	
+						var is_clicked_on_digit = view_link.isArea(event.target, '#digits');
+	
+						if (is_clicked_on_digit) {
+							view_link.showPrompt(is_clicked_on_digit.text());
+						}
+					});
+	
+					runOnce = false;
+				}
+			};
+		}(),
+		showPrompt: function showPrompt(digit_from_dom) {
+			var _this = this;
+	
+			var prompt = this.model.getPrompt(digit_from_dom);
+	
+			this.$prompt_dom.removeClass('_hide');
+			this.$prompt_dom.text(prompt);
+	
+			setTimeout(function () {
+				_this.$prompt_dom.addClass('_hide');
+			}, 1000);
+		}
+	});
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(4), __webpack_require__(1)))
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(_, Backbone) {'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.NumberParameters = exports.NumberModel = undefined;
+	
+	var _description_ = __webpack_require__(8);
+	
+	var NumberParameters = {
+		defaults: {
+			digits: [],
+			width: 3
+		},
+		description: _description_.number_hints,
+		getPrompt: function getPrompt(number) {
+			if (this.description.hasOwnProperty(number)) {
+				return this.description[number];
+			} else {
+				return '----';
+			}
+		},
+	
+		getRandomDigits: function getRandomDigits() {
+			var for_render = [];
+			var row_array = [];
+			var row_count = 0;
+	
+			var generated_random = this.generateRandom(0, 100);
+	
+			for (var i = 0; i < generated_random.length; i++) {
+	
+				generated_random[i] = this.fix100(generated_random[i]);
+	
+				generated_random[i] = this.fixZero(generated_random[i]);
+	
+				if (row_count < this.get('width')) {
+	
+					row_array.push(generated_random[i]);
+					row_count++;
+				} else {
+	
+					for_render.push(row_array);
+	
+					row_count = 1;
+					row_array = [];
+					row_array.push(generated_random[i]);
+				}
+			}
+			this.set('digits', for_render);
+		},
+	
+		fixZero: function fixZero(digit) {
+	
+			var add_digits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+	
+			var changed = _.find(add_digits, function (d) {
+				return d == digit;
+			});
+	
+			return changed ? '0' + changed : digit;
+		},
+		fix100: function fix100(digit) {
+			return digit != 100 ? digit : '00';
+		},
+		generateRandom: function generateRandom(min, max, numOfSwaps) {
+			var size = max - min + 1;
+			numOfSwaps = numOfSwaps || size;
+			var arr = Array.apply(null, Array(size));
+	
+			for (var i = 0, j = min; i < size & j <= max; i++, j++) {
+				arr[i] = j;
+			}
+	
+			for (var _i = 0; _i < numOfSwaps; _i++) {
+				var idx1 = Math.round(Math.random() * (size - 1));
+				var idx2 = Math.round(Math.random() * (size - 1));
+	
+				var temp = arr[idx1];
+				arr[idx1] = arr[idx2];
+				arr[idx2] = temp;
+			}
+	
+			return arr;
+		}
+	};
+	
+	var NumberModel = Backbone.Model.extend(NumberParameters);
+	
+	exports.NumberModel = NumberModel;
+	exports.NumberParameters = NumberParameters;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(3)))
 
 /***/ }
 /******/ ]);

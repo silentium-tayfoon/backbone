@@ -1,5 +1,5 @@
 
-import {NumberModel, NumberParameters} from 'base/modules/numbers/main_model';
+import {NumberModel, NumberParameters} from 'base/modules/numbers/numbers_model';
 
 const additional_func = {
 	defaults: {
