@@ -14329,6 +14329,9 @@
 		initialize: function initialize() {
 			this.render();
 		},
+		events: {
+			'click .help_navigation_js': 'helpNavigation'
+		},
 		el: '#help',
 		template: _.template(help_digits_view),
 		model: new _help_model.HelpModel(),
@@ -14381,6 +14384,15 @@
 			setTimeout(function () {
 				_this.$prompt_dom.addClass('_hide');
 			}, 1000);
+		},
+		helpNavigation: function helpNavigation(el) {
+			var total_heigt = document.body.offsetHeight;
+	
+			var button_val = el.target.value;
+			var scroll = total_heigt * button_val;
+			scroll = scroll.toFixed(0);
+	
+			window.scrollTo(0, scroll);
 		}
 	});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(4), __webpack_require__(1)))
@@ -14446,7 +14458,7 @@
 /* 14 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"prompt row _hide\">hint</div>\n<table class=\"table table-bordered table-striped\">\n    <tbody>\n    <% for (let i=0; i< digits.length; i++) { %>\n    <tr>\n        <% for (let j=0; j< width; j++) { %>\n        <td><%=digits[i][j]%></td>\n        <% } %>\n    </tr>\n    <% } %>\n    </tbody>\n</table>";
+	module.exports = "<div class=\"prompt row _hide\">hint</div>\n<div class=\"btn-group-vertical mr-2 help_navigation_js\" role=\"group\" aria-label=\"navigation\">\n    <button type=\"button\" class=\"btn btn-secondary\" value=\"0\">0</button>\n    <button type=\"button\" class=\"btn btn-secondary\" value=\"0.25\">25</button>\n    <button type=\"button\" class=\"btn btn-secondary\" value=\"0.5\">50</button>\n    <button type=\"button\" class=\"btn btn-secondary\" value=\"0.75\">75</button>\n    <button type=\"button\" class=\"btn btn-secondary\" value=\"1\">00</button>\n</div>\n<table class=\"table table-bordered table-striped\">\n    <tbody>\n    <% for (let i=0; i< digits.length; i++) { %>\n    <tr>\n        <% for (let j=0; j< width; j++) { %>\n        <td><%=digits[i][j]%></td>\n        <% } %>\n    </tr>\n    <% } %>\n    </tbody>\n</table>";
 
 /***/ },
 /* 15 */
@@ -14488,7 +14500,7 @@
 	
 	
 	// module
-	exports.push([module.id, "td {\n    text-align: center;\n    font-size: 2rem;\n}\n\n.prompt {\n    background-color: #e9ecef;\n    height: 50px;\n    width: 100%;\n    text-align: center;\n    position: fixed;\n    top: 10px;\n    left: 50px;\n    font-size: 2rem;\n    padding-left: 20px;\n}\n\n._hide {\n    display: none;\n}\n\n.container * { cursor: pointer }", ""]);
+	exports.push([module.id, "td {\n    text-align: center;\n    font-size: 2rem;\n}\n\n.prompt {\n    background-color: #e9ecef;\n    height: 50px;\n    width: 100%;\n    text-align: center;\n    position: fixed;\n    top: 10px;\n    left: 50px;\n    font-size: 2rem;\n    padding-left: 20px;\n}\n\n._hide {\n    display: none;\n}\n\n/**\n    fix click for apple devices\n*/\n.container * { cursor: pointer }\n\n.help_navigation_js {\n    position: fixed;\n    top: top;\n    left: 50 px;\n}", ""]);
 	
 	// exports
 

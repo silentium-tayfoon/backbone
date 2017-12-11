@@ -19,4 +19,13 @@ td {
     display: none;
 }
 
+/**
+    fix click for apple devices
+*/
 .container * { cursor: pointer }
+
+.help_navigation_js {
+    position: fixed;
+    top: top;
+    left: 50 px;
+}

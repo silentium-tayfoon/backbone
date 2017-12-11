@@ -7,6 +7,9 @@ export default Backbone.View.extend({
 	initialize: function() {
 		this.render();
 	},
+	events: {
+		'click .help_navigation_js': 'helpNavigation'
+	},
 	el: '#help',
 	template: _.template(help_digits_view),
 	model: new HelpModel(),
@@ -57,5 +60,14 @@ export default Backbone.View.extend({
 		setTimeout(()=>{
 			this.$prompt_dom.addClass('_hide');
 		}, 1000);
+	},
+	helpNavigation: function (el) {
+		let total_heigt = document.body.offsetHeight;
+
+		let button_val = el.target.value;
+		let scroll = total_heigt * button_val;
+			scroll = scroll.toFixed(0);
+
+		window.scrollTo(0, scroll);
 	}
 });
