@@ -1,5 +1,7 @@
 import {ShowHideBlock, SetActiveLink} from 'base/modules/helpers';
 
+import {cache_model} from 'base/modules/clearCache/clear_cache_model';
+
 const showHideBlockParameters = {
 	id_list: ['loading', 'numbers', 'help']
 };
@@ -18,7 +20,8 @@ const Router = Backbone.Router.extend({
 	routes: {
 		"": "main",    // #main
 		"main": "main",    // #main
-		"help": "help"  // #help
+		"help": "help",  // #help
+		"clear": "clearCache"
 	},
 
 	main: function() {
@@ -29,6 +32,10 @@ const Router = Backbone.Router.extend({
 	help: function() {
 		setActiveLink.activate('help');
 		showHideBlock.show('help');
+	},
+
+	clearCache: function() {
+		cache_model.checkVersionOnServer();
 	}
 
 });

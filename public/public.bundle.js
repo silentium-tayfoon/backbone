@@ -10341,17 +10341,17 @@
 	
 	var _router = __webpack_require__(5);
 	
-	var _numbers_view = __webpack_require__(7);
+	var _numbers_view = __webpack_require__(8);
 	
 	var _numbers_view2 = _interopRequireDefault(_numbers_view);
 	
-	var _help_view = __webpack_require__(12);
+	var _help_view = __webpack_require__(13);
 	
 	var _help_view2 = _interopRequireDefault(_help_view);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	__webpack_require__(15);
+	__webpack_require__(16);
 	
 	;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
@@ -13850,6 +13850,8 @@
 	
 	var _helpers = __webpack_require__(6);
 	
+	var _clear_cache_model = __webpack_require__(7);
+	
 	var showHideBlockParameters = {
 		id_list: ['loading', 'numbers', 'help']
 	};
@@ -13868,7 +13870,8 @@
 		routes: {
 			"": "main", // #main
 			"main": "main", // #main
-			"help": "help" // #help
+			"help": "help", // #help
+			"clear": "clearCache"
 		},
 	
 		main: function main() {
@@ -13879,6 +13882,10 @@
 		help: function help() {
 			setActiveLink.activate('help');
 			showHideBlock.show('help');
+		},
+	
+		clearCache: function clearCache() {
+			_clear_cache_model.cache_model.checkVersionOnServer();
 		}
 	
 	});
@@ -13984,16 +13991,60 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function(Backbone) {'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var ClearCacheModel = Backbone.Model.extend({
+		// urlRoot: 'http://localhost:8080/',
+		urlRoot: 'http://192.168.61.211:8080/',
+		url: '/clearCache',
+		defaults: {
+			app_version: 1, // first set in code
+			server_version: 1 // get from server
+		},
+		initialize: function initialize() {
+			this.on('sync', this.compareVersions, this);
+		},
+		checkVersionOnServer: function checkVersionOnServer() {
+			this.fetch({ data: { clear_cache: true } });
+		},
+		compareVersions: function compareVersions() {
+			if (this.get('server_version') > this.get('app_version')) {
+				window.location.href = this.preparedUrl();
+			}
+		},
+		preparedUrl: function preparedUrl() {
+			var clear_pathname = window.location.pathname.split('#')[0];
+			clear_pathname = clear_pathname + '?hash=' + this.generateHash();
+			return window.location.origin + clear_pathname;
+		},
+		generateHash: function generateHash() {
+			var hash = Date.now() + Math.random();
+			return hash.toFixed(0);
+		}
+	});
+	
+	var cache_model = new ClearCacheModel();
+	
+	exports.cache_model = cache_model;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/* WEBPACK VAR INJECTION */(function(Backbone, _, $) {'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
 	
-	var _numbers_model = __webpack_require__(8);
+	var _numbers_model = __webpack_require__(9);
 	
-	var control_view = __webpack_require__(10);
-	var digits_view = __webpack_require__(11);
+	var control_view = __webpack_require__(11);
+	var digits_view = __webpack_require__(12);
 	
 	exports.default = Backbone.View.extend({
 		events: {
@@ -14079,7 +14130,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(4), __webpack_require__(1)))
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_, Backbone) {'use strict';
@@ -14089,7 +14140,7 @@
 	});
 	exports.NumberParameters = exports.NumberModel = undefined;
 	
-	var _description_ = __webpack_require__(9);
+	var _description_ = __webpack_require__(10);
 	
 	var NumberParameters = {
 		defaults: {
@@ -14176,7 +14227,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(3)))
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -14301,19 +14352,19 @@
 	exports.number_hints = number_hints;
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"row\">\n    <div class=\"col\">\n        <input type=\"text\" class=\"form-control\" id=\"num_of_cols\" placeholder=\"col = <%=width%>\">\n    </div>\n    <div class=\"col\">\n        <button type=\"button\" class=\"btn btn-primary generate_js\">Generate</button>\n    </div>\n</div>\n<hr/>\n<div id=\"digits\"></div>";
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"prompt row _hide\">hint</div>\n<table class=\"table table-bordered table-striped\">\n    <tbody>\n    <% for (let i=0; i< digits.length; i++) { %>\n        <tr>\n            <% for (let j=0; j< width; j++) { %>\n                <td><%=digits[i][j]%></td>\n            <% } %>\n        </tr>\n    <% } %>\n    </tbody>\n</table>\n";
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Backbone, _, $) {'use strict';
@@ -14322,9 +14373,9 @@
 		value: true
 	});
 	
-	var _help_model = __webpack_require__(13);
+	var _help_model = __webpack_require__(14);
 	
-	var help_digits_view = __webpack_require__(14);
+	var help_digits_view = __webpack_require__(15);
 	
 	exports.default = Backbone.View.extend({
 		initialize: function initialize() {
@@ -14399,7 +14450,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(4), __webpack_require__(1)))
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_, Backbone) {'use strict';
@@ -14409,7 +14460,7 @@
 	});
 	exports.HelpModel = undefined;
 	
-	var _numbers_model = __webpack_require__(8);
+	var _numbers_model = __webpack_require__(9);
 	
 	var additional_func = {
 		defaults: {
@@ -14456,19 +14507,19 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(3)))
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"prompt row _hide\">hint</div>\n<div class=\"btn-group-vertical mr-2 help_navigation_js\" role=\"group\" aria-label=\"navigation\">\n    <button type=\"button\" class=\"btn btn-secondary\" value=\"0\">0</button>\n    <button type=\"button\" class=\"btn btn-secondary\" value=\"0.25\">25</button>\n    <button type=\"button\" class=\"btn btn-secondary\" value=\"0.5\">50</button>\n    <button type=\"button\" class=\"btn btn-secondary\" value=\"0.75\">75</button>\n    <button type=\"button\" class=\"btn btn-secondary\" value=\"1\">00</button>\n</div>\n<table class=\"table table-bordered table-striped\">\n    <tbody>\n    <% for (let i=0; i< digits.length; i++) { %>\n    <tr>\n        <% for (let j=0; j< width; j++) { %>\n        <td><%=digits[i][j]%></td>\n        <% } %>\n    </tr>\n    <% } %>\n    </tbody>\n</table>";
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(16);
+	var content = __webpack_require__(17);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// Prepare cssTransformation
 	var transform;
@@ -14476,7 +14527,7 @@
 	var options = {"hmr":true}
 	options.transform = transform
 	// add the styles to the DOM
-	var update = __webpack_require__(18)(content, options);
+	var update = __webpack_require__(19)(content, options);
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -14493,10 +14544,10 @@
 	}
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(17)(undefined);
+	exports = module.exports = __webpack_require__(18)(undefined);
 	// imports
 	
 	
@@ -14507,7 +14558,7 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	/*
@@ -14589,7 +14640,7 @@
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -14645,7 +14696,7 @@
 	var	singletonCounter = 0;
 	var	stylesInsertedAtTop = [];
 	
-	var	fixUrls = __webpack_require__(19);
+	var	fixUrls = __webpack_require__(20);
 	
 	module.exports = function(list, options) {
 		if (false) {
@@ -14961,7 +15012,7 @@
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports) {
 
 	

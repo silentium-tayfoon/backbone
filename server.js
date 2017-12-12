@@ -19,6 +19,15 @@ app.get('/', function (req, res) {
 	res.sendFile(application_root + '/index.html');
 });
 
+app.get('/clearCache', function (req, res) {
+	let model = {
+		app_version: 1,
+		server_version: 2
+	};
+
+	res.json(model);
+});
+
 app.get("/offline.manifest", function(req, res){
 
 	let options = {

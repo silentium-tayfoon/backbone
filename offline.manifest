@@ -1,8 +1,10 @@
 CACHE MANIFEST
+# v8
+# 11-12-2017
+
 # mandatory string
 # need to modify manifest file (simply change date or something)
 # to see update of code!
-# v6 11-12-2017
 
 CACHE:
 # something that must be cashed
