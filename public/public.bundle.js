@@ -14024,7 +14024,8 @@
 			this.$prompt_dom = this.$digits_dom.find('.prompt');
 		},
 		setWidth: function setWidth(e) {
-			this.model.set('width', e.target.value);
+			var value = e.target.value || 3;
+			this.model.set('width', value);
 		},
 		isArea: function isArea(clicked_target, searchParent) {
 	
