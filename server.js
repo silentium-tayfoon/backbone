@@ -28,7 +28,7 @@ app.get('/clearCache', function (req, res) {
 	res.json(model);
 });
 
-app.get("/offline.manifest", function(req, res){
+app.get("offline.manifest", function(req, res) {
 
 	let options = {
 		root: application_root + '/',
@@ -37,11 +37,11 @@ app.get("/offline.manifest", function(req, res){
 		}
 	};
 
-	res.sendFile('offline.manifest', options, function (err) {
+	res.sendFile('/public/offline.manifest', options, function (err) {
 		if (err) {
 			next(err);
 		} else {
-			//console.log('manifest is Sent!');
+			console.log('manifest is Sent!');
 		}
 	});
 });

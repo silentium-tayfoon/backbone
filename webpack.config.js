@@ -1,7 +1,8 @@
 /* to run with parameters which are in package.json - in console #: npm run prod */
 
 // process.env.NODE_ENV - get on run: NODE_ENV=some_val webpack
-const NODE_ENV = process.env.NODE_ENV || 'development';
+//const NODE_ENV = process.env.NODE_ENV || 'development';
+const NODE_ENV = 'prod';
 const webpack = require('webpack');
 const path = require("path");
 const path_list = (NODE_ENV === 'development') ? require('./path_list_development') : require('./path_list_production');
