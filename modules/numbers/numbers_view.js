@@ -7,6 +7,7 @@ const digits_view = require('html!base/modules/numbers/digits_view.tpl');
 export default Backbone.View.extend({
 	events: {
 		'click .generate_js': 'generateDigits',
+		'click .print_js': 'prepareForPrint',
 		'keyup #num_of_cols': 'setWidth'
 	},
 	initialize: function() {
@@ -31,6 +32,9 @@ export default Backbone.View.extend({
 		this.$digits_dom.empty().append(tpl);
 
 		this.$prompt_dom = this.$digits_dom.find('.prompt');
+	},
+	prepareForPrint: function() {
+		$('.print_hide_js').hide();
 	},
 	setWidth: function (e) {
 		let value = e.target.value || 3;

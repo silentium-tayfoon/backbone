@@ -20,7 +20,7 @@ const NumberParameters = {
 		let row_array = [];
 		let row_count = 0;
 
-		let generated_random = this.generateRandom(0, 100);
+		let generated_random = this.generateRandom(1, 100);
 
 		for (let i = 0; i< generated_random.length; i++) {
 

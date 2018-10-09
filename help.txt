@@ -1,3 +1,10 @@
+правильный html для индекс файла чтобы работал манифест!
+<html manifest="/public/offline.manifest">
+
+чтобы увидеть изменения - нужно пересобрать БАНДЛ!!!
+npm run prod
+и отключить или изменить манифест!
+
 mongodb start demon
 
 # MONGO DB - to start mong database just run in console: mongod
